@@ -14,6 +14,7 @@ material = "1.10.0"
 playServicesAdsIdentifier = "18.1.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+playServicesAppset = "16.1.0"
 
 [libraries]
 adjust-android = { module = "com.adjust.sdk:adjust-android", version.ref = "adjustAndroid" }
@@ -29,6 +30,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 play-services-ads-identifier = { module = "com.google.android.gms:play-services-ads-identifier", version.ref = "playServicesAdsIdentifier" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+play-services-appset = { module = "com.google.android.gms:play-services-appset", version.ref = "playServicesAppset" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -20,7 +20,6 @@ class NoctuaProxyTracker {
     private var adjustTracker: AdjustTracker? = null
     private var noctuaTracker: NoctuaTracker? = null
 
-
     fun init(context: Context) {
         val config = loadAppConfig(context)
 

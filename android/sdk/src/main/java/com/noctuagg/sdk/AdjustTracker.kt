@@ -5,10 +5,11 @@ import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustAdRevenue
 import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustEvent
+import com.adjust.sdk.LogLevel
 
 data class NoctuaAdjustConfig(
     val appToken: String,
-    val environment: String = AdjustConfig.ENVIRONMENT_SANDBOX,
+    val environment: String?,
     val eventMap: Map<String, String>,
 )
 
@@ -28,7 +29,13 @@ class AdjustTracker(private var config: NoctuaAdjustConfig) {
     }
 
     fun onCreate(context: Context, adjustConfig: NoctuaAdjustConfig) {
-        Adjust.onCreate(AdjustConfig(context, adjustConfig.appToken, adjustConfig.environment))
+        val environment = if (adjustConfig.environment.isNullOrEmpty()) {
+            AdjustConfig.ENVIRONMENT_SANDBOX
+        } else {
+            adjustConfig.environment
+        }
+
+        Adjust.onCreate(AdjustConfig(context, adjustConfig.appToken, environment))
     }
 
     fun onResume() {

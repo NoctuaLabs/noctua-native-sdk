@@ -33,12 +33,13 @@ android {
 }
 
 dependencies {
+    implementation(libs.play.services.appset)
+    implementation(libs.play.services.ads.identifier)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.adjust.android)
     implementation(libs.installreferrer)
-    implementation(libs.play.services.ads.identifier)
     implementation(libs.kafka.clients)
     implementation(libs.gson)
     testImplementation(libs.junit)
