@@ -36,5 +36,11 @@
             android:layout_height="wrap_content"
             android:text="Track Purchase" />
 
+        <Button
+            android:id="@+id/btnTrackCustomEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Track Custom Event" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

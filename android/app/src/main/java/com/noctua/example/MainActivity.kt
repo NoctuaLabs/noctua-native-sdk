@@ -25,11 +25,15 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnTrackAdRevenue).setOnClickListener {
             tracker.trackAdRevenue("admob_sdk", 0.19, "USD")
-                Log.d("NoctuaProxyTracker", "Ad revenue tracked: $it")
+                Log.d("NoctuaProxyTracker", "Ad revenue tracked")
         }
         findViewById<Button>(R.id.btnTrackPurchase).setOnClickListener {
             tracker.trackPurchase("example.orderId.1", 0.19, "USD")
             Log.d("NoctuaProxyTracker", "Purchase tracked")
+        }
+        findViewById<Button>(R.id.btnTrackCustomEvent).setOnClickListener {
+            tracker.trackCustomEvent("customEvent", mapOf("k1" to "v1", "k2" to "v2"))
+            Log.d("NoctuaProxyTracker", "Custom event tracked")
         }
     }
 }
