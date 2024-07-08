@@ -33,15 +33,14 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation("com.adjust.sdk:adjust-android:4.38.5")
-    implementation("com.android.installreferrer:installreferrer:2.2")
-    implementation("com.google.android.gms:play-services-ads-identifier:18.0.1")
-    implementation("org.apache.kafka:kafka-clients:3.0.0")
-    implementation("com.google.code.gson:gson:2.8.8")
+    implementation(libs.adjust.android)
+    implementation(libs.installreferrer)
+    implementation(libs.play.services.ads.identifier)
+    implementation(libs.kafka.clients)
+    implementation(libs.gson)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

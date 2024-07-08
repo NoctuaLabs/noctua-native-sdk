@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    namespace = "com.noctuagg.android_sdk"
+    namespace = "com.noctua.example"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.noctuagg.android_sdk"
-        minSdk = 24
+        applicationId = "com.noctua.example"
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -36,10 +36,12 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(project(":sdk"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
