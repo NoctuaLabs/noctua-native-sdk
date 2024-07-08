@@ -1,4 +1,4 @@
-package com.noctuagg.android_sdk
+package com.noctua.example
 
 import org.junit.Test
 

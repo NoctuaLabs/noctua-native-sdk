@@ -20,5 +20,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "noctua-android-sdk"
-include(":app")
 include(":sdk")
+include(":app")
