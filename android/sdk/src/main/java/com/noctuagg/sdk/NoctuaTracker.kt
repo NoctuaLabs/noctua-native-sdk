@@ -1,44 +1,39 @@
 package com.noctuagg.sdk
 
+import android.util.Log
 import com.google.gson.Gson
-import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.StringSerializer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 data class NoctuaConfig(
-    val kafkaBootstrapServers: String,
-    val kafkaTopic: String,
+    val trackerURL: String,
 )
 
 class NoctuaTracker(private val config: NoctuaConfig) {
-    private val kafkaTopic = config.kafkaTopic
-    private val kafkaProducer: KafkaProducer<String, String>
+    private var trackerURL: String = ""
 
     init {
-        if (config.kafkaBootstrapServers.isEmpty()) {
-            throw IllegalArgumentException("Kafka bootstrap servers is not set in noctuaggconfig.json")
+        if (config.trackerURL.isEmpty()) {
+            trackerURL = "https://kafka-proxy-poc.noctuaprojects.com/api/v1/events"
+        } else {
+            trackerURL = config.trackerURL
         }
-
-        if (config.kafkaTopic.isEmpty()) {
-            throw IllegalArgumentException("Kafka topic is not set in noctuaggconfig.json")
-        }
-
-        kafkaProducer = KafkaProducer(
-            mutableMapOf<String, Any>(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to config.kafkaBootstrapServers,
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name,
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name
-            )
-        )
     }
 
-    fun trackAdRevenue(source: String, revenue: Double, currency: String) {
+    fun trackAdRevenue(source: String, revenue: Double, currency: String, additionalPayload: Map<String, Any> = emptyMap()) {
         val payload = mapOf("source" to source, "revenue" to revenue, "currency" to currency)
+        payload.plus(additionalPayload)
         sendEvent("AdRevenue", payload)
     }
 
-    fun trackPurchase(orderId: String, amount: Double, currency: String) {
+    fun trackPurchase(orderId: String, amount: Double, currency: String, additionalPayload: Map<String, Any> = emptyMap()) {
         if (orderId.isEmpty()) {
             throw IllegalArgumentException("orderId is not set")
         }
@@ -52,6 +47,7 @@ class NoctuaTracker(private val config: NoctuaConfig) {
         }
 
         val payload = mapOf("orderId" to orderId, "amount" to amount, "currency" to currency)
+        payload.plus(additionalPayload)
         sendEvent("Purchase", payload)
     }
 
@@ -59,10 +55,31 @@ class NoctuaTracker(private val config: NoctuaConfig) {
         sendEvent(eventName, payload)
     }
 
-    private fun sendEvent(eventName: String, payload: Map<String, Any>) {
-        val gson = Gson()
-        val jsonPayload = gson.toJson(payload)
-        val record = ProducerRecord(kafkaTopic, eventName, jsonPayload)
-        kafkaProducer.send(record)
+    private fun sendEvent(eventName: String, params: Map<String, Any>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val client = OkHttpClient()
+            val json = Gson().toJson(params)
+
+            val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+            val body: RequestBody = json.toRequestBody(mediaType)
+
+            val request = Request.Builder()
+                .url(trackerURL)
+                .post(body)
+                .build()
+
+            try {
+                val response = client.newCall(request).execute()
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        Log.w("NoctuaProxyTracker", "Event sent successfully: ${response.body!!.string()}")
+                    } else {
+                        Log.w("NoctuaProxyTracker", "Failed to send event: ${response.body!!.string()}")
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }
