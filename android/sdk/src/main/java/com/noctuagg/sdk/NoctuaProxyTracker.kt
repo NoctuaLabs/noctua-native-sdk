@@ -21,6 +21,7 @@ class NoctuaProxyTracker {
     private var noctuaTracker: NoctuaTracker? = null
 
     fun init(context: Context) {
+        Log.w(TAG, "NoctuaProxyTracker.init")
         val config = loadAppConfig(context)
 
         if (config.productCode.isNullOrEmpty()) {
@@ -36,11 +37,8 @@ class NoctuaProxyTracker {
             Log.w(TAG, "Adjust configuration is not set. Adjust tracking will be disabled.")
         }
 
-        if (config.noctua != null) {
-            noctuaTracker = NoctuaTracker(config.noctua)
-        } else {
-            Log.w(TAG, "Noctua configuration is not set. Noctua tracking will be disabled.")
-        }
+        // NoctuaTracker does not need any config
+        noctuaTracker = config.noctua?.let { NoctuaTracker(it) }
     }
 
     private fun checkInit() {
@@ -63,18 +61,31 @@ class NoctuaProxyTracker {
         adjustTracker?.onPause()
     }
 
-    fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        checkInit();
+    fun loadAdjustMetadata() {
+        val metadata = adjustTracker?.loadMetadata()?.toSortedMap()
+        if (metadata != null) {
+            for ((key, value) in metadata) {
+                Log.w(TAG, "$key: $value")
+            }
+        }
+    }
 
+    fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        checkInit()
         adjustTracker?.trackCustomEvent(eventName, payload)
-        noctuaTracker?.trackCustomEvent(eventName, payload)
+
+        val completePayload = adjustTracker!!.adjustMetadata
+        completePayload!!.plus(payload)
+        noctuaTracker?.trackCustomEvent(eventName, completePayload)
     }
 
     fun trackAdRevenue(source: String, revenue: Double, currency: String) {
         checkInit();
-
         adjustTracker?.trackAdRevenue(source, revenue, currency)
-        noctuaTracker?.trackAdRevenue(source, revenue, currency)
+
+        val adjustDeviceInfoMap = adjustTracker!!.adjustMetadata
+        val additionalPayload = adjustDeviceInfoMap!!.toMap()
+        noctuaTracker?.trackAdRevenue(source, revenue, currency, additionalPayload)
     }
 
     fun trackPurchase(orderId: String, amount: Double, currency: String) {

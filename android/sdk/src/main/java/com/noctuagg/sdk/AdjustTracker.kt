@@ -1,9 +1,11 @@
 package com.noctuagg.sdk
 
 import android.content.Context
+import android.util.Log
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustAdRevenue
 import com.adjust.sdk.AdjustConfig
+import com.adjust.sdk.AdjustAttribution
 import com.adjust.sdk.AdjustEvent
 import com.adjust.sdk.LogLevel
 
@@ -14,6 +16,13 @@ data class NoctuaAdjustConfig(
 )
 
 class AdjustTracker(private var config: NoctuaAdjustConfig) {
+    companion object {
+        private const val TAG = "NoctuaProxyTracker"
+    }
+    var adjustContext: Context? = null;
+    var adjustConfig: AdjustConfig? = null;
+    var adjustMetadata: MutableMap<String, String>? = null;
+    var adjustAttribution: AdjustAttribution? = null;
     init {
         if (config.appToken.isEmpty()) {
             throw IllegalArgumentException("App token is not set in noctuaggconfig.json")
@@ -28,14 +37,22 @@ class AdjustTracker(private var config: NoctuaAdjustConfig) {
         }
     }
 
-    fun onCreate(context: Context, adjustConfig: NoctuaAdjustConfig) {
-        val environment = if (adjustConfig.environment.isNullOrEmpty()) {
+    fun onCreate(context: Context, config: NoctuaAdjustConfig) {
+        Log.w(TAG, "AdjustTracker.onCreate")
+        adjustContext = context
+        val environment = if (config.environment.isNullOrEmpty()) {
             AdjustConfig.ENVIRONMENT_SANDBOX
         } else {
-            adjustConfig.environment
+            config.environment
         }
 
-        Adjust.onCreate(AdjustConfig(context, adjustConfig.appToken, environment))
+        Log.w(TAG, "Adjust initialization")
+        Log.w(TAG, config.appToken)
+        adjustConfig = AdjustConfig(context, config.appToken, environment)
+
+        loadMetadata()
+
+        Adjust.onCreate(adjustConfig)
     }
 
     fun onResume() {
@@ -44,6 +61,27 @@ class AdjustTracker(private var config: NoctuaAdjustConfig) {
 
     fun onPause() {
         Adjust.onPause()
+    }
+
+    fun loadMetadata(): MutableMap<String, String>? {
+        adjustMetadata = DeviceInfo(adjustContext, adjustConfig).getDeviceInfoMap(adjustContext)
+        adjustAttribution = Adjust.getAttribution()
+        adjustMetadata?.put("attribution_adid", adjustAttribution?.adid)
+        adjustMetadata?.put("attribution_tracker_name", adjustAttribution?.trackerName)
+        adjustMetadata?.put("attribution_tracker_token", adjustAttribution?.trackerToken)
+        adjustMetadata?.put("attribution_adgroup", adjustAttribution?.adgroup)
+        adjustMetadata?.put("attribution_network", adjustAttribution?.network)
+        adjustMetadata?.put("attribution_campaign", adjustAttribution?.campaign)
+        adjustMetadata?.put("attribution_clicklabel", adjustAttribution?.clickLabel)
+        adjustMetadata?.put("attribution_cost_currency", adjustAttribution?.costCurrency)
+        adjustMetadata?.put("attribution_cost_type", adjustAttribution?.costType)
+        adjustMetadata?.put("attribution_creative", adjustAttribution?.creative)
+
+        val adid = Adjust.getAdid()
+        if (adid != null) {
+            adjustMetadata?.put("adid", adid)
+        }
+        return adjustMetadata as MutableMap<String, String>?
     }
 
     fun trackAdRevenue(source: String, revenue: Double, currency: String) {
@@ -72,7 +110,7 @@ class AdjustTracker(private var config: NoctuaAdjustConfig) {
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        val adjustEvent = AdjustEvent(eventName)
+        val adjustEvent = AdjustEvent(config.eventMap[eventName])
 
         for ((key, value) in payload) {
             adjustEvent.addCallbackParameter(key, value.toString())

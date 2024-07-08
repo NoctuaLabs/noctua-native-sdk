@@ -32,8 +32,23 @@ class MainActivity : AppCompatActivity() {
             Log.d("NoctuaProxyTracker", "Purchase tracked")
         }
         findViewById<Button>(R.id.btnTrackCustomEvent).setOnClickListener {
-            tracker.trackCustomEvent("customEvent", mapOf("k1" to "v1", "k2" to "v2"))
+            tracker.trackCustomEvent("sdkinit", mapOf("k1" to "v1", "k2" to "v2"))
             Log.d("NoctuaProxyTracker", "Custom event tracked")
         }
+
+        findViewById<Button>(R.id.btnGetAdjustMetadata).setOnClickListener {
+            tracker.loadAdjustMetadata()
+            Log.d("NoctuaProxyTracker", "loadAdjustMetadata")
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        tracker.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        tracker.onPause()
     }
 }
