@@ -28,6 +28,18 @@ class NoctuaTracker(private val config: NoctuaConfig) {
     }
 
     fun trackAdRevenue(source: String, revenue: Double, currency: String, additionalPayload: Map<String, Any> = emptyMap()) {
+        if (source.isEmpty()) {
+            throw IllegalArgumentException("orderId is not set")
+        }
+
+        if (revenue <= 0) {
+            throw IllegalArgumentException("revenue is negative or zero")
+        }
+
+        if (currency.isEmpty()) {
+            throw IllegalArgumentException("currency is not set")
+        }
+
         val payload = mapOf("source" to source, "revenue" to revenue, "currency" to currency)
         payload.plus(additionalPayload)
         sendEvent("AdRevenue", payload)
@@ -55,10 +67,12 @@ class NoctuaTracker(private val config: NoctuaConfig) {
         sendEvent(eventName, payload)
     }
 
-    private fun sendEvent(eventName: String, params: Map<String, Any>) {
+    private fun sendEvent(eventName: String, payload: Map<String, Any>) {
+        var mutable = payload.toMutableMap()
+        mutable.put("event_name", eventName)
         CoroutineScope(Dispatchers.IO).launch {
             val client = OkHttpClient()
-            val json = Gson().toJson(params)
+            val json = Gson().toJson(mutable)
 
             val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
             val body: RequestBody = json.toRequestBody(mediaType)

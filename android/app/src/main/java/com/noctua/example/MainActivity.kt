@@ -1,4 +1,4 @@
-package com.noctua.example
+package com.noctuagames.unrealsdktest
 
 import com.noctuagg.sdk.NoctuaProxyTracker
 import android.os.Bundle
@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         tracker.init(this)
+        tracker.setAppVersion("1.2.3")
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
