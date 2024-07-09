@@ -4,21 +4,37 @@ plugins {
 }
 
 android {
-    namespace = "com.noctua.example"
+    namespace = "com.noctuagames.unrealsdktest"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.noctua.example"
+        applicationId = "com.noctuagames.unrealsdktest"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 188
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file(findProperty("SAMPLE_APP_RELEASE_STORE_FILE") as String)
+            storePassword = findProperty("SAMPLE_APP_RELEASE_STORE_PASSWORD") as String
+            keyAlias = findProperty("SAMPLE_APP_RELEASE_KEY_ALIAS") as String
+            keyPassword = findProperty("SAMPLE_APP_RELEASE_KEY_PASSWORD") as String
+        }
+    }
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
