@@ -1,20 +1,30 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    `maven-publish`
 }
 
 android {
-    namespace = "com.noctuagg.sdk"
+    namespace = "com.noctuagames"
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 26
-
+        aarMetadata {
+            minCompileSdk = 34
+        }
+        minSdk = 29
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -32,6 +42,33 @@ android {
     }
 }
 
+publishing {
+    publications {
+        register<MavenPublication>("debug") {
+            groupId = "com.noctuagames"
+            artifactId = "noctua-android-sdk"
+            version = "0.1.0"
+
+            afterEvaluate {
+                from(components["debug"])
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://gitlab.com/api/v4/groups/evosverse/noctua/-/packages/maven")
+            name = "GitLab"
+            credentials(HttpHeaderCredentials::class) {
+                name = "Job-Token"
+                value = System.getenv("CI_JOB_TOKEN")
+            }
+            authentication {
+                create("header", HttpHeaderAuthentication::class)
+            }
+        }
+    }
+}
+
 dependencies {
     implementation(libs.play.services.appset)
     implementation(libs.play.services.ads.identifier)
@@ -42,9 +79,9 @@ dependencies {
     implementation(libs.kafka.clients)
     implementation(libs.adjust.android)
     implementation(libs.gson)
-    implementation("com.squareup.okhttp3:okhttp:4.9.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

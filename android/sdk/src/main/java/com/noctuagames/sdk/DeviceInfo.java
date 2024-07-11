@@ -1,4 +1,4 @@
-package com.noctuagg.sdk;
+package com.noctuagames.sdk;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -10,14 +10,8 @@ import android.content.pm.SigningInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 import java.util.Date;
@@ -26,7 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import static android.content.res.Configuration.UI_MODE_TYPE_MASK;
-import com.adjust.sdk.AdjustConfig;
 import static android.content.res.Configuration.UI_MODE_TYPE_TELEVISION;
 import static com.adjust.sdk.Constants.HIGH;
 import static com.adjust.sdk.Constants.LARGE;

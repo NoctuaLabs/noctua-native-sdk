@@ -1,6 +1,6 @@
 package com.noctuagames.unrealsdktest
 
-import com.noctuagg.sdk.NoctuaProxyTracker
+import com.noctuagames.sdk.NoctuaProxyTracker
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
