@@ -24,4 +24,4 @@ deploy-github-android-sdk:
       when: always
   script:
     - gradle :sdk:build
-    - gradle :sdk:publishReleasePublicationToGitHubPackagesRepository
+    - gradle :sdk:publishAndReleaseToMavenCentral --no-configuration-cache
