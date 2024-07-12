@@ -1,6 +1,6 @@
 stages:
-  - build
-  - publish
+  - deploy
+  - release
 
 .android-sdk:
   image: cimg/android:2024.07.1
@@ -8,20 +8,23 @@ stages:
     - if: $CI_COMMIT_BRANCH == "main"
       when: always
   before_script:
-    - chmod +x gradlew
-
-build-android-sdk:
-  extends: .android-sdk
-  stage: build
-  script:
     - cd android
-    - gradle :sdk:build
 
-publish-android-sdk:
+deploy-android-sdk:
   extends: .android-sdk
   stage: publish
+  needs:
+    - job: build-android-sdk
+      optional: false
   script:
-    - cd android
-    - ./gradlew :sdk:publishDebugPublicationToMavenRepository
-  dependencies:
-    - build-android-sdk
+    - gradle :sdk:build
+    - gradle :sdk:publishDebugPublicationToGitLabRepository
+
+release-android-sdk:
+  extends: .android-sdk
+  stage: release
+  needs:
+    - job: deploy-android-sdk
+      optional: false
+  script:
+    - echo "Placeholder for release step"
