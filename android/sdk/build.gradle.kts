@@ -63,7 +63,7 @@ publishing {
                 value = System.getenv("CI_JOB_TOKEN")
             }
             authentication {
-                create("header", HttpHeaderAuthentication::class)
+                create<HttpHeaderAuthentication>("header")
             }
         }
     }
