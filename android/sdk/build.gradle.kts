@@ -56,7 +56,7 @@ publishing {
     }
     repositories {
         maven {
-            url = uri("https://gitlab.com/api/v4/groups/evosverse/noctua/-/packages/maven")
+            url = uri("https://gitlab.com/api/v4/groups/78886536/-/packages/maven")
             name = "GitLab"
             credentials(HttpHeaderCredentials::class) {
                 name = "Job-Token"
