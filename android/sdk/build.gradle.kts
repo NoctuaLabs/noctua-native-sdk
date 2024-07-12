@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
@@ -16,10 +17,10 @@ android {
             minCompileSdk = 34
         }
         minSdk = 29
+        compileSdk = 34
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
-
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -43,13 +44,25 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    packaging {
+        resources {
+            excludes.add("**/*")
+        }
+    }
 }
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01)
-
-    coordinates("com.noctuagames.sdk", "noctua-android-sdk", "0.1.0-SNAPSHOT")
-
+    coordinates(groupId = "com.noctuagames.sdk", artifactId = "noctua-android-sdk", version =  "0.1.0")
+    configure(
+        AndroidSingleVariantLibrary(
+            variant = "release",
+            sourcesJar = true,
+            publishJavadocJar  = true
+        )
+    )
+    signAllPublications()
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     pom {
         name.set("Noctua Android SDK")
         description.set("SDK to integrate with Noctua Games")
@@ -80,16 +93,7 @@ mavenPublishing {
 publishing {
     publications {
         register<MavenPublication>("debug") {
-            groupId = "com.noctuagames"
-            artifactId = "noctua-android-sdk"
-            version = "0.1.0"
-
-            afterEvaluate {
-                from(components["debug"])
-            }
-        }
-        register<MavenPublication>("release") {
-            groupId = "com.noctuagames"
+            groupId = "com.noctuagames.sdk"
             artifactId = "noctua-android-sdk"
             version = "0.1.0"
 

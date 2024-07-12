@@ -24,8 +24,7 @@ deploy-maven-central-android-sdk:
   extends: .android-sdk
   stage: deploy
   rules:
-    - if: $CI_COMMIT_BRANCH == "release"
+    - if: $CI_COMMIT_BRANCH == "test-maven-central"
       when: always
   script:
-    - gradle :sdk:build
-    - gradle :sdk:publishAndReleaseToMavenCentral --no-configuration-cache
+    - gradle :sdk:publishMavenPublicationToMavenCentralRepository --no-configuration-cache
