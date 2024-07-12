@@ -1,27 +1,27 @@
 stages:
   - deploy
-  - release
 
 .android-sdk:
   image: cimg/android:2024.07.1
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: always
   before_script:
     - cd android
 
-deploy-android-sdk:
+deploy-gitlab-android-sdk:
   extends: .android-sdk
   stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: always
   script:
     - gradle :sdk:build
     - gradle :sdk:publishDebugPublicationToGitLabRepository
 
-release-android-sdk:
+deploy-github-android-sdk:
   extends: .android-sdk
-  stage: release
-  needs:
-    - job: deploy-android-sdk
-      optional: false
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "release"
+      when: always
   script:
-    - echo "Placeholder for release step"
+    - gradle :sdk:build
+    - gradle :sdk:publishReleasePublicationToGitHubPackagesRepository
