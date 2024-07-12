@@ -1,0 +1,22 @@
+stages:
+  - build
+  - publish
+  - release
+
+build:
+  image: gitlab.com/evosverse/noctua/dependency_proxy/containers/cimg/android:2024.07.1
+  stage: build
+  script:
+    - gradle build
+  only:
+    - main
+
+publish:
+  image: gitlab.com/evosverse/noctua/dependency_proxy/containers/cimg/android:2024.07.1
+  stage: publish
+  script:
+    - gradle :sdk:publishDebugPublicationToMavenRepository
+  dependencies:
+    - build
+  only:
+    - main

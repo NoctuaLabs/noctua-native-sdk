@@ -1,4 +1,4 @@
-package com.noctuagg.sdk
+package com.noctuagames.sdk
 
 import android.content.Context
 import android.util.Log
@@ -7,7 +7,6 @@ import com.adjust.sdk.AdjustAdRevenue
 import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustAttribution
 import com.adjust.sdk.AdjustEvent
-import com.adjust.sdk.LogLevel
 
 data class NoctuaAdjustConfig(
     val appToken: String,
