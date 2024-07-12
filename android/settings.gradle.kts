@@ -16,6 +16,13 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("https://maven.pkg.github.com/noctualabs/noctua-native-sdk")
+            credentials {
+                username = "jekjektuanakal"
+                password = "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"
+            }
+        }
     }
 }
 
