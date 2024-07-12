@@ -15,7 +15,7 @@ deploy-android-sdk:
   stage: deploy
   script:
     - gradle :sdk:build
-    - gradle --debug :sdk:publishDebugPublicationToGitLabRepository
+    - gradle --info :sdk:publishDebugPublicationToGitLabRepository
 
 release-android-sdk:
   extends: .android-sdk
