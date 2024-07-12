@@ -3,6 +3,10 @@ stages:
 
 .android-sdk:
   image: cimg/android:2024.07.1
+  rules:
+    - changes:
+        - .gitlab-ci.yml
+        - android/**/*
   before_script:
     - cd android
 
@@ -16,7 +20,7 @@ deploy-gitlab-android-sdk:
     - gradle :sdk:build
     - gradle :sdk:publishDebugPublicationToGitLabRepository
 
-deploy-github-android-sdk:
+deploy-maven-central-android-sdk:
   extends: .android-sdk
   stage: deploy
   rules:

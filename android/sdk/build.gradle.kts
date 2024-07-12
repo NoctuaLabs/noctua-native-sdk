@@ -75,8 +75,6 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://git@github.com/noctualabs/noctua-native-sdk.git")
         }
     }
-
-    signAllPublications()
 }
 
 publishing {
