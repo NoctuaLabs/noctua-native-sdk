@@ -53,17 +53,34 @@ publishing {
                 from(components["debug"])
             }
         }
+        register<MavenPublication>("release") {
+            groupId = "com.noctuagames"
+            artifactId = "noctua-android-sdk"
+            version = "0.1.0"
+
+            afterEvaluate {
+                from(components["debug"])
+            }
+        }
     }
     repositories {
         maven {
-            url = uri("https://gitlab.com/api/v4/projects/59492250/packages/maven")
             name = "GitLab"
+            url = uri("https://gitlab.com/api/v4/projects/59492250/packages/maven")
             credentials(HttpHeaderCredentials::class) {
                 name = "Job-Token"
                 value = System.getenv("CI_JOB_TOKEN")
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
+            }
+        }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/noctualabs/noctua-native-sdk")
+            credentials {
+                username = "jekjektuanakal"
+                password = System.getenv("GITHUB_ACCESS_TOKEN")
             }
         }
     }
