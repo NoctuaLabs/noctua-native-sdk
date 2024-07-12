@@ -13,9 +13,6 @@ stages:
 deploy-android-sdk:
   extends: .android-sdk
   stage: deploy
-  needs:
-    - job: build-android-sdk
-      optional: false
   script:
     - gradle :sdk:build
     - gradle :sdk:publishDebugPublicationToGitLabRepository
