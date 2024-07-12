@@ -12,7 +12,7 @@ stages:
 
 deploy-android-sdk:
   extends: .android-sdk
-  stage: publish
+  stage: deploy
   needs:
     - job: build-android-sdk
       optional: false
