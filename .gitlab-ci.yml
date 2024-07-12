@@ -3,7 +3,7 @@ stages:
   - publish
 
 .android-sdk:
-  image: gitlab.com/evosverse/noctua/dependency_proxy/containers/cimg/android:2024.07.1
+  image: cimg/android:2024.07.1
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: always
