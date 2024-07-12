@@ -1,7 +1,10 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     `maven-publish`
+    id("com.vanniktech.maven.publish") version "0.29.0"
 }
 
 android {
@@ -42,6 +45,38 @@ android {
     }
 }
 
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.S01)
+
+    coordinates("com.noctuagames.sdk", "noctua-android-sdk", "0.1.0-SNAPSHOT")
+
+    pom {
+        name.set("Noctua Android SDK")
+        description.set("SDK to integrate with Noctua Games")
+        inceptionYear.set("2024")
+        url.set("https://github.com/NoctuaLabs/noctua-native-sdk/")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                id.set("noctualabs")
+                name.set("Noctua Labs")
+                url.set("https://github.com/NoctuaLabs/")
+            }
+        }
+        scm {
+            url.set("https://github.com/NoctuaLabs/noctua-native-sdk/")
+            connection.set("scm:git:git://github.com/noctualabs/noctua-native-sdk.git")
+            developerConnection.set("scm:git:ssh://git@github.com/noctualabs/noctua-native-sdk.git")
+        }
+    }
+}
+
 publishing {
     publications {
         register<MavenPublication>("debug") {
@@ -73,14 +108,6 @@ publishing {
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
-            }
-        }
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/noctualabs/noctua-native-sdk")
-            credentials {
-                username = "jekjektuanakal"
-                password = System.getenv("GITHUB_ACCESS_TOKEN")
             }
         }
     }
