@@ -82,20 +82,10 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://git@github.com/noctualabs/noctua-native-sdk.git")
         }
     }
+
 }
 
 publishing {
-    publications {
-        register<MavenPublication>("debug") {
-            groupId = "com.noctuagames.sdk"
-            artifactId = "noctua-android-sdk"
-            version = "0.1.0"
-
-            afterEvaluate {
-                from(components["debug"])
-            }
-        }
-    }
     repositories {
         maven {
             name = "GitLab"

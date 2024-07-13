@@ -5,16 +5,17 @@ stages:
 
 .android:
   image: cimg/android:2024.07.1
-  rules:
-    - changes:
-        - .gitlab-ci.yml
-        - android/**/*
   before_script:
     - cd android
 
 test-android:
   extends: .android
   stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+      changes:
+        - android/**
+      when: always
   script:
     - ./gradlew check
 
@@ -23,10 +24,11 @@ deploy-gitlab-android-sdk:
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - android/**
       when: always
   script:
-    - gradle :sdk:build
-    - gradle :sdk:publishDebugPublicationToGitLabRepository
+    - ./gradlew :sdk:publishMavenPublicationToGitLabRepository
 
 deploy-maven-central-android-sdk:
   extends: .android
@@ -35,4 +37,16 @@ deploy-maven-central-android-sdk:
     - if: $CI_COMMIT_BRANCH == "release"
       when: always
   script:
-    - gradle :sdk:publishMavenPublicationToMavenCentralRepository --no-configuration-cache
+    - ./gradlew :sdk:publishMavenPublicationToMavenCentralRepository
+
+release-android-sdk:
+  extends: .android
+  stage: release
+  rules:
+    - if: $CI_COMMIT_BRANCH == "release"
+      when: manual
+      needs:
+        - deploy-maven-central-android-sdk
+
+  script:
+    - ./gradlew :sdk:publishAndReleaseToMavenCentral
