@@ -1,7 +1,9 @@
 stages:
+  - test
   - deploy
+  - release
 
-.android-sdk:
+.android:
   image: cimg/android:2024.07.1
   rules:
     - changes:
@@ -10,8 +12,14 @@ stages:
   before_script:
     - cd android
 
+test-android:
+  extends: .android
+  stage: test
+  script:
+    - ./gradlew check
+
 deploy-gitlab-android-sdk:
-  extends: .android-sdk
+  extends: .android
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
@@ -21,10 +29,10 @@ deploy-gitlab-android-sdk:
     - gradle :sdk:publishDebugPublicationToGitLabRepository
 
 deploy-maven-central-android-sdk:
-  extends: .android-sdk
+  extends: .android
   stage: deploy
   rules:
-    - if: $CI_COMMIT_BRANCH == "test-maven-central"
+    - if: $CI_COMMIT_BRANCH == "release"
       when: always
   script:
     - gradle :sdk:publishMavenPublicationToMavenCentralRepository --no-configuration-cache
