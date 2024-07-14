@@ -55,7 +55,7 @@ deploy-gitlab-android-sdk:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
-        - android/**
+        - android/**/*
       when: on_success
       needs:
         - bump-main-version-android-sdk
