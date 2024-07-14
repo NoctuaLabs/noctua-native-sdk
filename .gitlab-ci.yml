@@ -8,6 +8,9 @@ stages:
   image :
     name: alpine/git
     entrypoint: [""]
+  variables:
+    GIT_STRATEGY: clone # clone entire repo instead of reusing workspace
+    GIT_DEPTH: 0 # avoid shallow clone to give cliff all the info it needs
   before_script:
     - apk add git-cliff
     - git config --global user.email "gitlab-ci@noctua.gg"
@@ -19,7 +22,7 @@ test-android:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
       changes:
-        - android/**
+        - android/**/*
       when: always
   script:
     - cd android
@@ -31,7 +34,7 @@ bump-main-version-android-sdk:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
-        - android/**
+        - android/**/*
       when: always
   script:
     - cd android
@@ -41,7 +44,7 @@ bump-main-version-android-sdk:
         echo "Bumping version for next release";
         git add version.txt;
         git commit -m "bump version to v$(cat version.txt) [skip ci]";
-        git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
+        git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip;
       else
         echo "No version bump required";
       fi
@@ -60,6 +63,7 @@ deploy-gitlab-android-sdk:
     paths:
       - sdk/build/outputs/aar/*.aar
   script:
+    - cd android
     - ./gradlew :sdk:publishMavenPublicationToGitLabRepository
 
 bump-release-version-android-sdk:
@@ -85,7 +89,7 @@ release-android-sdk:
   rules:
     - if: $CI_COMMIT_BRANCH == "release"
       changes:
-        - android/**
+        - android/**/*
       when: manual
       needs:
         - bump-release-version-android-sdk
