@@ -5,7 +5,9 @@ stages:
   - release
 
 .bump-version:
-  image : alpine/git
+  image :
+    name: alpine/git
+    entrypoint: [""]
   before_script:
     - apk add git-cliff
     - git config --global user.email "gitlab-ci@noctua.gg"
