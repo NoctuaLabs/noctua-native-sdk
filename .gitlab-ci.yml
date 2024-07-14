@@ -1,6 +1,7 @@
 stages:
   - test
   - deploy
+  - bump-version
   - release
 
 .android:
@@ -27,17 +28,33 @@ deploy-gitlab-android-sdk:
       changes:
         - android/**
       when: always
+  artifacts:
+    paths:
+      - sdk/build/outputs/aar/*.aar
   script:
     - ./gradlew :sdk:publishMavenPublicationToGitLabRepository
+    - ./gradlew :sdk:publishToMavenCentral
 
-deploy-maven-central-android-sdk:
-  extends: .android
-  stage: deploy
+bump-version-android-sdk:
+  image:
+    name: alpine/git
+    entrypoint: [ "" ]
+  stage: bump-version
   rules:
     - if: $CI_COMMIT_BRANCH == "release"
       when: always
   script:
-    - ./gradlew :sdk:publishMavenPublicationToMavenCentralRepository
+    - apk add git-cliff
+    - cd android
+    - git-cliff --repository ".." --include-path "android/**/*" --bumped-version > version.txt
+    - git add version.txt
+    - git-cliff --repository ".." --include-path "android/**/*" --bump > CHANGELOG.md
+    - git add CHANGELOG.md
+    - git config --global user.email "gitlab-ci@noctua.gg"
+    - git config --global user.name "Noctua Gitlab CI"
+    - git commit -m "Bump version to v$(cat version.txt) [skip ci]"
+    - git tag -a "v$(cat version.txt)" -m "Release v$(cat version.txt)"
+    - git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
 
 release-android-sdk:
   extends: .android
@@ -46,7 +63,6 @@ release-android-sdk:
     - if: $CI_COMMIT_BRANCH == "release"
       when: manual
       needs:
-        - deploy-maven-central-android-sdk
-
+        - bump-version-android-sdk
   script:
     - ./gradlew :sdk:publishAndReleaseToMavenCentral

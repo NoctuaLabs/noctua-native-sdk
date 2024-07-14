@@ -9,6 +9,7 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven(url="https://gitlab.com/api/v4/projects/59492250/packages/maven")
     }
 }
 dependencyResolutionManagement {
