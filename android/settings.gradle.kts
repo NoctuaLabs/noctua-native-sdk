@@ -9,6 +9,7 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven(url="https://gitlab.com/api/v4/projects/59492250/packages/maven")
     }
 }
 dependencyResolutionManagement {
@@ -16,13 +17,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url = uri("https://maven.pkg.github.com/noctualabs/noctua-native-sdk")
-            credentials {
-                username = "jekjektuanakal"
-                password = "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"
-            }
-        }
+        maven(url="https://gitlab.com/api/v4/projects/59492250/packages/maven")
     }
 }
 
