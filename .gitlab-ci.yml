@@ -79,6 +79,8 @@ release-android-sdk:
     - cd android
     - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --bumped-version)
     - echo $NEW_VERSION_TAG | sed -r "s/android-sdk-v(.*)/\1/" > version.txt
+    - git reset --hard HEAD
+    - git checkout $CI_COMMIT_BRANCH
     - git pull origin $CI_COMMIT_BRANCH
     - git add version.txt
     - git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --bump > CHANGELOG.md
