@@ -47,12 +47,16 @@ android {
 }
 
 mavenPublishing {
-    coordinates(groupId = "com.noctuagames.sdk", artifactId = "noctua-android-sdk", version =  "0.1.0")
+    coordinates(
+        groupId = "com.noctuagames.sdk",
+        artifactId = "noctua-android-sdk",
+        version = File("version.txt").readText().trim(),
+    )
     configure(
         AndroidSingleVariantLibrary(
             variant = "release",
             sourcesJar = true,
-            publishJavadocJar  = true
+            publishJavadocJar = true
         )
     )
     signAllPublications()
