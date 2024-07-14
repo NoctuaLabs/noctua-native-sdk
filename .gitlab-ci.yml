@@ -120,5 +120,7 @@ publish-android-sdk:
     - source ~/.config/envman/PATH.env
     - NEW_VERSION_TAG="android-sdk-v$(cat version.txt)"
     - cp ./sdk/build/outputs/aar/sdk-release.aar "./noctua-$NEW_VERSION_TAG.aar"
-    - gh auth login --with-token <<< $GITHUB_ACCESS_TOKEN
+    - echo $GITHUB_ACCESS_TOKEN | gh auth login --with-token
+    - git remote add github https://github.com/NoctuaLabs/noctua-native-sdk.git
     - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md "./noctua-$NEW_VERSION_TAG.aar"
+    - git remote remove github
