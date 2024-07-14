@@ -63,6 +63,7 @@ deploy-gitlab-android-sdk:
     paths:
       - sdk/build/outputs/aar/*.aar
   script:
+    - git checkout $CI_COMMIT_BRANCH
     - cd android
     - ./gradlew :sdk:publishMavenPublicationToGitLabRepository
 
