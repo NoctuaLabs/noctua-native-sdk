@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.4] - 2024-07-14
+
+### ⚙️ Miscellaneous Tasks
+
+- *(ci)* Fix gh release
+
 ## [android-sdk-v0.1.3] - 2024-07-14
 
 ### ⚙️ Miscellaneous Tasks
