@@ -105,16 +105,17 @@ publish-android-sdk:
     GIT_DEPTH: 0 # avoid shallow clone to give cliff all the info it needs
   script:
     - cd android
+    - git fetch --tags
+    - git checkout $CI_COMMIT_BRANCH
     - ./gradlew :sdk:publishAndReleaseToMavenCentral
     - wget "https://github.com/orhun/git-cliff/releases/download/v2.4.0/git-cliff-2.4.0-x86_64-unknown-linux-gnu.tar.gz"
     - tar -xvf git-cliff-2.4.0-x86_64-unknown-linux-gnu.tar.gz
     - cp ./git-cliff-2.4.0/git-cliff /usr/local/bin/
     - chmod +x /usr/local/bin/git-cliff
-    - git checkout $CI_COMMIT_BRANCH
-    - git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --latest --config github > GithubRelease.md
+    - git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --latest > GithubRelease.md
     - curl -sS https://webi.sh/gh | sh
     - source ~/.config/envman/PATH.env
     - NEW_VERSION_TAG="android-sdk-v$(cat version.txt)"
     - cp ./sdk/build/outputs/aar/sdk-release.aar "./noctua-$NEW_VERSION_TAG.aar"
-    - gh auth login --with-token $GITHUB_ACCESS_TOKEN
+    - gh auth login --with-token <<< $GITHUB_ACCESS_TOKEN
     - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md "./noctua-$NEW_VERSION_TAG.aar"
