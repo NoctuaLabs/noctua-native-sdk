@@ -51,7 +51,7 @@ deploy-gitlab-android-sdk:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         - android/**
-      when: always
+      when: on_success
       needs:
         - bump-main-version-android-sdk
   artifacts:
@@ -82,6 +82,8 @@ release-android-sdk:
   stage: release
   rules:
     - if: $CI_COMMIT_BRANCH == "release"
+      changes:
+        - android/**
       when: manual
       needs:
         - bump-release-version-android-sdk
