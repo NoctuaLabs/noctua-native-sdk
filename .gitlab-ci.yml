@@ -59,41 +59,52 @@ deploy-gitlab-android-sdk:
       when: on_success
       needs:
         - bump-main-version-android-sdk
-  artifacts:
-    paths:
-      - sdk/build/outputs/aar/*.aar
   script:
     - git checkout $CI_COMMIT_BRANCH
     - cd android
     - ./gradlew :sdk:publishMavenPublicationToGitLabRepository
 
-bump-release-version-android-sdk:
+prepare-release-android-sdk:
   extends: .bump-version
-  stage: bump-version
+  stage: release
   rules:
-    - if: $CI_COMMIT_BRANCH == "release"
-      when: always
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - android/**/*
+      when: manual
+      needs:
+        - deploy-gitlab-android-sdk
   script:
     - cd android
     - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --bumped-version)
     - echo $NEW_VERSION_TAG | sed -r "s/android-sdk-v(.*)/\1/" > version.txt
     - git add version.txt
-    - git-cliff --repository ".." --include-path "android/**/*" --bump > CHANGELOG.md
+    - git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --bump > CHANGELOG.md
     - git add CHANGELOG.md
     - git commit -m "bump version to $NEW_VERSION_TAG [skip ci]"
     - git tag -a $NEW_VERSION_TAG -m "Release $NEW_VERSION_TAG"
     - git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
 
-release-android-sdk:
+publish-release-android-sdk:
   image: cimg/android:2024.07.1
   stage: release
   rules:
-    - if: $CI_COMMIT_BRANCH == "release"
+    - if: $CI_COMMIT_BRANCH == "main"
       changes:
         - android/**/*
-      when: manual
+      when: on_success
       needs:
-        - bump-release-version-android-sdk
+        - prepare-release-android-sdk
   script:
     - cd android
     - ./gradlew :sdk:publishAndReleaseToMavenCentral
+    - wget "https://github.com/orhun/git-cliff/releases/download/v2.4.0/git-cliff-2.4.0-x86_64-unknown-linux-gnu.tar.gz"
+    - tar -xvf git-cliff-2.4.0-x86_64-unknown-linux-gnu.tar.gz
+    - cp ./git-cliff-2.4.0/git-cliff /usr/local/bin/
+    - chmod +x /usr/local/bin/git-cliff
+    - git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --latest --config github > GithubRelease.md
+    - curl -sS https://webi.sh/gh | sh
+    - source ~/.config/envman/PATH.env
+    - $NEW_VERSION_TAG="android-sdk-v$(cat version.txt)"
+    - gh auth login --with-token $GITHUB_ACCESS_TOKEN
+    - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md
