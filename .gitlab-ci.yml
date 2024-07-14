@@ -3,6 +3,7 @@ stages:
   - bump-version
   - deploy
   - release
+  - publish
 
 .bump-version:
   image :
@@ -16,7 +17,7 @@ stages:
     - git config --global user.email "gitlab-ci@noctua.gg"
     - git config --global user.name "Noctua Gitlab CI"
 
-test-android:
+test-android-sdk:
   image: cimg/android:2024.07.1
   stage: test
   rules:
@@ -28,7 +29,7 @@ test-android:
     - cd android
     - ./gradlew check
 
-bump-main-version-android-sdk:
+bump-version-android-sdk:
   extends: .bump-version
   stage: bump-version
   rules:
@@ -49,7 +50,7 @@ bump-main-version-android-sdk:
         echo "No version bump required";
       fi
 
-deploy-gitlab-android-sdk:
+deploy-android-sdk:
   image: cimg/android:2024.07.1
   stage: deploy
   rules:
@@ -58,13 +59,13 @@ deploy-gitlab-android-sdk:
         - android/**/*
       when: on_success
       needs:
-        - bump-main-version-android-sdk
+        - bump-version-android-sdk
   script:
     - git checkout $CI_COMMIT_BRANCH
     - cd android
     - ./gradlew :sdk:publishMavenPublicationToGitLabRepository
 
-prepare-release-android-sdk:
+release-android-sdk:
   extends: .bump-version
   stage: release
   rules:
@@ -73,11 +74,12 @@ prepare-release-android-sdk:
         - android/**/*
       when: manual
       needs:
-        - deploy-gitlab-android-sdk
+        - deploy-android-sdk
   script:
     - cd android
     - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --bumped-version)
     - echo $NEW_VERSION_TAG | sed -r "s/android-sdk-v(.*)/\1/" > version.txt
+    - git pull origin $CI_COMMIT_BRANCH
     - git add version.txt
     - git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --bump > CHANGELOG.md
     - git add CHANGELOG.md
@@ -85,16 +87,16 @@ prepare-release-android-sdk:
     - git tag -a $NEW_VERSION_TAG -m "Release $NEW_VERSION_TAG"
     - git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
 
-publish-release-android-sdk:
+publish-android-sdk:
   image: cimg/android:2024.07.1
-  stage: release
+  stage: publish
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         - android/**/*
       when: on_success
       needs:
-        - prepare-release-android-sdk
+        - release-android-sdk
   script:
     - cd android
     - ./gradlew :sdk:publishAndReleaseToMavenCentral
@@ -106,5 +108,6 @@ publish-release-android-sdk:
     - curl -sS https://webi.sh/gh | sh
     - source ~/.config/envman/PATH.env
     - $NEW_VERSION_TAG="android-sdk-v$(cat version.txt)"
+    - cp ./sdk/build/outputs/aar/sdk-release.aar "./noctua-$NEW_VERSION_TAG.aar"
     - gh auth login --with-token $GITHUB_ACCESS_TOKEN
-    - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md
+    - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md "./noctua-$NEW_VERSION_TAG.aar"
