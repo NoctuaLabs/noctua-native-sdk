@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.2] - 2024-07-14
+
+### ⚙️ Miscellaneous Tasks
+
+- *(ci)* Fix publish
+- *(ci)* Must checkout before release
+
 ## [android-sdk-v0.1.1] - 2024-07-14
 
 ### 🐛 Bug Fixes
