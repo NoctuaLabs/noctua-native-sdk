@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.noctuagames"
+    namespace = "com.noctuagames.sdk"
     compileSdk = 34
 
     defaultConfig {
