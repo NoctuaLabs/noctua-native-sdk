@@ -1,4 +1,4 @@
-package com.noctuagg.sdk
+package com.noctuagames.sdk
 
 import org.junit.Test
 

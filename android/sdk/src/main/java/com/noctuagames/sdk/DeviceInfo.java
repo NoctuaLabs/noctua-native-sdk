@@ -12,28 +12,33 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.LocaleList;
 import android.util.DisplayMetrics;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static android.content.res.Configuration.UI_MODE_TYPE_MASK;
 import static android.content.res.Configuration.UI_MODE_TYPE_TELEVISION;
-import static com.adjust.sdk.Constants.HIGH;
-import static com.adjust.sdk.Constants.LARGE;
-import static com.adjust.sdk.Constants.LONG;
-import static com.adjust.sdk.Constants.LOW;
-import static com.adjust.sdk.Constants.MEDIUM;
-import static com.adjust.sdk.Constants.NORMAL;
-import static com.adjust.sdk.Constants.SMALL;
-import static com.adjust.sdk.Constants.XLARGE;
 
 /**
  * Created by pfms on 06/11/14.
  */
 public class DeviceInfo {
+    private static final String HIGH = "high";
+    private static final String LARGE = "large";
+    private static final String LONG = "long";
+    private static final String LOW = "low";
+    private static final String MEDIUM = "medium";
+    private static final String NORMAL = "normal";
+    private static final String SMALL = "small";
+    private static final String XLARGE = "xlarge";
 
     public static final String OFFICIAL_FACEBOOK_SIGNATURE =
             "30820268308201d102044a9c4610300d06092a864886f70d0101040500307a310b3009060355040613" +
@@ -97,14 +102,14 @@ public class DeviceInfo {
     String mcc;
     String mnc;
 
-    DeviceInfo(Context context, com.adjust.sdk.AdjustConfig adjustConfig) {
+    DeviceInfo(Context context) {
         Resources resources = context.getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
         Configuration configuration = resources.getConfiguration();
-        Locale locale = com.adjust.sdk.Util.getLocale(configuration);
+        Locale locale = getLocale(configuration);
         PackageInfo packageInfo = getPackageInfo(context);
         int screenLayout = configuration.screenLayout;
-        isGooglePlayGamesForPC = com.adjust.sdk.Util.isGooglePlayGamesForPC(context);
+        isGooglePlayGamesForPC = isGooglePlayGamesForPC(context);
 
         packageName = getPackageName(context);
         appVersion = getAppVersion(packageInfo);
@@ -130,36 +135,29 @@ public class DeviceInfo {
         uiMode = getDeviceUiMode(configuration);
     }
 
-    public Map<String, String> getDeviceInfoMap(final Context context) {
-        Resources resources = context.getResources();
-        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        Configuration configuration = resources.getConfiguration();
-        Locale locale = com.adjust.sdk.Util.getLocale(configuration);
-        PackageInfo packageInfo = DeviceInfo.getPackageInfo(context);
-        int screenLayout = configuration.screenLayout;
-
+    public Map<String, String> getDeviceInfoMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("package_name", DeviceInfo.getPackageName(context));
-        map.put("app_version", DeviceInfo.getAppVersion(packageInfo));
-        //map.put("device_type", DeviceInfo.getDeviceType(configuration));
-        map.put("device_name", getDeviceName());
-        //map.put("device_manufacturer", deviceManufacturer);
-        map.put("os_version", getOsVersion());
-        map.put("api_level", getApiLevel());
-        map.put("language", getLanguage(locale));
-        map.put("country", getCountry(locale));
-        map.put("screen_size", getScreenSize(screenLayout));
-        map.put("screen_format", getScreenFormat(screenLayout));
-        map.put("screen_density", getScreenDensity(displayMetrics));
-        map.put("display_width", getDisplayWidth(displayMetrics));
-        map.put("display_height", getDisplayHeight(displayMetrics));
+        map.put("package_name", packageName);
+        map.put("app_version", appVersion);
+        map.put("device_type", deviceType);
+        map.put("device_name", deviceName);
+        map.put("device_manufacturer", deviceManufacturer);
+        map.put("os_version", osVersion);
+        map.put("api_level", apiLevel);
+        map.put("language", language);
+        map.put("country", country);
+        map.put("screen_size", screenSize);
+        map.put("screen_format", screenFormat);
+        map.put("screen_density", screenDensity);
+        map.put("display_width", displayWidth);
+        map.put("display_height", displayHeight);
         //map.put("client_sdk", getClientSdk(adjustConfig.sdkPrefix));
-        map.put("fb_attribution_id", getFacebookAttributionId(context));
-        map.put("hardware_name", getHardwareName());
-        map.put("abi", getABI());
-        map.put("build_name", getBuildName());
-        map.put("app_install_time", getAppInstallTime(packageInfo));
-        map.put("app_update_time", getAppUpdateTime(packageInfo));
+        map.put("fb_attribution_id", fbAttributionId);
+        map.put("hardware_name", hardwareName);
+        map.put("abi", abi);
+        map.put("build_name", buildName);
+        map.put("app_install_time", appInstallTime);
+        map.put("app_update_time", appUpdateTime);
         //map.put("ui_mode", getDeviceUiMode(configuration).toString());
 	    //map.put("screen_layout", screenLayout.toString());
         //if (Reflection.isAppRunningInSamsungCloudEnvironment(context, adjustConfig.logger)) {
@@ -319,14 +317,6 @@ public class DeviceInfo {
         return String.valueOf(displayMetrics.heightPixels);
     }
 
-    public static String getClientSdk(String sdkPrefix) {
-        if (sdkPrefix == null) {
-            return com.adjust.sdk.Constants.CLIENT_SDK;
-        } else {
-            return com.adjust.sdk.Util.formatString("%s@%s", sdkPrefix, com.adjust.sdk.Constants.CLIENT_SDK);
-        }
-    }
-
     @SuppressWarnings("deprecation")
     public static String getFacebookAttributionId(final Context context) {
         try {
@@ -377,21 +367,19 @@ public class DeviceInfo {
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     public static String getABI() {
-        String[] SupportedABIS = com.adjust.sdk.Util.getSupportedAbis();
-
-        // SUPPORTED_ABIS is only supported in API level 21
-        // get CPU_ABI instead
-        if (SupportedABIS == null || SupportedABIS.length == 0) {
-            return com.adjust.sdk.Util.getCpuAbi();
+        if (Build.VERSION.SDK_INT >= 21 && Build.SUPPORTED_ABIS != null && Build.SUPPORTED_ABIS.length > 0) {
+            return Build.SUPPORTED_ABIS[0];
         }
-
-        return SupportedABIS[0];
+        else {
+            return Build.CPU_ABI;
+        }
     }
 
     public static String getAppInstallTime(PackageInfo packageInfo) {
         try {
-            return com.adjust.sdk.Util.dateFormatter.format(new Date(packageInfo.firstInstallTime));
+            return formatEpochMilli(packageInfo.firstInstallTime);
         } catch (Exception ex) {
             return null;
         }
@@ -399,9 +387,31 @@ public class DeviceInfo {
 
     public static String getAppUpdateTime(PackageInfo packageInfo) {
         try {
-            return com.adjust.sdk.Util.dateFormatter.format(new Date(packageInfo.lastUpdateTime));
+            return formatEpochMilli(packageInfo.lastUpdateTime);
         } catch (Exception ex) {
             return null;
+        }
+    }
+
+    private static String formatEpochMilli(long epochMilli) {
+        ZoneId zoneId = TimeZone.getDefault().toZoneId();
+        ZonedDateTime dateTime = Instant.ofEpochMilli(epochMilli).atZone(zoneId);
+
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(dateTime);
+    }
+
+    public static boolean isGooglePlayGamesForPC(Context context) {
+        return context.getPackageManager().hasSystemFeature("com.google.android.play.feature.HPE_EXPERIENCE");
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    public static Locale getLocale(Configuration config) {
+        LocaleList localeList = config.getLocales();
+        if (Build.VERSION.SDK_INT >= 24 && !localeList.isEmpty()) {
+            return localeList.get(0);
+        }
+        else {
+            return config.locale;
         }
     }
 }
