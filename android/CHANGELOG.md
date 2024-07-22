@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.6] - 2024-07-22
+
+### 🐛 Bug Fixes
+
+- Support lower API levels
+- Remove unneeded dependencies
+
 ## [android-sdk-v0.1.5] - 2024-07-17
 
 ### 🚜 Refactor
