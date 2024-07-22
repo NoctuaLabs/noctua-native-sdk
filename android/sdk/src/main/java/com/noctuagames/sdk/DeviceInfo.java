@@ -28,6 +28,7 @@ import java.util.TimeZone;
 
 import static android.content.res.Configuration.UI_MODE_TYPE_MASK;
 import static android.content.res.Configuration.UI_MODE_TYPE_TELEVISION;
+import static kotlinx.coroutines.flow.FlowKt.firstOrNull;
 
 /**
  * Created by pfms on 06/11/14.
@@ -369,13 +370,12 @@ public class DeviceInfo {
         }
     }
 
-    @SuppressLint("ObsoleteSdkInt")
     public static String getABI() {
-        if (Build.VERSION.SDK_INT >= 21 && Build.SUPPORTED_ABIS != null && Build.SUPPORTED_ABIS.length > 0) {
+        if (Build.SUPPORTED_ABIS != null && Build.SUPPORTED_ABIS.length > 0) {
             return Build.SUPPORTED_ABIS[0];
         }
         else {
-            return Build.CPU_ABI;
+            return "unknown";
         }
     }
 
