@@ -15,10 +15,12 @@ import android.os.Build;
 import android.os.LocaleList;
 import android.util.DisplayMetrics;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -394,21 +396,29 @@ public class DeviceInfo {
     }
 
     private static String formatEpochMilli(long epochMilli) {
-        ZoneId zoneId = TimeZone.getDefault().toZoneId();
-        ZonedDateTime dateTime = Instant.ofEpochMilli(epochMilli).atZone(zoneId);
+        if (Build.VERSION.SDK_INT >= 26) {
+            ZoneId zoneId = TimeZone.getDefault().toZoneId();
+            ZonedDateTime dateTime = Instant.ofEpochMilli(epochMilli).atZone(zoneId);
 
-        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(dateTime);
+            return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(dateTime);
+        }
+        else {
+            Date date = new Date(epochMilli);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.getDefault());
+
+            return sdf.format(date);
+        }
     }
 
     public static boolean isGooglePlayGamesForPC(Context context) {
         return context.getPackageManager().hasSystemFeature("com.google.android.play.feature.HPE_EXPERIENCE");
     }
 
-    @SuppressLint("ObsoleteSdkInt")
     public static Locale getLocale(Configuration config) {
-        LocaleList localeList = config.getLocales();
-        if (Build.VERSION.SDK_INT >= 24 && !localeList.isEmpty()) {
-            return localeList.get(0);
+        if (Build.VERSION.SDK_INT >= 24) {
+            LocaleList localeList = config.getLocales();
+
+            return !localeList.isEmpty() ? localeList.get(0) : config.locale;
         }
         else {
             return config.locale;

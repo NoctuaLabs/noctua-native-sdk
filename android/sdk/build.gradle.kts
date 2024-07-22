@@ -14,9 +14,9 @@ android {
 
     defaultConfig {
         aarMetadata {
-            minCompileSdk = 34
+            minCompileSdk = 32
         }
-        minSdk = 29
+        minSdk = 22
         compileSdk = 34
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -111,7 +111,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.installreferrer)
-    implementation(libs.kafka.clients)
     implementation(libs.adjust.android)
     implementation(libs.gson)
     implementation(libs.okhttp)
