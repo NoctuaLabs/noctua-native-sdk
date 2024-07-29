@@ -1,0 +1,14 @@
+{
+  "productCode": "<NOCTUA_PRODUCT_CODE>",
+  "adjust": {
+    "appToken": "<ADJUST_APP_TOKEN>",
+    "environment": "sandbox",
+    "eventMap": {
+      "Purchase": "ADJUST_PURCHASE_EVENT_TOKEN",
+      "TestSendEvent": "ADJUST_CUSTOM_EVENT_TOKEN"
+    }
+  },
+  "noctua": {
+    "trackerUrl": ""
+  }
+}
