@@ -8,12 +8,14 @@ import java.io.IOException
 data class NoctuaConfig(
     val productCode: String?,
     val adjust: AdjustServiceConfig?,
+    val firebase: FirebaseServiceConfig?,
     val noctua: NoctuaServiceConfig?,
 )
 
 class Noctua {
     private lateinit var productCode: String
     private var adjust: AdjustService? = null
+    private var firebase: FirebaseService? = null
     private var noctua: NoctuaService? = null
 
     fun init(context: Context) {
@@ -40,6 +42,22 @@ class Noctua {
             adjust?.onCreate(context)
         }
 
+        val firebaseAvailable =
+            try {
+                Class.forName("com.google.firebase.FirebaseApp")
+                true
+            } catch (e: ClassNotFoundException) {
+                Log.w(TAG, "Firebase SDK is not found. Firebase tracking will be disabled.")
+                false
+            }
+
+        if (firebaseAvailable && config.firebase != null) {
+            firebase = FirebaseService(config.firebase);
+            firebase?.onCreate(context)
+
+        }
+
+
         noctua = config.noctua?.let {
             NoctuaService(it, context, adjust != null)
         }
@@ -56,16 +74,19 @@ class Noctua {
     fun onResume() {
         checkInit();
         adjust?.onResume()
+        firebase?.onResume()
     }
 
     fun onPause() {
         checkInit();
         adjust?.onPause()
+        firebase?.onResume()
     }
 
     fun trackCustomEvent(eventName: String, payload: MutableMap<String, Any> = mutableMapOf()) {
         checkInit()
         adjust?.trackCustomEvent(eventName, payload)
+        firebase?.trackCustomEvent(eventName, payload)
         noctua?.trackCustomEvent(eventName, payload)
     }
 
@@ -77,6 +98,7 @@ class Noctua {
     ) {
         checkInit();
         adjust?.trackAdRevenue(source, revenue, currency, extraPayload)
+        firebase?.trackAdRevenue(source, revenue, currency, extraPayload)
         noctua?.trackAdRevenue(source, revenue, currency, extraPayload)
     }
 
@@ -89,6 +111,7 @@ class Noctua {
         checkInit();
 
         adjust?.trackPurchase(orderId, amount, currency, extraPayload)
+        firebase?.trackPurchase(orderId, amount, currency, extraPayload)
         noctua?.trackPurchase(orderId, amount, currency, extraPayload)
     }
 
