@@ -8,32 +8,12 @@ import com.adjust.sdk.AdjustAdRevenue
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 
-data class FirebaseServiceConfig(
-    val projectId: String,
-    val appId: String,
-    val apiKey: String,
-)
-
-class FirebaseService(private var config: FirebaseServiceConfig) {
+class FirebaseService() {
     companion object {
         private lateinit var firebaseContext: Context
         private val TAG = FirebaseService::class.simpleName
     }
-    private lateinit var internalConfig: FirebaseServiceConfig
     private lateinit var Analytics: FirebaseAnalytics
-    init {
-        if (config.projectId.isEmpty()) {
-            throw IllegalArgumentException("Firebase projectId is not set")
-        }
-        if (config.appId.isEmpty()) {
-            throw IllegalArgumentException("Firebase appId is not set")
-        }
-        if (config.apiKey.isEmpty()) {
-            throw IllegalArgumentException("Firebase apiKey is not set")
-        }
-
-        internalConfig = config
-    }
 
     fun onCreate(context: Context) {
         firebaseContext = context
