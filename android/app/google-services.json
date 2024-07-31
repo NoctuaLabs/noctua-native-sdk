@@ -1,0 +1,198 @@
+{
+  "project_info": {
+    "project_number": "297069337891",
+    "project_id": "noctua-sdk-test",
+    "storage_bucket": "noctua-sdk-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297069337891:android:1fdf14df2446740db50096",
+        "android_client_info": {
+          "package_name": "com.android.noctuagames.noctuaquicksdktest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvPZxnJnFKsIPlxvx9SrNXLtwETlM62UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "297069337891-eidb9tsi4gh8eufg8ns26q4nbhc4irb5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.noctuagames.ios.sdktest"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297069337891:android:70eff040a3a4320cb50096",
+        "android_client_info": {
+          "package_name": "com.noctuagames.android.noctuaquicksdktest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297069337891-8n14e2m61tgqo7f0rnssiuo38tcjjlh9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noctuagames.android.noctuaquicksdktest",
+            "certificate_hash": "fbdfdae287de7fef4bcf63a6e5afbe807e9633ad"
+          }
+        },
+        {
+          "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvPZxnJnFKsIPlxvx9SrNXLtwETlM62UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "297069337892-eidb9tsi4gh8eufg8ns26q4nbhc4irb5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.noctuagames.ios.sdktest"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297069337891:android:e7fad40c4f02df60b50096",
+        "android_client_info": {
+          "package_name": "com.noctuagames.android.sdktest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvPZxnJnFKsIPlxvx9SrNXLtwETlM62UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "297069337891-eidb9tsi4gh8eufg8ns26q4nbhc4irb5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.noctuagames.ios.sdktest"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297069337891:android:0a7df972d6b48089b50096",
+        "android_client_info": {
+          "package_name": "com.noctuagames.unrealsdktest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvPZxnJnFKsIPlxvx9SrNXLtwETlM62UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "297069337891-eidb9tsi4gh8eufg8ns26q4nbhc4irb5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.noctuagames.ios.sdktest"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297069337891:android:e5c3283a4848fbb4b50096",
+        "android_client_info": {
+          "package_name": "com.quicksdk.hwdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvPZxnJnFKsIPlxvx9SrNXLtwETlM62UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297069337891-98utd3sqchmv56980te8os5e7sg33qfr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "297069337891-eidb9tsi4gh8eufg8ns26q4nbhc4irb5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.noctuagames.ios.sdktest"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
