@@ -116,6 +116,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.facebook.android:facebook-core:latest.release")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

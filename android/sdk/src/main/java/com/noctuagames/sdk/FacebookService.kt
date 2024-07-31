@@ -3,30 +3,48 @@ package com.noctuagames.sdk
 import android.content.Context
 import android.util.Log
 import android.os.Bundle
+import android.app.Activity
+import android.content.ContextWrapper
 import com.adjust.sdk.AdjustAdRevenue
 
-import com.google.firebase.FirebaseApp
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsLogger
+import java.util.Currency
 
-class FirebaseService() {
+/*
+References:
+- https://developers.facebook.com/docs/app-events/getting-started-app-events-android/
+- https://developers.facebook.com/docs/app-events/reference
+* */
+
+class FacebookService() {
     companion object {
-        private lateinit var firebaseContext: Context
-        private val TAG = FirebaseService::class.simpleName
+        private lateinit var facebookContext: Context
+        private val TAG = FacebookService::class.simpleName
     }
-    private lateinit var Analytics: FirebaseAnalytics
+    private lateinit var Analytics: AppEventsLogger
+
+    fun Context.getActivity(): Activity? = when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.getActivity()
+        else -> null
+    }
 
     fun onCreate(context: Context) {
-        firebaseContext = context
-        Log.w(TAG, "NoctuaFirebase.onCreate")
-        Log.w(TAG, "Noctua's Firebase initialization")
+        facebookContext = context
+        Log.w(TAG, "NoctuaFacbook.onCreate")
+        Log.w(TAG, "Noctua's Facbook initialization")
         try {
-            Log.w(TAG, "Firebase initialized successfully")
-            Analytics = FirebaseAnalytics.getInstance(firebaseContext)
-            Log.w(TAG, "Firebase Analytics initialized successfully")
+            FacebookSdk.setAutoInitEnabled(true)
+            FacebookSdk.fullyInitialize()
+            FacebookSdk.setAdvertiserIDCollectionEnabled(true)
+            facebookContext.getActivity()?.let {
+                Analytics = AppEventsLogger.newLogger(it)
+                Log.w(TAG, "Facbook Analytics initialized successfully")
+            }
         } catch (e: Exception) {
-            Log.e(TAG, "Error initializing Firebase: ${e.message}", e)
+            Log.e(TAG, "Error initializing Facbook: ${e.message}", e)
         }
-
     }
 
     fun onResume() {
@@ -48,6 +66,7 @@ class FirebaseService() {
             adRevenue.addCallbackParameter(key, value.toString())
         }
 
+        // TODO need to look up to legacy code base, what to put in here
         val bundle = Bundle().apply { // TODO do we need to add network/type/campaign here?
             putString("source", source)
             putDouble("ad_revenue", revenue)
@@ -78,16 +97,19 @@ class FirebaseService() {
             throw IllegalArgumentException("currency is not set")
         }
 
+        /* TODO need to look up to legacy code base, what to put in here
         val bundle = Bundle().apply {
-            putString(FirebaseAnalytics.Param.CURRENCY, currency)
-            putDouble(FirebaseAnalytics.Param.VALUE, amount)
-            putString(FirebaseAnalytics.Param.TRANSACTION_ID, orderId)
-
+            ???
         }
         for ((key, value) in extraPayload) {
             bundle.putString(key, value.toString())
         }
-        Analytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
+        * */
+        Analytics.logPurchase(
+            purchaseAmount = amount.toBigDecimal(),
+            currency = Currency.getInstance(currency),
+            //parameters = bundle
+        )
         Log.w(TAG, "Purchase event logged: $currency, $amount, $orderId, $extraPayload")
     }
 
@@ -97,7 +119,6 @@ class FirebaseService() {
         for ((key, value) in payload) {
             bundle.putString(key, value.toString())
         }
-        Analytics?.logEvent(eventName, bundle)
-        Log.w(TAG, "trackCustomEvent complete")
+        Analytics.logEvent(eventName, bundle)
     }
 }
