@@ -4,7 +4,7 @@ use_frameworks!
 
 target 'NoctuaSDKExample' do
   project 'NoctuaSDKExample/NoctuaSDKExample.xcodeproj'
-  pod 'NoctuaSDK', :path => 'NoctuaSDK'
+  pod 'NoctuaSDK', '~> 0.1.1'
 end
 
 target 'NoctuaSDK' do

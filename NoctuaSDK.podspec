@@ -89,7 +89,7 @@ Pod::Spec.new do |spec|
   #  Not including the public_header_files will make all headers public.
   #
 
-  spec.ios.source_files  = "ios/NoctuaSDK/NoctuaSDK/**/*.swift", "ios/NoctuaSDK/**/*.{h,m}"
+  spec.ios.source_files  = "ios/NoctuaSDK/NoctuaSDK/**/*.{h,m,swift}"
   # spec.exclude_files = "Classes/Exclude"
 
   # spec.public_header_files = "Classes/**/*.h"
