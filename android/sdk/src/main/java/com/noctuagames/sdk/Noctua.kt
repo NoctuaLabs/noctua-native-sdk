@@ -15,6 +15,7 @@ class Noctua {
     private lateinit var productCode: String
     private var adjust: AdjustService? = null
     private var firebase: FirebaseService? = null
+    private var facebook: FacebookService? = null
     private var noctua: NoctuaService? = null
 
     fun init(context: Context) {
@@ -56,6 +57,20 @@ class Noctua {
 
         }
 
+        val facebookAvailable =
+            try {
+                Class.forName("com.facebook.FacebookSdk")
+                true
+            } catch (e: ClassNotFoundException) {
+                Log.w(TAG, "Firebase SDK is not found. Facebook tracking will be disabled.")
+                false
+            }
+
+        if (facebookAvailable) {
+            facebook = FacebookService();
+            facebook?.onCreate(context)
+
+        }
 
         noctua = config.noctua?.let {
             NoctuaService(it, context, adjust != null)
@@ -74,18 +89,21 @@ class Noctua {
         checkInit();
         adjust?.onResume()
         firebase?.onResume()
+        facebook?.onResume()
     }
 
     fun onPause() {
         checkInit();
         adjust?.onPause()
         firebase?.onResume()
+        facebook?.onResume()
     }
 
     fun trackCustomEvent(eventName: String, payload: MutableMap<String, Any> = mutableMapOf()) {
         checkInit()
         adjust?.trackCustomEvent(eventName, payload)
         firebase?.trackCustomEvent(eventName, payload)
+        facebook?.trackCustomEvent(eventName, payload)
         noctua?.trackCustomEvent(eventName, payload)
     }
 
@@ -98,6 +116,7 @@ class Noctua {
         checkInit();
         adjust?.trackAdRevenue(source, revenue, currency, extraPayload)
         firebase?.trackAdRevenue(source, revenue, currency, extraPayload)
+        facebook?.trackAdRevenue(source, revenue, currency, extraPayload)
         noctua?.trackAdRevenue(source, revenue, currency, extraPayload)
     }
 
@@ -111,6 +130,7 @@ class Noctua {
 
         adjust?.trackPurchase(orderId, amount, currency, extraPayload)
         firebase?.trackPurchase(orderId, amount, currency, extraPayload)
+        facebook?.trackPurchase(orderId, amount, currency, extraPayload)
         noctua?.trackPurchase(orderId, amount, currency, extraPayload)
     }
 
