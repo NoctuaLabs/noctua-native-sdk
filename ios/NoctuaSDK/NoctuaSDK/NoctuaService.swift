@@ -50,9 +50,7 @@ class NoctuaService {
     }
     
     private func sendEvent(payload: [String:Encodable]) {
-        let encoder = JSONEncoder()
         let bodyData = encodeDictionaryToJSON(dictionary: payload)
-        
         
         var request = URLRequest(url: URL(string: trackerURL)!)
         request.httpMethod = "POST"
@@ -60,34 +58,33 @@ class NoctuaService {
         request.httpBody = bodyData
 
         let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
-            guard let data = data else { return }
+            guard data != nil else { return }
         }
 
         task.resume()
     }
-    
-    private struct AnyEncodable: Encodable {
-        let value: Encodable
+}
 
-        init(_ value: Encodable) {
-            self.value = value
-        }
+private struct AnyEncodable: Encodable {
+    let value: Encodable
 
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.singleValueContainer()
-            try container.encode(value)
-        }
+    init(_ value: Encodable) {
+        self.value = value
     }
 
-    // Function to encode a dictionary of type [String: Encodable] to JSON
-    private func encodeDictionaryToJSON(dictionary: [String: Encodable]) -> Data? {
-        let encodableDictionary = dictionary.mapValues { AnyEncodable($0) }
-        do {
-            let jsonData = try JSONEncoder().encode(encodableDictionary)
-            return jsonData
-        } catch {
-            print("Error encoding to JSON: \(error)")
-            return nil
-        }
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
+    }
+}
+
+private func encodeDictionaryToJSON(dictionary: [String: Encodable]) -> Data? {
+    let encodableDictionary = dictionary.mapValues { AnyEncodable($0) }
+    do {
+        let jsonData = try JSONEncoder().encode(encodableDictionary)
+        return jsonData
+    } catch {
+        print("Error encoding to JSON: \(error)")
+        return nil
     }
 }

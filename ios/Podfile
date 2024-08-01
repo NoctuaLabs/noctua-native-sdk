@@ -1,8 +1,13 @@
 platform :ios, '14.0'
+workspace 'NoctuaSDK'
+use_frameworks!
 
-project 'NoctuaSDK/NoctuaSDK.xcodeproj'
+target 'NoctuaSDKExample' do
+  project 'NoctuaSDKExample/NoctuaSDKExample.xcodeproj'
+  pod 'NoctuaSDK', :path => 'NoctuaSDK'
+end
 
 target 'NoctuaSDK' do
-  use_frameworks!
+  project 'NoctuaSDK/NoctuaSDK.xcodeproj'
   pod 'Adjust', '~> 4.38.4'
 end

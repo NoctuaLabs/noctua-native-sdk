@@ -16,6 +16,7 @@
 		B135B7972C59E3540091DCC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B135B7962C59E3540091DCC8 /* WebKit.framework */; platformFilter = ios; };
 		B135B7992C59EFDE0091DCC8 /* NoctuaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135B7982C59EFDE0091DCC8 /* NoctuaService.swift */; };
 		B135B79B2C59F98F0091DCC8 /* Noctua.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135B79A2C59F98F0091DCC8 /* Noctua.swift */; };
+		B135B7BD2C5B39540091DCC8 /* NoctuaPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135B7BC2C5B39540091DCC8 /* NoctuaPlugin.swift */; };
 		B18A6F5D2C59DE3000D4C360 /* NoctuaSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = B18A6F5C2C59DE3000D4C360 /* NoctuaSDK.docc */; };
 		B18A6F632C59DE3000D4C360 /* NoctuaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B18A6F582C59DE3000D4C360 /* NoctuaSDK.framework */; };
 		B18A6F682C59DE3000D4C360 /* NoctuaSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18A6F672C59DE3000D4C360 /* NoctuaSDKTests.swift */; };
@@ -44,6 +45,7 @@
 		B135B7962C59E3540091DCC8 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/System/iOSSupport/System/Library/PrivateFrameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		B135B7982C59EFDE0091DCC8 /* NoctuaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoctuaService.swift; sourceTree = "<group>"; };
 		B135B79A2C59F98F0091DCC8 /* Noctua.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Noctua.swift; sourceTree = "<group>"; };
+		B135B7BC2C5B39540091DCC8 /* NoctuaPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoctuaPlugin.swift; sourceTree = "<group>"; };
 		B18A6F582C59DE3000D4C360 /* NoctuaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NoctuaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B18A6F5B2C59DE3000D4C360 /* NoctuaSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoctuaSDK.h; sourceTree = "<group>"; };
 		B18A6F5C2C59DE3000D4C360 /* NoctuaSDK.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = NoctuaSDK.docc; sourceTree = "<group>"; };
@@ -112,10 +114,11 @@
 		B18A6F5A2C59DE3000D4C360 /* NoctuaSDK */ = {
 			isa = PBXGroup;
 			children = (
-				B135B78C2C59E2BC0091DCC8 /* AdjustService.swift */,
 				B18A6F5B2C59DE3000D4C360 /* NoctuaSDK.h */,
 				B18A6F5C2C59DE3000D4C360 /* NoctuaSDK.docc */,
 				B135B7982C59EFDE0091DCC8 /* NoctuaService.swift */,
+				B135B78C2C59E2BC0091DCC8 /* AdjustService.swift */,
+				B135B7BC2C5B39540091DCC8 /* NoctuaPlugin.swift */,
 				B135B79A2C59F98F0091DCC8 /* Noctua.swift */,
 			);
 			path = NoctuaSDK;
@@ -278,6 +281,7 @@
 				B135B79B2C59F98F0091DCC8 /* Noctua.swift in Sources */,
 				B18A6F5D2C59DE3000D4C360 /* NoctuaSDK.docc in Sources */,
 				B135B7992C59EFDE0091DCC8 /* NoctuaService.swift in Sources */,
+				B135B7BD2C5B39540091DCC8 /* NoctuaPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

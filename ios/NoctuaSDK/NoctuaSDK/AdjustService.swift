@@ -28,33 +28,33 @@ class AdjustService {
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable]) {
-        var adRevenue = ADJAdRevenue(source: source)!
+        let adRevenue = ADJAdRevenue(source: source)!
         adRevenue.setRevenue(revenue, currency: currency)
         
         for (key, value) in extraPayload {
-            adRevenue.setValue(value, forKey: key)
+            adRevenue.addCallbackParameter(key, value: "\(value)")
         }
         
         Adjust.trackAdRevenue(adRevenue)
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable]) {
-        var purchase = ADJEvent(eventToken: config.eventMap["Purchase"]!)!
+        let purchase = ADJEvent(eventToken: config.eventMap["Purchase"]!)!
         purchase.setTransactionId(orderId)
         purchase.setRevenue(amount, currency: currency)
         
         for (key, value) in extraPayload {
-            purchase.setValue(value, forKey: key)
+            purchase.addCallbackParameter(key, value: "\(value)")
         }
 
         Adjust.trackEvent(purchase)
     }
     
-    func trackCustomEvent(eventName: String, payload: [String:Any]) {
-        var event = ADJEvent(eventToken: config.eventMap[eventName]!)!
+    func trackCustomEvent(_ eventName: String, payload: [String:Encodable]) {
+        let event = ADJEvent(eventToken: config.eventMap[eventName]!)!
 
         for (key, value) in payload {
-            event.setValue(value, forKey: key)
+            event.addCallbackParameter(key, value: "\(value)")
         }
 
         Adjust.trackEvent(event)
