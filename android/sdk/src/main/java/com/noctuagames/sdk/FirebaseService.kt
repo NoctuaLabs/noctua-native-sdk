@@ -5,15 +5,32 @@ import android.util.Log
 import android.os.Bundle
 import com.adjust.sdk.AdjustAdRevenue
 
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 
-class FirebaseService() {
+data class FirebaseServiceConfig(
+    // Credentials are written in Android Resources
+    val eventMap: Map<String, String>,
+)
+
+
+class FirebaseService(private val config: FirebaseServiceConfig) {
     companion object {
         private lateinit var firebaseContext: Context
         private val TAG = FirebaseService::class.simpleName
     }
     private lateinit var Analytics: FirebaseAnalytics
+
+    init {
+        if (config.eventMap.isEmpty()) {
+            throw IllegalArgumentException("Event map for Firebase is not set in noctuaggconfig.json")
+        }
+        if (!config.eventMap.containsKey("ad_revenue")) {
+            throw IllegalArgumentException("Event name for Firebase Purchase is not set in noctuaggconfig.json")
+        }
+        if (!config.eventMap.containsKey("purchase")) {
+            throw IllegalArgumentException("Event name for Firebase Purchase is not set in noctuaggconfig.json")
+        }
+    }
 
     fun onCreate(context: Context) {
         firebaseContext = context
@@ -92,6 +109,10 @@ class FirebaseService() {
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        if (!config.eventMap.containsKey(eventName)) {
+            Log.w(FirebaseService.TAG, "This event is not available in the Firebase event map: $eventName")
+            return
+        }
         Log.w(TAG, "trackCustomEvent")
         val bundle = Bundle()
         for ((key, value) in payload) {

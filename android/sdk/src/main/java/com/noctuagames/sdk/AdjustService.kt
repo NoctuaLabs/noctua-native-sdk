@@ -6,6 +6,7 @@ import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustAdRevenue
 import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustEvent
+import com.noctuagames.sdk.FacebookService.Companion
 
 data class AdjustServiceConfig(
     val appToken: String,
@@ -15,6 +16,9 @@ data class AdjustServiceConfig(
 
 internal class AdjustService(private val config: AdjustServiceConfig) {
     private lateinit var context: Context
+    companion object {
+        private val TAG = AdjustService::class.simpleName
+    }
 
     init {
         if (config.appToken.isEmpty()) {
@@ -25,10 +29,9 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
             throw IllegalArgumentException("Event map is not set in noctuaggconfig.json")
         }
 
-        if (!config.eventMap.containsKey("Purchase")) {
+        if (!config.eventMap.containsKey("purchase")) {
             throw IllegalArgumentException("Event name for Purchase is not set in noctuaggconfig.json")
         }
-
     }
 
     fun onCreate(context: Context) {
@@ -100,6 +103,10 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        if (!config.eventMap.containsKey(eventName)) {
+            Log.w(AdjustService.TAG, "This event is not available in the Adjust event map: $eventName")
+            return
+        }
         val adjustEvent = AdjustEvent(config.eventMap[eventName])
 
         for ((key, value) in payload) {
@@ -109,7 +116,4 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
         Adjust.trackEvent(adjustEvent)
     }
 
-    companion object {
-        private val TAG = AdjustService::class.simpleName
-    }
 }

@@ -17,12 +17,31 @@ References:
 - https://developers.facebook.com/docs/app-events/reference
 * */
 
-class FacebookService() {
+data class FacebookServiceConfig(
+    // Credentials are written in Android Resources
+    val eventMap: Map<String, String>,
+)
+
+class FacebookService(private val config: FacebookServiceConfig) {
     companion object {
         private lateinit var facebookContext: Context
         private val TAG = FacebookService::class.simpleName
     }
     private lateinit var Analytics: AppEventsLogger
+
+    init {
+        if (config.eventMap.isEmpty()) {
+            throw IllegalArgumentException("Event map for Facebook is not set in noctuaggconfig.json")
+        }
+        if (!config.eventMap.containsKey("ad_revenue")) {
+            throw IllegalArgumentException("Event name for Facebook Purchase is not set in noctuaggconfig.json")
+        }
+        /* Facebook is using logPurchase to track purchase directly, no need to set specific event name for purchase
+        if (!config.eventMap.containsKey("Purchase")) {
+            throw IllegalArgumentException("Event name for Facebook Purchase is not set in noctuaggconfig.json")
+        }
+         */
+    }
 
     fun Context.getActivity(): Activity? = when (this) {
         is Activity -> this
@@ -66,8 +85,8 @@ class FacebookService() {
             adRevenue.addCallbackParameter(key, value.toString())
         }
 
-        // TODO need to look up to legacy code base, what to put in here
-        val bundle = Bundle().apply { // TODO do we need to add network/type/campaign here?
+        // No example from legacy codebase. Let's put the metadata inside the bundle.
+        val bundle = Bundle().apply {
             putString("source", source)
             putDouble("ad_revenue", revenue)
             putString("currency", currency)
@@ -75,7 +94,7 @@ class FacebookService() {
         for ((key, value) in extraPayload) {
             bundle.putString(key, value.toString())
         }
-        Analytics.logEvent("ad_revenue", bundle)
+        Analytics.logEvent(config.eventMap["ad_revenue"], bundle)
         Log.w(TAG, "Ad revenue event logged: Source: $source, Revenue: $revenue, Currency: $currency")
     }
 
@@ -97,28 +116,29 @@ class FacebookService() {
             throw IllegalArgumentException("currency is not set")
         }
 
-        /* TODO need to look up to legacy code base, what to put in here
-        val bundle = Bundle().apply {
-            ???
-        }
+        // Put the metadata as is into the bundle, just like legacy codebase
+        val bundle = Bundle()
         for ((key, value) in extraPayload) {
             bundle.putString(key, value.toString())
         }
-        * */
         Analytics.logPurchase(
             purchaseAmount = amount.toBigDecimal(),
             currency = Currency.getInstance(currency),
-            //parameters = bundle
+            parameters = bundle
         )
         Log.w(TAG, "Purchase event logged: $currency, $amount, $orderId, $extraPayload")
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        if (!config.eventMap.containsKey(eventName)) {
+            Log.w(TAG, "This event is not available in the Facebook event map: $eventName")
+            return
+        }
         Log.w(TAG, "trackCustomEvent")
         val bundle = Bundle()
         for ((key, value) in payload) {
             bundle.putString(key, value.toString())
         }
-        Analytics.logEvent(eventName, bundle)
+        Analytics.logEvent(config.eventMap[eventName], bundle)
     }
 }

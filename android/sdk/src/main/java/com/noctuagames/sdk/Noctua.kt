@@ -8,6 +8,8 @@ import java.io.IOException
 data class NoctuaConfig(
     val productCode: String?,
     val adjust: AdjustServiceConfig?,
+    val firebase: FirebaseServiceConfig?,
+    val facebook: FacebookServiceConfig?,
     val noctua: NoctuaServiceConfig?,
 )
 
@@ -51,8 +53,8 @@ class Noctua {
                 false
             }
 
-        if (firebaseAvailable) {
-            firebase = FirebaseService();
+        if (firebaseAvailable && config.firebase != null) {
+            firebase = FirebaseService(config.firebase);
             firebase?.onCreate(context)
 
         }
@@ -66,8 +68,8 @@ class Noctua {
                 false
             }
 
-        if (facebookAvailable) {
-            facebook = FacebookService();
+        if (facebookAvailable && config.facebook != null) {
+            facebook = FacebookService(config.facebook);
             facebook?.onCreate(context)
 
         }
