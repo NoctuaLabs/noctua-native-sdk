@@ -2,7 +2,8 @@ package com.noctuagames.sdk
 
 import android.content.Context
 import android.util.Log
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.FieldNamingPolicy
 import java.io.IOException
 
 data class NoctuaConfig(
@@ -184,7 +185,12 @@ fun loadAppConfig(context: Context): NoctuaConfig {
             it.read(buffer)
             val json = String(buffer)
 
-            return Gson().fromJson(json, NoctuaConfig::class.java)
+            // Create a Gson instance with custom field naming policy
+            val gson = GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create()
+
+            return gson.fromJson(json, NoctuaConfig::class.java)
         }
     } catch (e: IOException) {
         throw IllegalArgumentException("Failed to load noctuagg.json", e)

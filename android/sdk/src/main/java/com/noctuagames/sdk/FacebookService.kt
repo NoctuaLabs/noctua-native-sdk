@@ -78,13 +78,6 @@ class FacebookService(private val config: FacebookServiceConfig) {
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        val adRevenue = AdjustAdRevenue(source)
-        adRevenue.setRevenue(revenue, currency)
-
-        for ((key, value) in extraPayload) {
-            adRevenue.addCallbackParameter(key, value.toString())
-        }
-
         // No example from legacy codebase. Let's put the metadata inside the bundle.
         val bundle = Bundle().apply {
             putString("source", source)
@@ -92,7 +85,10 @@ class FacebookService(private val config: FacebookServiceConfig) {
             putString("currency", currency)
         }
         for ((key, value) in extraPayload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
         Analytics.logEvent(config.eventMap["ad_revenue"], bundle)
         Log.w(TAG, "Ad revenue event logged: Source: $source, Revenue: $revenue, Currency: $currency")
@@ -119,7 +115,10 @@ class FacebookService(private val config: FacebookServiceConfig) {
         // Put the metadata as is into the bundle, just like legacy codebase
         val bundle = Bundle()
         for ((key, value) in extraPayload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
         Analytics.logPurchase(
             purchaseAmount = amount.toBigDecimal(),
@@ -137,7 +136,10 @@ class FacebookService(private val config: FacebookServiceConfig) {
         Log.w(TAG, "trackCustomEvent")
         val bundle = Bundle()
         for ((key, value) in payload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
         Analytics.logEvent(config.eventMap[eventName], bundle)
     }

@@ -58,20 +58,16 @@ class FirebaseService(private val config: FirebaseServiceConfig) {
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        val adRevenue = AdjustAdRevenue(source)
-        adRevenue.setRevenue(revenue, currency)
-
-        for ((key, value) in extraPayload) {
-            adRevenue.addCallbackParameter(key, value.toString())
-        }
-
-        val bundle = Bundle().apply { // TODO do we need to add network/type/campaign here?
+        val bundle = Bundle().apply {
             putString("source", source)
             putDouble("ad_revenue", revenue)
             putString("currency", currency)
         }
         for ((key, value) in extraPayload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
         Analytics.logEvent("ad_revenue", bundle)
         Log.w(TAG, "Ad revenue event logged: Source: $source, Revenue: $revenue, Currency: $currency")
@@ -102,7 +98,10 @@ class FirebaseService(private val config: FirebaseServiceConfig) {
 
         }
         for ((key, value) in extraPayload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
         Analytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
         Log.w(TAG, "Purchase event logged: $currency, $amount, $orderId, $extraPayload")
@@ -116,7 +115,10 @@ class FirebaseService(private val config: FirebaseServiceConfig) {
         Log.w(TAG, "trackCustomEvent")
         val bundle = Bundle()
         for ((key, value) in payload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
         Analytics?.logEvent(eventName, bundle)
         Log.w(TAG, "trackCustomEvent complete")

@@ -6,7 +6,6 @@ import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustAdRevenue
 import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustEvent
-import com.noctuagames.sdk.FacebookService.Companion
 
 data class AdjustServiceConfig(
     val appToken: String,
