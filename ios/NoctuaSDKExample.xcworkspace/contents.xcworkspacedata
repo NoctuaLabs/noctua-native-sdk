@@ -5,9 +5,6 @@
       location = "group:NoctuaSDKExample/NoctuaSDKExample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:NoctuaSDK/NoctuaSDK.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

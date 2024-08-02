@@ -1,13 +1,8 @@
-platform :ios, '14.0'
-workspace 'NoctuaSDK'
+platform :ios, "14.0"
+workspace "NoctuaSDKExample.xcworkspace"
 use_frameworks!
 
-target 'NoctuaSDKExample' do
-  project 'NoctuaSDKExample/NoctuaSDKExample.xcodeproj'
-  pod 'NoctuaSDK', '~> 0.1.1'
-end
-
-target 'NoctuaSDK' do
-  project 'NoctuaSDK/NoctuaSDK.xcodeproj'
-  pod 'Adjust', '~> 4.38.4'
+target "NoctuaSDKExample" do
+  project "NoctuaSDKExample/NoctuaSDKExample.xcodeproj"
+  pod "NoctuaSDK", :path => ".."
 end

@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "NoctuaSDK"
-  spec.version      = "0.1.2"
+  spec.version      = "0.1.3"
   spec.summary      = "Noctua iOS SDK"
 
   # This description is used to generate tags and improve search results.
@@ -89,7 +89,7 @@ Pod::Spec.new do |spec|
   #  Not including the public_header_files will make all headers public.
   #
 
-  spec.ios.source_files  = "ios/NoctuaSDK/NoctuaSDK/**/*.{h,m,swift}"
+  spec.ios.source_files  = "ios/NoctuaSDK/Sources/**/*.{h,m,swift}"
   # spec.exclude_files = "Classes/Exclude"
 
   # spec.public_header_files = "Classes/**/*.h"
@@ -134,10 +134,7 @@ Pod::Spec.new do |spec|
 
   # spec.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   # spec.dependency "JSONKit", "~> 1.4"
+  
+  spec.dependency "Adjust", "~> 4.38.4"
 
-  spec.subspec 'Adjust' do |adjust|
-    adjust.dependency "Adjust", "~> 4.38.4"
-  end  
-
-  spec.default_subspecs = :none
 end
