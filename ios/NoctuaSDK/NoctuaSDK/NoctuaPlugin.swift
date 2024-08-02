@@ -27,10 +27,11 @@ class NoctuaPlugin {
             nil
         }
         
-        self.adjust = if (self.config.adjust != nil) {
-            AdjustService(config: self.config.adjust!)
-        } else {
-            nil
+        if self.config.adjust == nil {
+            self.adjust = nil
+        }
+        else {
+            self.adjust = try? AdjustService(config: self.config.adjust!)
         }
     }
     
