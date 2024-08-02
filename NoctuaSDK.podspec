@@ -134,7 +134,10 @@ Pod::Spec.new do |spec|
 
   # spec.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   # spec.dependency "JSONKit", "~> 1.4"
-  
-  spec.dependency "Adjust", "~> 4.38.4"
 
+  spec.subspec 'Adjust' do |adjust|
+    adjust.dependency "Adjust", "~> 4.38.4"
+  end  
+
+  spec.default_subspecs = :none
 end

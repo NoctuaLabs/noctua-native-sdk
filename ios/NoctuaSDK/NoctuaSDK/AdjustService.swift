@@ -6,8 +6,13 @@
 //
 
 import Foundation
-
+#if canImport(Adjust)
 import Adjust
+#endif
+
+enum AdjustServiceError : Error {
+    case adjustNotFound
+}
 
 struct AdjustServiceConfig : Codable {
     let appToken: String
@@ -18,16 +23,31 @@ struct AdjustServiceConfig : Codable {
 class AdjustService {
     let config: AdjustServiceConfig
     
-    init(config: AdjustServiceConfig) {
+    init(config: AdjustServiceConfig) throws {
         self.config = config
         
-        let adjustConfig = ADJConfig(appToken: config.appToken, environment: config.environment ?? "sandbox")
+        guard !config.eventMap.isEmpty else {
+            throw ConfigurationError.missingKey("eventMap is empty")
+        }
+        
+        guard !config.eventMap.keys.contains("Purchase") else {
+            throw ConfigurationError.missingKey("no eventToken for purchase")
+        }
+        
+        let environment = if config.environment == nil || config.environment!.isEmpty { "sandbox" } else { config.environment! }
+
+#if canImport(Adjust)
+        let adjustConfig = ADJConfig(appToken: config.appToken, environment: environment)
         adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevelWarn } else { ADJLogLevelDebug }
         
         Adjust.appDidLaunch(adjustConfig)
+#else
+        throw AdjustServiceError.adjustNotFound
+#endif
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable]) {
+#if canImport(Adjust)
         let adRevenue = ADJAdRevenue(source: source)!
         adRevenue.setRevenue(revenue, currency: currency)
         
@@ -36,9 +56,11 @@ class AdjustService {
         }
         
         Adjust.trackAdRevenue(adRevenue)
+#endif
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable]) {
+#if canImport(Adjust)
         let purchase = ADJEvent(eventToken: config.eventMap["Purchase"]!)!
         purchase.setTransactionId(orderId)
         purchase.setRevenue(amount, currency: currency)
@@ -48,9 +70,11 @@ class AdjustService {
         }
 
         Adjust.trackEvent(purchase)
+#endif
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Encodable]) {
+#if canImport(Adjust)
         let event = ADJEvent(eventToken: config.eventMap[eventName]!)!
 
         for (key, value) in payload {
@@ -58,5 +82,6 @@ class AdjustService {
         }
 
         Adjust.trackEvent(event)
+#endif
     }
 }
