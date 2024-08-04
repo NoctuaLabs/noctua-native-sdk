@@ -11,13 +11,16 @@ Pod::Spec.new do |spec|
   spec.swift_version = "5.0"
 
   spec.source       = { :git => "https://github.com/NoctuaLabs/noctua-native-sdk.git", :tag => "ios-sdk-v#{spec.version}" }
-  spec.ios.source_files  = "ios/NoctuaSDK/Sources/**/*.{h,m,swift}"
   
   spec.frameworks = "WebKit", "StoreKit", "AppTrackingTransparency", "AdServices", "AdSupport"
   spec.static_framework = true
 
-  spec.default_subspec = :none
+  spec.subspec 'Core' do |core|
+    core.ios.source_files  = "ios/NoctuaSDK/Sources/**/*.{h,m,swift}"
+  end
   spec.subspec 'Adjust' do |adjust|
     adjust.dependency "Adjust", "~> 4.38.4"
   end
+  
+  spec.default_subspec = 'Core'
 end
