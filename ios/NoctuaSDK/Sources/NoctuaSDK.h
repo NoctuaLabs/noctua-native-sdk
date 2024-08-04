@@ -1,10 +1,3 @@
-//
-//  NoctuaSDK.h
-//  NoctuaSDK
-//
-//  Created by SDK Dev on 31/07/24.
-//
-
 #import <Foundation/Foundation.h>
 
 //! Project version number for NoctuaSDK.

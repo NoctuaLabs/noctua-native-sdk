@@ -1,10 +1,3 @@
-//
-//  AdjustService.swift
-//  NoctuaSDK
-//
-//  Created by SDK Dev on 31/07/24.
-//
-
 import Foundation
 #if canImport(Adjust)
 import Adjust
@@ -12,6 +5,7 @@ import Adjust
 
 enum AdjustServiceError : Error {
     case adjustNotFound
+    case invalidConfig(String)
 }
 
 struct AdjustServiceConfig : Codable {
@@ -24,19 +18,19 @@ class AdjustService {
     let config: AdjustServiceConfig
     
     init(config: AdjustServiceConfig) throws {
+#if canImport(Adjust)
         self.config = config
         
         guard !config.eventMap.isEmpty else {
-            throw ConfigurationError.missingKey("eventMap is empty")
+            throw AdjustServiceError.invalidConfig("eventMap is empty")
         }
         
-        guard !config.eventMap.keys.contains("Purchase") else {
-            throw ConfigurationError.missingKey("no eventToken for purchase")
+        guard config.eventMap.keys.contains("Purchase") else {
+            throw AdjustServiceError.invalidConfig("no eventToken for purchase")
         }
         
         let environment = if config.environment == nil || config.environment!.isEmpty { "sandbox" } else { config.environment! }
 
-#if canImport(Adjust)
         let adjustConfig = ADJConfig(appToken: config.appToken, environment: environment)
         adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevelWarn } else { ADJLogLevelDebug }
         

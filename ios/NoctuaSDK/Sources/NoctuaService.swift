@@ -1,25 +1,25 @@
-//
-//  NoctuaService.swift
-//  NoctuaSDK
-//
-//  Created by SDK Dev on 31/07/24.
-//
-
 import Foundation
+import os
 
 struct NoctuaServiceConfig : Decodable {
     let trackerURL: String?
 }
 
 class NoctuaService {
-    let trackerURL: String
+    let trackerURL: URL
     
-    init(config: NoctuaServiceConfig) {
-        trackerURL = if config.trackerURL == nil || config.trackerURL!.isEmpty {
-            "https://kafka-proxy-poc.noctuaprojects.com/api/v1/events"
+    init(config: NoctuaServiceConfig) throws {
+        let url = if config.trackerURL == nil || config.trackerURL!.isEmpty {
+            URL(string:"https://kafka-proxy-poc.noctuaprojects.com/api/v1/events")
         } else {
-            config.trackerURL!
+            URL(string: config.trackerURL!)
         }
+        
+        guard url != nil else {
+            throw InitError.invalidArgument(config.trackerURL!)
+        }
+        
+        trackerURL = url!
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable]) {
@@ -27,9 +27,8 @@ class NoctuaService {
         payload["source"] = source
         payload["revenue"] = revenue
         payload["currency"] = currency
-        payload["event_name"] = "AdRevenue"
         
-        sendEvent(payload: payload)
+        sendEvent("AdRevenue", payload: payload)
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable]) {
@@ -37,32 +36,52 @@ class NoctuaService {
         payload["orderId"] = orderId
         payload["amount"] = amount
         payload["currency"] = currency
-        payload["event_name"] = "Purchase"
         
-        sendEvent(payload: payload)
+        sendEvent("Purchase", payload: payload)
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Encodable]) {
+        sendEvent(eventName, payload: payload)
+    }
+    
+    private func sendEvent(_ eventName: String, payload: [String:Encodable]) {
         var payload = payload
         payload["event_name"] = eventName
 
-        sendEvent(payload: payload)
-    }
-    
-    private func sendEvent(payload: [String:Encodable]) {
-        let bodyData = encodeDictionaryToJSON(dictionary: payload)
+        let bodyData = try? JSONEncoder().encode(payload.mapValues { AnyEncodable($0) })
         
-        var request = URLRequest(url: URL(string: trackerURL)!)
+        guard bodyData != nil else {
+            self.logger.error("unable to encode event \(eventName) as json: \(payload)")
+            return
+        }
+        
+        var request = URLRequest(url: trackerURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = bodyData
 
-        let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
-            guard data != nil else { return }
+        let task = URLSession.shared.dataTask(with: request) { 
+            (data, response, error) in
+            
+            guard error == nil else {
+                self.logger.error("send event \(eventName) failed")
+                return
+            }
+            
+            if response == nil {
+                self.logger.warning("send event finished with no response")
+            }
+            
+            self.logger.debug("send event \(eventName) to \(response!.url!.absoluteString) succeeded")
         }
 
         task.resume()
     }
+
+    private let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: NoctuaService.self)
+    )
 }
 
 private struct AnyEncodable: Encodable {
@@ -78,13 +97,4 @@ private struct AnyEncodable: Encodable {
     }
 }
 
-private func encodeDictionaryToJSON(dictionary: [String: Encodable]) -> Data? {
-    let encodableDictionary = dictionary.mapValues { AnyEncodable($0) }
-    do {
-        let jsonData = try JSONEncoder().encode(encodableDictionary)
-        return jsonData
-    } catch {
-        print("Error encoding to JSON: \(error)")
-        return nil
-    }
-}
+
