@@ -1,11 +1,5 @@
-//
-//  NoctuaPlugin.swift
-//  NoctuaSDK
-//
-//  Created by SDK Dev on 01/08/24.
-//
-
 import Foundation
+import os
 
 struct NoctuaConfig : Decodable {
     let productCode: String
@@ -21,17 +15,44 @@ class NoctuaPlugin {
     init(config: NoctuaConfig) {
         self.config = config
         
-        self.noctua = if (self.config.noctua != nil) {
-            NoctuaService(config: self.config.noctua!)
-        } else {
-            nil
+
+        if self.config.noctua == nil {
+            logger.warning("config for NoctuaService not found")
+
+            self.noctua = nil
+        }
+        else {
+            self.noctua = try? NoctuaService(config: self.config.noctua!)
+
+            if self.noctua == nil {
+                logger.warning("NoctuaService disabled due to initialization error")
+            }
         }
         
         if self.config.adjust == nil {
+            logger.warning("config for AdjustService not found")
+            
             self.adjust = nil
         }
         else {
-            self.adjust = try? AdjustService(config: self.config.adjust!)
+            do {
+                self.adjust = try AdjustService(config: self.config.adjust!)
+            }
+            catch AdjustServiceError.adjustNotFound {
+                logger.warning("Adjust disabled, Adjust module not found")
+                
+                self.adjust = nil
+            }
+            catch AdjustServiceError.invalidConfig(let message) {
+                logger.warning("Adjust disabled, invalid Adjust config: \(message)")
+                
+                self.adjust = nil
+            }
+            catch {
+                logger.warning("Adjust disabled, unknown error")
+
+                self.adjust = nil
+            }
         }
     }
     
@@ -49,32 +70,9 @@ class NoctuaPlugin {
         self.adjust?.trackCustomEvent(eventName, payload: payload)
         self.noctua?.trackCustomEvent(eventName, payload: payload)
     }
-}
-
-enum ConfigurationError: Error {
-    case fileNotFound
-    case invalidFormat
-    case missingKey(String)
-    case unknown(Error)
-}
-
-func loadConfig() throws -> NoctuaConfig {
-    guard let path = Bundle.main.path(forResource: "noctuagg", ofType: "json") else {
-        throw ConfigurationError.fileNotFound
-    }
     
-    let config: NoctuaConfig
-    
-    do {
-        let data = try Data(contentsOf: URL(fileURLWithPath: path))
-        config = try JSONDecoder().decode(NoctuaConfig.self, from: data)
-    } catch {
-        throw ConfigurationError.invalidFormat
-    }
-    
-    if config.productCode.isEmpty {
-        throw ConfigurationError.missingKey("productCode")
-    }
-    
-    return config
+    private let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: NoctuaPlugin.self)
+    )
 }

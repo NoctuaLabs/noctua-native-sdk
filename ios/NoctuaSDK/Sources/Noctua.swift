@@ -1,17 +1,8 @@
-//
-//  Noctua.swift
-//  NoctuaSDK
-//
-//  Created by SDK Dev on 31/07/24.
-//
-
 import Foundation
 
 public class Noctua {
     public static func initialize() throws {
-        let config = try loadConfig()
-        
-        plugin = NoctuaPlugin(config: config)
+        plugin = NoctuaPlugin(config: try loadConfig())
     }
     
     public static func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable] = [:]) {
@@ -27,4 +18,32 @@ public class Noctua {
     }
     
     static var plugin: NoctuaPlugin?
+}
+
+enum ConfigurationError: Error {
+    case fileNotFound
+    case invalidFormat
+    case missingKey(String)
+    case unknown(Error)
+}
+
+func loadConfig() throws -> NoctuaConfig {
+    guard let path = Bundle.main.path(forResource: "noctuagg", ofType: "json") else {
+        throw ConfigurationError.fileNotFound
+    }
+    
+    let config: NoctuaConfig
+    
+    do {
+        let data = try Data(contentsOf: URL(fileURLWithPath: path))
+        config = try JSONDecoder().decode(NoctuaConfig.self, from: data)
+    } catch {
+        throw ConfigurationError.invalidFormat
+    }
+    
+    if config.productCode.isEmpty {
+        throw ConfigurationError.missingKey("productCode")
+    }
+    
+    return config
 }

@@ -11,25 +11,9 @@
 		B135B7AB2C5AF28B0091DCC8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135B7AA2C5AF28B0091DCC8 /* ContentView.swift */; };
 		B135B7AD2C5AF28D0091DCC8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B135B7AC2C5AF28D0091DCC8 /* Assets.xcassets */; };
 		B135B7B02C5AF28D0091DCC8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B135B7AF2C5AF28D0091DCC8 /* Preview Assets.xcassets */; };
-		B135B7B82C5B1B400091DCC8 /* NoctuaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B135B7B72C5B1B400091DCC8 /* NoctuaSDK.framework */; };
-		B135B7B92C5B1B400091DCC8 /* NoctuaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B135B7B72C5B1B400091DCC8 /* NoctuaSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B135B7BF2C5B3A8D0091DCC8 /* noctuagg.json in Resources */ = {isa = PBXBuildFile; fileRef = B135B7BE2C5B3A8D0091DCC8 /* noctuagg.json */; };
 		C9957597745F3180CBE3C599 /* Pods_NoctuaSDKExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA103668E8C41BE76F4AC9CF /* Pods_NoctuaSDKExample.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		B135B7BA2C5B1B400091DCC8 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B135B7B92C5B1B400091DCC8 /* NoctuaSDK.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		147E0B4751BADF504D61628B /* Pods-NoctuaSDKExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -49,7 +33,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B135B7B82C5B1B400091DCC8 /* NoctuaSDK.framework in Frameworks */,
 				C9957597745F3180CBE3C599 /* Pods_NoctuaSDKExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -125,8 +108,7 @@
 				B135B7A12C5AF28B0091DCC8 /* Sources */,
 				B135B7A22C5AF28B0091DCC8 /* Frameworks */,
 				B135B7A32C5AF28B0091DCC8 /* Resources */,
-				B135B7BA2C5B1B400091DCC8 /* Embed Frameworks */,
-				69DE705753F0FD705FA63EC6 /* [CP] Embed Pods Frameworks */,
+				2138CA1C83B703E0E3D076C8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -184,7 +166,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		69DE705753F0FD705FA63EC6 /* [CP] Embed Pods Frameworks */ = {
+		2138CA1C83B703E0E3D076C8 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (

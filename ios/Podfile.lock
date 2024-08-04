@@ -2,22 +2,26 @@ PODS:
   - Adjust (4.38.4):
     - Adjust/Core (= 4.38.4)
   - Adjust/Core (4.38.4)
-  - NoctuaSDK (0.1.1):
+  - NoctuaSDK (0.1.3)
+  - NoctuaSDK/Adjust (0.1.3):
     - Adjust (~> 4.38.4)
 
 DEPENDENCIES:
-  - Adjust (~> 4.38.4)
-  - NoctuaSDK (~> 0.1.1)
+  - NoctuaSDK (from `..`)
+  - NoctuaSDK/Adjust (from `..`)
 
 SPEC REPOS:
   trunk:
     - Adjust
-    - NoctuaSDK
+
+EXTERNAL SOURCES:
+  NoctuaSDK:
+    :path: ".."
 
 SPEC CHECKSUMS:
   Adjust: afda46df69f035fd216310fb85f399c40c61830a
-  NoctuaSDK: a78fce31dcea358ccc79d8406808f52f94cecd0d
+  NoctuaSDK: ff80540713fa3c63a94af10e18b74dd1e9eabed7
 
-PODFILE CHECKSUM: 61eec21835ef38a6c18e6c2d3dccb6932c446ec3
+PODFILE CHECKSUM: 052f6a58ad70eb8b80f68409f38f4e2486cc2413
 
 COCOAPODS: 1.15.2

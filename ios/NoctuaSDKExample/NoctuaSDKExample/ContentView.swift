@@ -15,7 +15,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Button(action: {
-                Noctua.trackAdRevenue(source: "mbuh", revenue: 1.3, currency: "USD", extraPayload: [:])
+                Noctua.trackAdRevenue(source: "admob_sdk", revenue: 1.3, currency: "USD", extraPayload: [:])
                 logger.debug("Track Ad Revenue tapped")
             }) {
                 Text("Track Ad Revenue")
