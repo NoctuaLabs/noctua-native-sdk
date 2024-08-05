@@ -21,6 +21,12 @@ Pod::Spec.new do |spec|
   spec.subspec 'Adjust' do |adjust|
     adjust.dependency "Adjust", "~> 4.38.4"
   end
+  spec.subspec 'Firebase' do |firebase|
+    firebase.dependency "Firebase", "~> 11.0.0"
+  end
+  spec.subspec 'FirebaseAnalytics' do |firebase|
+    firebase.dependency "FirebaseAnalytics", "~> 11.0.0"
+  end
   
   spec.default_subspec = 'Core'
 end

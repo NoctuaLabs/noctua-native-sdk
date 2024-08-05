@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C3737F22C60DD3700880FB6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0C3737F12C60DD3700880FB6 /* GoogleService-Info.plist */; };
 		B135B7A92C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135B7A82C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift */; };
 		B135B7AB2C5AF28B0091DCC8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135B7AA2C5AF28B0091DCC8 /* ContentView.swift */; };
 		B135B7AD2C5AF28D0091DCC8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B135B7AC2C5AF28D0091DCC8 /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C3737F12C60DD3700880FB6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		147E0B4751BADF504D61628B /* Pods-NoctuaSDKExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.debug.xcconfig"; sourceTree = "<group>"; };
 		3DDA05C80905516022156631 /* Pods-NoctuaSDKExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.release.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.release.xcconfig"; sourceTree = "<group>"; };
 		AA103668E8C41BE76F4AC9CF /* Pods_NoctuaSDKExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoctuaSDKExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,6 +63,7 @@
 		B135B7A72C5AF28B0091DCC8 /* NoctuaSDKExample */ = {
 			isa = PBXGroup;
 			children = (
+				0C3737F12C60DD3700880FB6 /* GoogleService-Info.plist */,
 				B135B7A82C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift */,
 				B135B7AA2C5AF28B0091DCC8 /* ContentView.swift */,
 				B135B7AC2C5AF28D0091DCC8 /* Assets.xcassets */,
@@ -158,6 +161,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B135B7BF2C5B3A8D0091DCC8 /* noctuagg.json in Resources */,
+				0C3737F22C60DD3700880FB6 /* GoogleService-Info.plist in Resources */,
 				B135B7B02C5AF28D0091DCC8 /* Preview Assets.xcassets in Resources */,
 				B135B7AD2C5AF28D0091DCC8 /* Assets.xcassets in Resources */,
 			);
