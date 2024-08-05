@@ -18,7 +18,6 @@ enum FacebookServiceError : Error {
 }
 
 struct FacebookServiceConfig : Codable {
-    let environment: String?
     let eventMap: [String:String]
 }
 
@@ -38,9 +37,7 @@ class FacebookService {
             throw FacebookServiceError.invalidConfig("no eventToken for purchase")
         }
         
-        let environment = if config.environment == nil || config.environment!.isEmpty { "sandbox" } else { config.environment! }
-        
-        // No init func from the Facebook AEM kit
+        // There is no init func from the Facebook AEM kit
 #else
         throw FacebookServiceError.facebookNotFound
 #endif

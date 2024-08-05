@@ -18,7 +18,6 @@ enum FirebaseServiceError : Error {
 }
 
 struct FirebaseServiceConfig : Codable {
-    let environment: String?
     let eventMap: [String:String]
 }
 
@@ -37,8 +36,6 @@ class FirebaseService {
         guard config.eventMap.keys.contains("Purchase") else {
             throw FirebaseServiceError.invalidConfig("no eventToken for purchase")
         }
-        
-        let environment = if config.environment == nil || config.environment!.isEmpty { "sandbox" } else { config.environment! }
         
         FirebaseApp.configure()
 
