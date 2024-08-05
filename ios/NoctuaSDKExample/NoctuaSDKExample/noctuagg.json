@@ -3,14 +3,20 @@
     "adjust": {
         "appToken": "<ADJUST_APP_TOKEN>",
         "eventMap": {
-            "Purchase": "<ADJUST_PURCHASE_EVENT_TOKEN",
-            "TestSendEvent": "<ADJUST_CUSTOM_EVENT_TOKEN"
+            "Purchase": "ADJUST_PURCHASE_EVENT_TOKEN",
+            "TestSendEvent": "ADJUST_CUSTOM_EVENT_TOKEN"
         }
     },
     "firebase": {
         "eventMap": {
-            "Purchase": "<ADJUST_PURCHASE_EVENT_TOKEN",
-            "TestSendEvent": "<ADJUST_CUSTOM_EVENT_TOKEN"
+            "Purchase": "FIREBASE_PURCHASE_EVENT_TOKEN",
+            "TestSendEvent": "FIREBASE_CUSTOM_EVENT_TOKEN"
+        }
+    },
+    "facebook": {
+        "eventMap": {
+            "Purchase": "FACEBOOK_PURCHASE_EVENT_TOKEN",
+            "TestSendEvent": "FACEBOOK_CUSTOM_EVENT_TOKEN"
         }
     },
     "noctua": {}

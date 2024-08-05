@@ -97,7 +97,7 @@ class FirebaseService {
             return
         }
        
-        Analytics.logEvent(config.eventMap[eventName] ?? "", parameters: payload)
+        Analytics.logEvent(firebaseEventName, parameters: payload)
 #endif
     }
     

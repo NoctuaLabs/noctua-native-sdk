@@ -6,6 +6,7 @@ struct NoctuaConfig : Decodable {
     let noctua: NoctuaServiceConfig?
     let adjust: AdjustServiceConfig?
     let firebase: FirebaseServiceConfig?
+    let facebook: FacebookServiceConfig?
 }
 
 class NoctuaPlugin {
@@ -13,6 +14,7 @@ class NoctuaPlugin {
     let noctua: NoctuaService?
     let adjust: AdjustService?
     let firebase: FirebaseService?
+    let facebook: FacebookService?
 
     init(config: NoctuaConfig) {
         self.config = config
@@ -83,6 +85,33 @@ class NoctuaPlugin {
                 logger.warning("Firebase disabled, unknown error")
 
                 self.firebase = nil
+            }
+        }
+        
+        if self.config.facebook == nil {
+            logger.warning("config for FacebookService not found")
+            
+            self.facebook = nil
+        }
+        else {
+            do {
+                self.facebook = try FacebookService(config: self.config.facebook!)
+                logger.info("FacebookService initialized")
+            }
+            catch FacebookServiceError.facebookNotFound {
+                logger.warning("Facebook disabled, Facebook module not found")
+
+                self.facebook = nil
+            }
+            catch FacebookServiceError.invalidConfig(let message) {
+                logger.warning("Facebook disabled, invalid Facebook config: \(message)")
+
+                self.facebook = nil
+            }
+            catch {
+                logger.warning("Facebook disabled, unknown error")
+
+                self.facebook = nil
             }
         }
     }
