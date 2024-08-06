@@ -40,7 +40,7 @@ class AdjustService {
 #endif
     }
     
-    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Adjust)
         let adRevenue = ADJAdRevenue(source: source)!
         adRevenue.setRevenue(revenue, currency: currency)
@@ -53,7 +53,7 @@ class AdjustService {
 #endif
     }
     
-    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Adjust)
         let purchase = ADJEvent(eventToken: config.eventMap["Purchase"]!)!
         purchase.setTransactionId(orderId)
@@ -67,7 +67,7 @@ class AdjustService {
 #endif
     }
     
-    func trackCustomEvent(_ eventName: String, payload: [String:Encodable]) {
+    func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(Adjust)
         let event = ADJEvent(eventToken: config.eventMap[eventName]!)!
 
