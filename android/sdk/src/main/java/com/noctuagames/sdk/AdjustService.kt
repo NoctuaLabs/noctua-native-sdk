@@ -15,6 +15,9 @@ data class AdjustServiceConfig(
 
 internal class AdjustService(private val config: AdjustServiceConfig) {
     private lateinit var context: Context
+    companion object {
+        private val TAG = AdjustService::class.simpleName
+    }
 
     init {
         if (config.appToken.isEmpty()) {
@@ -28,7 +31,6 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
         if (!config.eventMap.containsKey("Purchase")) {
             throw IllegalArgumentException("Event name for Purchase is not set in noctuaggconfig.json")
         }
-
     }
 
     fun onCreate(context: Context) {
@@ -100,6 +102,10 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        if (!config.eventMap.containsKey(eventName)) {
+            Log.w(AdjustService.TAG, "This event is not available in the Adjust event map: $eventName")
+            return
+        }
         val adjustEvent = AdjustEvent(config.eventMap[eventName])
 
         for ((key, value) in payload) {
@@ -109,7 +115,4 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
         Adjust.trackEvent(adjustEvent)
     }
 
-    companion object {
-        private val TAG = AdjustService::class.simpleName
-    }
 }

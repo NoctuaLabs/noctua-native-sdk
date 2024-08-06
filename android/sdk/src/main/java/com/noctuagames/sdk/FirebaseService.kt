@@ -5,15 +5,32 @@ import android.util.Log
 import android.os.Bundle
 import com.adjust.sdk.AdjustAdRevenue
 
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 
-class FirebaseService() {
+data class FirebaseServiceConfig(
+    // Credentials are written in Android Resources
+    val eventMap: Map<String, String>,
+)
+
+
+class FirebaseService(private val config: FirebaseServiceConfig) {
     companion object {
         private lateinit var firebaseContext: Context
         private val TAG = FirebaseService::class.simpleName
     }
     private lateinit var Analytics: FirebaseAnalytics
+
+    init {
+        if (config.eventMap.isEmpty()) {
+            throw IllegalArgumentException("Event map for Firebase is not set in noctuaggconfig.json")
+        }
+        if (!config.eventMap.containsKey("AdRevenue")) {
+            throw IllegalArgumentException("Event name for Firebase Purchase is not set in noctuaggconfig.json")
+        }
+        if (!config.eventMap.containsKey("Purchase")) {
+            throw IllegalArgumentException("Event name for Firebase Purchase is not set in noctuaggconfig.json")
+        }
+    }
 
     fun onCreate(context: Context) {
         firebaseContext = context
@@ -41,22 +58,18 @@ class FirebaseService() {
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        val adRevenue = AdjustAdRevenue(source)
-        adRevenue.setRevenue(revenue, currency)
-
-        for ((key, value) in extraPayload) {
-            adRevenue.addCallbackParameter(key, value.toString())
-        }
-
-        val bundle = Bundle().apply { // TODO do we need to add network/type/campaign here?
+        val bundle = Bundle().apply {
             putString("source", source)
             putDouble("ad_revenue", revenue)
             putString("currency", currency)
         }
         for ((key, value) in extraPayload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
-        Analytics.logEvent("ad_revenue", bundle)
+        Analytics.logEvent("AdRevenue", bundle)
         Log.w(TAG, "Ad revenue event logged: Source: $source, Revenue: $revenue, Currency: $currency")
     }
 
@@ -85,17 +98,27 @@ class FirebaseService() {
 
         }
         for ((key, value) in extraPayload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
         Analytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
         Log.w(TAG, "Purchase event logged: $currency, $amount, $orderId, $extraPayload")
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        if (!config.eventMap.containsKey(eventName)) {
+            Log.w(FirebaseService.TAG, "This event is not available in the Firebase event map: $eventName")
+            return
+        }
         Log.w(TAG, "trackCustomEvent")
         val bundle = Bundle()
         for ((key, value) in payload) {
-            bundle.putString(key, value.toString())
+            when (value) {
+                is Int -> bundle.putInt(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
         }
         Analytics?.logEvent(eventName, bundle)
         Log.w(TAG, "trackCustomEvent complete")

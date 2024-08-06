@@ -2,12 +2,15 @@ package com.noctuagames.sdk
 
 import android.content.Context
 import android.util.Log
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.FieldNamingPolicy
 import java.io.IOException
 
 data class NoctuaConfig(
     val productCode: String?,
     val adjust: AdjustServiceConfig?,
+    val firebase: FirebaseServiceConfig?,
+    val facebook: FacebookServiceConfig?,
     val noctua: NoctuaServiceConfig?,
 )
 
@@ -51,8 +54,8 @@ class Noctua {
                 false
             }
 
-        if (firebaseAvailable) {
-            firebase = FirebaseService();
+        if (firebaseAvailable && config.firebase != null) {
+            firebase = FirebaseService(config.firebase);
             firebase?.onCreate(context)
 
         }
@@ -66,8 +69,8 @@ class Noctua {
                 false
             }
 
-        if (facebookAvailable) {
-            facebook = FacebookService();
+        if (facebookAvailable && config.facebook != null) {
+            facebook = FacebookService(config.facebook);
             facebook?.onCreate(context)
 
         }
@@ -182,7 +185,11 @@ fun loadAppConfig(context: Context): NoctuaConfig {
             it.read(buffer)
             val json = String(buffer)
 
-            return Gson().fromJson(json, NoctuaConfig::class.java)
+            // Create a Gson instance with custom field naming policy
+            val gson = GsonBuilder()
+                .create()
+
+            return gson.fromJson(json, NoctuaConfig::class.java)
         }
     } catch (e: IOException) {
         throw IllegalArgumentException("Failed to load noctuagg.json", e)

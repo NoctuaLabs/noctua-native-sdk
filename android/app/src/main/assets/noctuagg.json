@@ -8,6 +8,19 @@
       "TestSendEvent": "ADJUST_CUSTOM_EVENT_TOKEN"
     }
   },
+  "firebase": {
+    "eventMap": {
+      "Purchase": "FIREBASE_PURCHASE_EVENT_TOKEN",
+      "AdRevenue": "FIREBASE_AD_REVENUE_EVENT_TOKEN",
+      "TestSendEvent": "FIREBASE_CUSTOM_EVENT_TOKEN"
+    }
+  },
+  "facebook": {
+    "eventMap": {
+      "AdRevenue": "FACEBOOK_AD_REVENUE_EVENT_TOKEN",
+      "TestSendEvent": "FACEBOOK_CUSTOM_EVENT_TOKEN"
+    }
+  },
   "noctua": {
     "trackerUrl": ""
   }
