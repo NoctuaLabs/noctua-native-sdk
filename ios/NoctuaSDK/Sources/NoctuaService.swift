@@ -22,7 +22,7 @@ class NoctuaService {
         trackerURL = url!
     }
     
-    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
         var payload = extraPayload
         payload["source"] = source
         payload["revenue"] = revenue
@@ -31,7 +31,7 @@ class NoctuaService {
         sendEvent("AdRevenue", payload: payload)
     }
     
-    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
         var payload = extraPayload
         payload["orderId"] = orderId
         payload["amount"] = amount
@@ -40,15 +40,15 @@ class NoctuaService {
         sendEvent("Purchase", payload: payload)
     }
     
-    func trackCustomEvent(_ eventName: String, payload: [String:Encodable]) {
+    func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
         sendEvent(eventName, payload: payload)
     }
     
-    private func sendEvent(_ eventName: String, payload: [String:Encodable]) {
+    private func sendEvent(_ eventName: String, payload: [String:Any]) {
         var payload = payload
         payload["event_name"] = eventName
 
-        let bodyData = try? JSONEncoder().encode(payload.mapValues { AnyEncodable($0) })
+        let bodyData = try? JSONEncoder().encode(payload.mapValues { AnyEncodable($0 as! Encodable) })
         
         guard bodyData != nil else {
             self.logger.error("unable to encode event \(eventName) as json: \(payload)")

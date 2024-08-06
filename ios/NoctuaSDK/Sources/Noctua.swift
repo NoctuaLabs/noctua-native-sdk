@@ -1,19 +1,19 @@
 import Foundation
 
-public class Noctua {
-    public static func initialize() throws {
+@objc public class Noctua: NSObject {
+    @objc public static func initNoctua() throws {
         plugin = NoctuaPlugin(config: try loadConfig())
     }
     
-    public static func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable] = [:]) {
+    @objc public static func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any] = [:]) {
         plugin?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
     }
     
-    public static func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable] = [:]) {
+    @objc public static func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any] = [:]) {
         plugin?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
     }
     
-    public static func trackCustomEvent(_ eventName: String, payload: [String:Encodable] = [:]) {
+    @objc public static func trackCustomEvent(_ eventName: String, payload: [String:Any] = [:]) {
         plugin?.trackCustomEvent(eventName, payload: payload)
     }
     

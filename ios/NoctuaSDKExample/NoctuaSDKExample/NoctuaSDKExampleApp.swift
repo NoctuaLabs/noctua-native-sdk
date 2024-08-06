@@ -14,7 +14,7 @@ struct NoctuaSDKExampleApp: App {
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "NoctuaSDKExampleApp")
     
     init() {
-        try! Noctua.initialize()
+        try! Noctua.initNoctua()
     }
     
     var body: some Scene {
