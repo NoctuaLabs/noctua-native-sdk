@@ -56,17 +56,17 @@ class NoctuaPlugin {
         }
     }
     
-    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
         self.adjust?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
         self.noctua?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
     }
     
-    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
         self.adjust?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
         self.noctua?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
     }
     
-    func trackCustomEvent(_ eventName: String, payload: [String:Encodable]) {
+    func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
         self.adjust?.trackCustomEvent(eventName, payload: payload)
         self.noctua?.trackCustomEvent(eventName, payload: payload)
     }
