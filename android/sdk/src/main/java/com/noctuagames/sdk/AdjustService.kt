@@ -28,7 +28,7 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
             throw IllegalArgumentException("Event map is not set in noctuaggconfig.json")
         }
 
-        if (!config.eventMap.containsKey("purchase")) {
+        if (!config.eventMap.containsKey("Purchase")) {
             throw IllegalArgumentException("Event name for Purchase is not set in noctuaggconfig.json")
         }
     }

@@ -33,7 +33,7 @@ class FacebookService(private val config: FacebookServiceConfig) {
         if (config.eventMap.isEmpty()) {
             throw IllegalArgumentException("Event map for Facebook is not set in noctuaggconfig.json")
         }
-        if (!config.eventMap.containsKey("ad_revenue")) {
+        if (!config.eventMap.containsKey("AdRevenue")) {
             throw IllegalArgumentException("Event name for Facebook Purchase is not set in noctuaggconfig.json")
         }
         /* Facebook is using logPurchase to track purchase directly, no need to set specific event name for purchase
@@ -90,7 +90,7 @@ class FacebookService(private val config: FacebookServiceConfig) {
                 else -> bundle.putString(key, value.toString())
             }
         }
-        Analytics.logEvent(config.eventMap["ad_revenue"], bundle)
+        Analytics.logEvent(config.eventMap["AdRevenue"], bundle)
         Log.w(TAG, "Ad revenue event logged: Source: $source, Revenue: $revenue, Currency: $currency")
     }
 

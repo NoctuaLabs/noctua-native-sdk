@@ -187,7 +187,6 @@ fun loadAppConfig(context: Context): NoctuaConfig {
 
             // Create a Gson instance with custom field naming policy
             val gson = GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create()
 
             return gson.fromJson(json, NoctuaConfig::class.java)

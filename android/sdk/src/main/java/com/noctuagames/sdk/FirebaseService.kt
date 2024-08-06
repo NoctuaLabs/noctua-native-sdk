@@ -24,10 +24,10 @@ class FirebaseService(private val config: FirebaseServiceConfig) {
         if (config.eventMap.isEmpty()) {
             throw IllegalArgumentException("Event map for Firebase is not set in noctuaggconfig.json")
         }
-        if (!config.eventMap.containsKey("ad_revenue")) {
+        if (!config.eventMap.containsKey("AdRevenue")) {
             throw IllegalArgumentException("Event name for Firebase Purchase is not set in noctuaggconfig.json")
         }
-        if (!config.eventMap.containsKey("purchase")) {
+        if (!config.eventMap.containsKey("Purchase")) {
             throw IllegalArgumentException("Event name for Firebase Purchase is not set in noctuaggconfig.json")
         }
     }
@@ -69,7 +69,7 @@ class FirebaseService(private val config: FirebaseServiceConfig) {
                 else -> bundle.putString(key, value.toString())
             }
         }
-        Analytics.logEvent("ad_revenue", bundle)
+        Analytics.logEvent("AdRevenue", bundle)
         Log.w(TAG, "Ad revenue event logged: Source: $source, Revenue: $revenue, Currency: $currency")
     }
 
