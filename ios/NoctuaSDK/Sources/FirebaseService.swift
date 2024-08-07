@@ -44,7 +44,7 @@ class FirebaseService {
 #endif
     }
     
-    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Firebase)
         let firebaseEventName = config.eventMap["AdRevenue"] ?? ""
         guard !firebaseEventName.isEmpty else  {
@@ -65,7 +65,7 @@ class FirebaseService {
 #endif
     }
     
-    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Firebase)
         let firebaseEventName = config.eventMap["Purchase"] ?? ""
         guard !firebaseEventName.isEmpty else  {
@@ -86,7 +86,7 @@ class FirebaseService {
 #endif
     }
     
-    func trackCustomEvent(_ eventName: String, payload: [String:Encodable]) {
+    func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(Firebase)
         let firebaseEventName = config.eventMap[eventName] ?? ""
         guard !firebaseEventName.isEmpty else  {

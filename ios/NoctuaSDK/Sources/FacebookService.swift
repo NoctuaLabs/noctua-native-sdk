@@ -43,7 +43,7 @@ class FacebookService {
 #endif
     }
     
-    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(FBAEMKit)
         let facebookEventName = config.eventMap["AdRevenue"] ?? ""
         guard !facebookEventName.isEmpty else  {
@@ -65,7 +65,7 @@ class FacebookService {
 #endif
     }
     
-    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Encodable]) {
+    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(FBAEMKit)
         let facebookEventName = config.eventMap["Purchase"] ?? ""
         guard !facebookEventName.isEmpty else  {
@@ -86,7 +86,7 @@ class FacebookService {
 #endif
     }
     
-    func trackCustomEvent(_ eventName: String, payload: [String:Encodable]) {
+    func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FBAEMKit)
         let facebookEventName = config.eventMap[eventName] ?? ""
         guard !facebookEventName.isEmpty else  {
