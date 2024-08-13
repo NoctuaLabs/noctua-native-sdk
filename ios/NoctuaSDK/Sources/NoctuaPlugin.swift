@@ -2,7 +2,7 @@ import Foundation
 import os
 
 struct NoctuaConfig : Decodable {
-    let productCode: String
+    let clientId: String
     let noctua: NoctuaServiceConfig?
     let adjust: AdjustServiceConfig?
     let firebase: FirebaseServiceConfig?

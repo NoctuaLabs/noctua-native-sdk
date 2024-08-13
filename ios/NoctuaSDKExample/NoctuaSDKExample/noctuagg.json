@@ -1,5 +1,5 @@
 {
-    "productCode": "<NOCTUA_PRODUCT_CODE>",
+    "clientId": "<NOCTUA_CLIENT_ID>",
     "adjust": {
         "appToken": "<ADJUST_APP_TOKEN>",
         "eventMap": {

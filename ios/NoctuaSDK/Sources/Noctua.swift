@@ -41,8 +41,8 @@ func loadConfig() throws -> NoctuaConfig {
         throw ConfigurationError.invalidFormat
     }
     
-    if config.productCode.isEmpty {
-        throw ConfigurationError.missingKey("productCode")
+    if config.clientId.isEmpty {
+        throw ConfigurationError.missingKey("clientId")
     }
     
     return config
