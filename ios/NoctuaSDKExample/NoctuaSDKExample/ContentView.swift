@@ -49,6 +49,20 @@ struct ContentView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
+            
+            Button(action: {
+                Noctua.purchaseItem(productId: "noctua.sdktest.ios.pack1", completion: { (success, message) in
+                    logger.debug("Purchase Item tapped: \(success), \(message)")
+                });
+            }) {
+                Text("Purchase Item")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+
         }
         .padding()
     }

@@ -7,7 +7,7 @@ import com.google.gson.FieldNamingPolicy
 import java.io.IOException
 
 data class NoctuaConfig(
-    val productCode: String?,
+    val clientId: String?,
     val adjust: AdjustServiceConfig?,
     val firebase: FirebaseServiceConfig?,
     val facebook: FacebookServiceConfig?,
@@ -15,7 +15,7 @@ data class NoctuaConfig(
 )
 
 class Noctua {
-    private lateinit var productCode: String
+    private lateinit var clientId: String
     private var adjust: AdjustService? = null
     private var firebase: FirebaseService? = null
     private var facebook: FacebookService? = null
@@ -25,11 +25,11 @@ class Noctua {
         Log.w(TAG, "init")
         val config = loadAppConfig(context)
 
-        if (config.productCode.isNullOrEmpty()) {
-            throw IllegalArgumentException("productCode is not set in noctuagg.json")
+        if (config.clientId.isNullOrEmpty()) {
+            throw IllegalArgumentException("clientId is not set in noctuagg.json")
         }
 
-        this.productCode = config.productCode
+        this.clientId = config.clientId
 
         val adjustAvailable =
             try {
@@ -83,7 +83,7 @@ class Noctua {
     }
 
     private fun checkInit() {
-        if (!this::productCode.isInitialized) {
+        if (!this::clientId.isInitialized) {
             throw IllegalArgumentException("SDK not initialized. Call init() first.")
         }
     }

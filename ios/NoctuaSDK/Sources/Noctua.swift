@@ -16,6 +16,10 @@ import Foundation
     @objc public static func trackCustomEvent(_ eventName: String, payload: [String:Any] = [:]) {
         plugin?.trackCustomEvent(eventName, payload: payload)
     }
+
+    @objc public static func purchaseItem(productId: String, completion: @escaping PurchaseCompletion) {
+        plugin?.purchaseItem(productId: productId, completion: completion)
+    }
     
     static var plugin: NoctuaPlugin?
 }
