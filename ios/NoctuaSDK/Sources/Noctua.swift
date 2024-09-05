@@ -17,8 +17,8 @@ import Foundation
         plugin?.trackCustomEvent(eventName, payload: payload)
     }
 
-    @objc public static func purchaseItem(productId: String) {
-        plugin?.purchaseItem(productId: productId)
+    @objc public static func purchaseItem(productId: String, completion: @escaping PurchaseCompletion) {
+        plugin?.purchaseItem(productId: productId, completion: completion)
     }
     
     static var plugin: NoctuaPlugin?

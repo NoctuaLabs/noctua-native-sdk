@@ -134,8 +134,8 @@ class NoctuaPlugin {
         self.firebase?.trackCustomEvent(eventName, payload: payload)
     }
 
-    func purchaseItem(productId: String) {
-        self.noctua?.purchaseItem(productId: productId)
+    func purchaseItem(productId: String, completion: @escaping PurchaseCompletion) {
+        self.noctua?.purchaseItem(productId: productId, completion: completion)
     }
     
     private let logger = Logger(
