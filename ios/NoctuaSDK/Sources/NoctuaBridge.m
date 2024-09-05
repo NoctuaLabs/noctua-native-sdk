@@ -29,4 +29,7 @@
     [Noctua trackCustomEvent:eventName payload:payload];
 }
 
++ (void)purchaseItem:(NSString *)productId completion:(void (^)(BOOL success, NSString *message))completion {
+}
+
 @end

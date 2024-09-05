@@ -133,6 +133,10 @@ class NoctuaPlugin {
         self.noctua?.trackCustomEvent(eventName, payload: payload)
         self.firebase?.trackCustomEvent(eventName, payload: payload)
     }
+
+    func purchaseItem(productId: String) {
+        self.noctua?.purchaseItem(productId: productId)
+    }
     
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

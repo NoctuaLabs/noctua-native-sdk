@@ -1,11 +1,12 @@
 import Foundation
 import os
+import StoreKit
 
 struct NoctuaServiceConfig : Decodable {
     let trackerURL: String?
 }
 
-class NoctuaService {
+class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
     let trackerURL: URL
     
     init(config: NoctuaServiceConfig) throws {
@@ -20,6 +21,9 @@ class NoctuaService {
         }
         
         trackerURL = url!
+
+        super.init()
+        SKPaymentQueue.default().add(self)
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
@@ -42,6 +46,11 @@ class NoctuaService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
         sendEvent(eventName, payload: payload)
+
+    }
+
+    func purchaseItem(productId: String) {
+        initiatePayment(productId: "noctua.sdktest.ios.pack1")
     }
     
     private func sendEvent(_ eventName: String, payload: [String:Any]) {
@@ -76,6 +85,89 @@ class NoctuaService {
         }
 
         task.resume()
+    }
+
+    func initiatePayment(productId: String) {
+        if SKPaymentQueue.canMakePayments() {
+            let request = SKProductsRequest(productIdentifiers: Set([productId]))
+            request.delegate = self
+            request.start()
+        } else {
+            // Handle the case where the user can't make payments
+            print("User can't make payments")
+        }
+    }
+
+    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        print("productsRequest: \(response.products)")
+        if let product = response.products.first {
+            let payment = SKPayment(product: product)
+            SKPaymentQueue.default().add(payment)
+        } else {
+            print("Product not found")
+        }
+    }
+
+    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        print("------------------------------------------------------------")
+        print("paymentQueue: \(transactions)")
+        for transaction in transactions {
+            if let error = transaction.error as? SKError {
+                switch error.code {
+                case .paymentCancelled:
+                    print("Payment cancelled 1")
+                case .paymentInvalid:
+                    print("Payment invalid 2")
+                case .paymentNotAllowed:
+                    print("Payment not allowed 3")
+                default:
+                    print("Other payment error: \(error.localizedDescription)")
+                }
+            } else if let error = transaction.error as NSError? {
+                if error.domain == "ASDErrorDomain" && error.code == 907 {
+                    if let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? NSError,
+                       underlyingError.domain == "AMSErrorDomain" && underlyingError.code == 6 {
+                        print("Payment sheet cancelled 4")
+                    } else {
+                        print("ASDErrorDomain error: \(error.localizedDescription)")
+                    }
+                } else {
+                    print("Other error: \(error.localizedDescription)")
+                }
+            } else {
+                print("Unknown error")
+            }
+            switch transaction.transactionState {
+            case .purchased:
+                print("Transaction successful")
+                SKPaymentQueue.default().finishTransaction(transaction)
+                // Handle successful purchase
+            case .failed:
+                print("Transaction failed: \(String(describing: transaction.error?.localizedDescription))")
+                SKPaymentQueue.default().finishTransaction(transaction)
+                // Handle failed purchase
+            case .restored:
+                print("Transaction restored")
+                SKPaymentQueue.default().finishTransaction(transaction)
+                // Handle restored purchase
+            case .deferred:
+                print("Transaction deferred")
+            case .purchasing:
+                print("Transaction in progress")
+            @unknown default:
+                print("Unknown transaction state")
+            }
+        }
+    }
+
+    // Call this method when initializing your NoctuaService
+    func setupPayments() {
+        SKPaymentQueue.default().add(self)
+    }
+
+    // Call this method when your app is being terminated
+    func tearDownPayments() {
+        SKPaymentQueue.default().remove(self)
     }
 
     private let logger = Logger(
