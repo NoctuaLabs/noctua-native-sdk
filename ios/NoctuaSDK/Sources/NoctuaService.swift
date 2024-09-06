@@ -11,8 +11,6 @@ struct NoctuaServiceConfig : Decodable {
 class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
     let trackerURL: URL
 
-     // Define a typealias for our completion handler
-    
     // Dictionary to store completion handlers for each product
     private var purchaseCompletions: [String: PurchaseCompletion] = [:]
     

@@ -51,7 +51,7 @@ struct ContentView: View {
             }
             
             Button(action: {
-                Noctua.purchaseItem(productId: "noctua.sdktest.ios.pack1", completion: { (success, message) in
+                Noctua.purchaseItem("noctua.sdktest.ios.pack1", completion: { (success, message) in
                     logger.debug("Purchase Item tapped: \(success), \(message)")
                 });
             }) {
