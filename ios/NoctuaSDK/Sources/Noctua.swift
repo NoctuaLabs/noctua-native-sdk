@@ -17,8 +17,17 @@ import Foundation
         plugin?.trackCustomEvent(eventName, payload: payload)
     }
 
-    @objc public static func purchaseItem(productId: String, completion: @escaping PurchaseCompletion) {
-        plugin?.purchaseItem(productId: productId, completion: completion)
+    @objc public static func purchaseItem(_ productId: String, completion: @escaping (Bool, String) -> Void) {
+        print("Noctua purchaseItem called with productId: \(productId)")
+        // Implement your purchase logic here
+        // This should typically involve calling StoreKit to initiate the purchase
+        //plugin?.purchaseItem(productId, completion: completion)
+        
+        // For testing, you can add a dummy implementation:
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            print("Simulating purchase completion")
+            completion(true, "Purchase completed successfully")
+        }
     }
     
     static var plugin: NoctuaPlugin?

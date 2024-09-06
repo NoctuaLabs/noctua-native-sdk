@@ -30,7 +30,7 @@
 }
 
 + (void)purchaseItem:(NSString *)productId completion:(void (^)(BOOL success, NSString *message))completion {
-    [Noctua purchaseItemWithProductId:productId completion:^(BOOL success, NSString * _Nonnull message) {
+    [Noctua purchaseItem:productId completion:^(BOOL success, NSString * _Nonnull message) {
         if (completion) {
             completion(success, message);
         }
