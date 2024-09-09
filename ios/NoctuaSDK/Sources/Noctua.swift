@@ -41,7 +41,7 @@ enum ConfigurationError: Error {
 }
 
 func loadConfig() throws -> NoctuaConfig {
-    guard let path = Bundle.main.path(forResource: "noctuagg", ofType: "json") else {
+    guard let path = Bundle.main.path(forResource: "Raw/noctuagg", ofType: "json") else {
         throw ConfigurationError.fileNotFound
     }
     
