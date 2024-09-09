@@ -117,24 +117,32 @@ class NoctuaPlugin {
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
+        logger.debug("source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
+        
         self.adjust?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
         self.noctua?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
         self.firebase?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
+        logger.debug("orderId: \(orderId), amount: \(amount), extraPayload: \(extraPayload)")
+        
         self.adjust?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
         self.noctua?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
         self.firebase?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
+        logger.debug("eventName: \(eventName), payload: \(payload)")
+        
         self.adjust?.trackCustomEvent(eventName, payload: payload)
         self.noctua?.trackCustomEvent(eventName, payload: payload)
         self.firebase?.trackCustomEvent(eventName, payload: payload)
     }
 
     func purchaseItem(productId: String, completion: @escaping PurchaseCompletion) {
+        logger.debug("productId: \(productId)")
+        
         self.noctua?.purchaseItem(productId: productId, completion: completion)
     }
     
