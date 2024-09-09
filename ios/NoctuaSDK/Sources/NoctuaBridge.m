@@ -30,8 +30,11 @@
 }
 
 + (void)purchaseItem:(NSString *)productId completion:(void (^)(BOOL success, NSString *message))completion {
+    NSLog(@"NativeSDK: NoctuaBridge - purchaseItem called with productId: %@", productId);
     [Noctua purchaseItem:productId completion:^(BOOL success, NSString * _Nonnull message) {
+        NSLog(@"NativeSDK: NoctuaBridge - purchaseItem: %d, %@", success, message);
         if (completion) {
+            NSLog(@"NativeSDK: NoctuaBridge - calling completion with success: %d, message: %@", success, message);
             completion(success, message);
         }
     }];
