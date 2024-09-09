@@ -65,7 +65,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         var payload = payload
         payload["event_name"] = eventName
 
-        let bodyData = try? JSONEncoder().encode(payload.mapValues { AnyEncodable($0 as! Encodable) })
+        let bodyData = try? JSONEncoder().encode(payload.mapValues { AnyEncodable($0) })
         
         guard bodyData != nil else {
             self.logger.error("unable to encode event \(eventName) as json: \(payload)")
@@ -81,15 +81,15 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
             (data, response, error) in
             
             guard error == nil else {
-                self.logger.error("send event \(eventName) failed")
+                self.logger.error("Sending event \(eventName) failed")
                 return
             }
             
             if response == nil {
-                self.logger.warning("send event finished with no response")
+                self.logger.warning("Event \(eventName) sent with no response")
             }
             
-            self.logger.debug("send event \(eventName) to \(response!.url!.absoluteString) succeeded")
+            self.logger.debug("Event \(eventName) sent, payload: \(bodyData!)")
         }
 
         task.resume()
@@ -192,15 +192,35 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
 }
 
 private struct AnyEncodable: Encodable {
-    let value: Encodable
+    private let value: Encodable
 
-    init(_ value: Encodable) {
-        self.value = value
+    init(_ value: Any) {
+        let cfValue = value as CFTypeRef
+        let typeID = CFGetTypeID(cfValue)
+        
+        if typeID == CFBooleanGetTypeID() {
+            self.value = (value as! Bool)
+        } else if typeID == CFNumberGetTypeID() {
+            let number = value as! NSNumber
+            switch CFNumberGetType(number as CFNumber) {
+            case .charType:
+                self.value = number.boolValue
+            case .sInt8Type, .sInt16Type, .sInt32Type, .sInt64Type, .intType, .shortType, .longType, .longLongType:
+                self.value = number.intValue
+            case .float32Type, .float64Type, .floatType, .doubleType, .cgFloatType:
+                self.value = number.doubleValue
+            default:
+                self.value = number.stringValue
+            }
+        } else if let value = value as? NSString {
+            self.value = value as String
+        } else {
+            self.value = "\(value)"
+        }
     }
 
     func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(value)
+        try value.encode(to: encoder)
     }
 }
 
