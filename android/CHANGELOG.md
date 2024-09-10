@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.7] - 2024-09-10
+
+### ⚙️ Miscellaneous Tasks
+
+- Add example config to example app
+
 ## [android-sdk-v0.1.6] - 2024-07-22
 
 ### 🐛 Bug Fixes
