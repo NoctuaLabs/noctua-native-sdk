@@ -55,7 +55,8 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     }
 
     func purchaseItem(productId: String, completion: @escaping PurchaseCompletion) {
-        initiatePayment(productId: "noctua.sdktest.ios.pack1", completion: { (success, message) in
+        print("Noctua SDK Native: NoctuaService.purchaseItem called with productId: \(productId)")
+        initiatePayment(productId: productId, completion: { (success, message) in
             print("purchaseItem: \(success), \(message)")
             completion(success, message)
         })
