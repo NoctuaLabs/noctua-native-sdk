@@ -18,16 +18,8 @@ import Foundation
     }
 
     @objc public static func purchaseItem(_ productId: String, completion: @escaping (Bool, String) -> Void) {
-        print("Noctua purchaseItem called with productId: \(productId)")
-        // Implement your purchase logic here
-        // This should typically involve calling StoreKit to initiate the purchase
-        //plugin?.purchaseItem(productId, completion: completion)
-        
-        // For testing, you can add a dummy implementation:
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            print("Simulating purchase completion")
-            completion(true, "Purchase completed successfully")
-        }
+        print("Noctua SDK Native: Noctua.purchaseItem called with productId: \(productId)")
+        plugin?.purchaseItem(productId: productId, completion: completion)
     }
     
     static var plugin: NoctuaPlugin?
