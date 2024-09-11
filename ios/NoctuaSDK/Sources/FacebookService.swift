@@ -6,9 +6,8 @@
 //
 
 import Foundation
-#if canImport(FBAEMKit)
+#if canImport(FBSDKCoreKit)
 import FBSDKCoreKit
-import FBAEMKit
 #endif
 import os
 
@@ -25,7 +24,7 @@ class FacebookService {
     let config: FacebookServiceConfig
     
     init(config: FacebookServiceConfig) throws {
-#if canImport(FBAEMKit)
+#if canImport(FBSDKCoreKit)
         logger.info("Facebook module detected")
         self.config = config
         
@@ -37,17 +36,17 @@ class FacebookService {
             throw FacebookServiceError.invalidConfig("no eventToken for purchase")
         }
         
-        // There is no init func from the Facebook AEM kit
+        AppEvents.shared.activateApp()
 #else
         throw FacebookServiceError.facebookNotFound
 #endif
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
-#if canImport(FBAEMKit)
+#if canImport(FBSDKCoreKit)
         let facebookEventName = config.eventMap["AdRevenue"] ?? ""
         guard !facebookEventName.isEmpty else  {
-            print("Event name for AdRevenue is not registered in the eventMap")
+            logger.warning("Event name for AdRevenue is not registered in the eventMap")
             return
         }
 
@@ -66,31 +65,24 @@ class FacebookService {
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
-#if canImport(FBAEMKit)
-        let facebookEventName = config.eventMap["Purchase"] ?? ""
-        guard !facebookEventName.isEmpty else  {
-            print("Event name for Purchase is not registered in the eventMap")
-            return
-        }
-                                                
+#if canImport(FBSDKCoreKit)
         var parameters: [AppEvents.ParameterName: Any] = [
-            AppEvents.ParameterName("order_id"): orderId,
-            AppEvents.ParameterName("amount"): amount,
-            AppEvents.ParameterName("currency"): currency
+            AppEvents.ParameterName("fb_transaction_id"): orderId,
         ]
         
         for (key, value) in extraPayload {
             parameters[AppEvents.ParameterName(key)] = value
         }
-        AppEvents.shared.logEvent(AppEvents.Name(facebookEventName), parameters: parameters)
+        AppEvents.shared.logPurchase(amount: amount, currency: currency, parameters: parameters)
+        logger.debug("Facebook Purchase, amount: \(amount), currency: \(currency), parameters: \(parameters)")
 #endif
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
-#if canImport(FBAEMKit)
+#if canImport(FBSDKCoreKit)
         let facebookEventName = config.eventMap[eventName] ?? ""
         guard !facebookEventName.isEmpty else  {
-            print("Event name for " + eventName + " is not registered in the eventMap")
+            logger.warning("Event name for \(eventName) is not registered in the eventMap")
             return
         }
         
@@ -99,11 +91,12 @@ class FacebookService {
             parameters[AppEvents.ParameterName(key)] = value
         }
         AppEvents.shared.logEvent(AppEvents.Name(facebookEventName), parameters: parameters)
+        logger.debug("Facebook \(facebookEventName), parameters: \(parameters)")
 #endif
     }
     
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: NoctuaPlugin.self)
+        category: String(describing: FacebookService.self)
     )
 }

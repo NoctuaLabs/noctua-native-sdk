@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
     firebase.dependency "FirebaseAnalytics", "~> 11.0.0"
   end
   spec.subspec 'FBSDKCoreKit' do |facebook|
-    facebook.dependency "FBSDKCoreKit", "~> 17.0.2"
+    facebook.dependency "FBSDKCoreKit", "~> 17.1.0"
   end
   
   spec.default_subspec = 'Core'
