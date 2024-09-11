@@ -18,8 +18,11 @@ import Foundation
     }
 
     @objc public static func purchaseItem(_ productId: String, completion: @escaping (Bool, String) -> Void) {
-        print("Noctua SDK Native: Noctua.purchaseItem called with productId: \(productId)")
         plugin?.purchaseItem(productId: productId, completion: completion)
+    }
+
+    @objc public static func getActiveCurrency(_ productId: String, completion: @escaping (Bool, String) -> Void) {
+        plugin?.getActiveCurrency(productId: productId, completion: completion)
     }
     
     static var plugin: NoctuaPlugin?
