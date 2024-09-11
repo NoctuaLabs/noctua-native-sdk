@@ -68,9 +68,9 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     func purchaseItem(productId: String, completion: @escaping CompletionCallback) {
         completionHandler = completion
         storeKitOperation = "purchaseItem"
-        print("Noctua SDK Native: NoctuaService.purchaseItem called with productId: \(productId)")
+        self.logger.info("Noctua SDK Native: NoctuaService.purchaseItem called with productId: \(productId)")
         initiatePayment(productId: productId, completion: { (success, message) in
-            print("purchaseItem: \(success), \(message)")
+            self.logger.info("purchaseItem: \(success), \(message)")
             completion(success, message)
         })
     }
@@ -116,7 +116,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
             request.start() // continue to productsRequest
         } else {
             // Handle the case where the user can't make payments
-            print("User can't make payments")
+            self.logger.info("User can't make payments")
             completion(false, "User can't make payments")
         }
     }
@@ -124,22 +124,22 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     // SKProduct related handler. This handler covers both queryProduct and purchaseItem
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         let completion = completionHandler!
-        print("productsRequest: \(response.products)")
+        self.logger.info("productsRequest: \(response.products)")
         if let product = response.products.first {
             if (storeKitOperation == "purchaseItem") {
                 let payment = SKPayment(product: product)
                 SKPaymentQueue.default().add(payment) // continue to paymentQueue
             } else if (storeKitOperation == "getActiveCurrency") {
                 if let currency = product.priceLocale.currencyCode {
-                    print("Product currency: \(currency)")
+                    self.logger.info("Product currency: \(currency)")
                     completion(true, String(currency))
                 } else {
-                    print("Unable to retrieve product currency")
+                    self.logger.warning("Unable to retrieve product currency")
                     completion(false, "Unable to retrieve product currency")
                 }
             }
         } else {
-            print("Product not found")
+            self.logger.warning("Product not found")
             if let productId = response.invalidProductIdentifiers.first {
                 completion(false, "Product not found")
             }
@@ -152,30 +152,30 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
             if let error = transaction.error as? SKError {
                 switch error.code {
                 case .paymentCancelled:
-                    print("Payment cancelled")
+                    self.logger.warning("Payment cancelled")
                     completion(false, "Payment cancelled")
                 case .paymentInvalid:
-                    print("Payment invalid")
+                    self.logger.warning("Payment invalid")
                     completion(false, "Invalid payment")
                 case .paymentNotAllowed:
-                    print("Payment not allowed")
+                    self.logger.warning("Payment not allowed")
                     completion(false, "Payment not allowed")
                 default:
-                    print("Other payment error: \(error.localizedDescription)")
+                    self.logger.warning("Other payment error: \(error.localizedDescription)")
                     completion(false, "error: \(error.localizedDescription)")
                 }
             } else if let error = transaction.error as NSError? {
                 if error.domain == "ASDErrorDomain" && error.code == 907 {
                     if let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? NSError,
                        underlyingError.domain == "AMSErrorDomain" && underlyingError.code == 6 {
-                        print("Payment sheet cancelled")
+                        self.logger.warning("Payment sheet cancelled")
                         completion(false, "Payment sheet cancelled")
                     } else {
-                        print("ASDErrorDomain error: \(error.localizedDescription)")
+                        self.logger.warning("ASDErrorDomain error: \(error.localizedDescription)")
                         completion(false, "Payment error: \(error.localizedDescription)")
                     }
                 } else {
-                    print("Other error: \(error.localizedDescription)")
+                    self.logger.warning("Other error: \(error.localizedDescription)")
                     completion(false, "Payment error: \(error.localizedDescription)")
                 }
             } else {
@@ -187,46 +187,46 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
                         do {
                             let receiptData = try Data(contentsOf: appStoreReceiptURL, options: .alwaysMapped)
                             let receiptString = receiptData.base64EncodedString(options: [])
-                            print("Transaction successful, receiptData: \(receiptString)")
+                            self.logger.warning("Transaction successful, receiptData: \(receiptString)")
                             completion(true, receiptString)
                         } catch {
-                            print("Couldn't read receipt data: \(error)")
+                            self.logger.warning("Couldn't read receipt data: \(error)")
                             completion(false, "Couldn't read receipt data: \(error.localizedDescription)")
                         }
                     } else {
-                        print("Transaction successful, but no receipt data available")
+                        self.logger.warning("Transaction successful, but no receipt data available")
                         completion(false, "Transaction successful, but no receipt data available")
                     }
                 case .failed:
-                    print("Transaction failed: \(String(describing: transaction.error?.localizedDescription))")
+                    self.logger.warning("Transaction failed: \(String(describing: transaction.error?.localizedDescription))")
                     SKPaymentQueue.default().finishTransaction(transaction)
                     completion(false, "failed: \(String(describing: transaction.error?.localizedDescription))")
                 case .restored:
-                    print("Transaction restored")
+                    self.logger.warning("Transaction restored")
                     SKPaymentQueue.default().finishTransaction(transaction)
                     if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
                        FileManager.default.fileExists(atPath: appStoreReceiptURL.path) {
                         do {
                             let receiptData = try Data(contentsOf: appStoreReceiptURL, options: .alwaysMapped)
                             let receiptString = receiptData.base64EncodedString(options: [])
-                            print("Transaction restored, receiptData: \(receiptString)")
+                            self.logger.warning("Transaction restored, receiptData: \(receiptString)")
                             completion(true, receiptString)
                         } catch {
-                            print("Couldn't read receipt data: \(error)")
+                            self.logger.warning("Couldn't read receipt data: \(error)")
                             completion(false, "Couldn't read receipt data: \(error.localizedDescription)")
                         }
                     } else {
-                        print("Transaction restored, but no receipt data available")
+                        self.logger.warning("Transaction restored, but no receipt data available")
                         completion(false, "Transaction restored, but no receipt data available")
                     }
                 case .deferred:
-                    print("Transaction deferred")
+                    self.logger.warning("Transaction deferred")
                     completion(false, "Payment deferred")
                 case .purchasing:
-                    print("Transaction in progress")
+                    self.logger.warning("Transaction in progress")
                     // Do nothing
                 @unknown default:
-                    print("Unknown transaction state")
+                    self.logger.warning("Unknown transaction state")
                     // Do nothing
                 }
             }
