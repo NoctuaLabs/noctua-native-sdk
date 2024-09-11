@@ -7,6 +7,13 @@
             "TestSendEvent": "TestSendEvent"
         }
     },
+    "firebase": {
+        "eventMap": {
+            "AdRevenue": "AdRevenue",
+            "Purchase": "Purchase",
+            "TestSendEvent": "TestSendEvent"
+        }
+    },
     "noctua": {
         "trackerUrl": "",
         "baseUrl": "https://sdk-api-v2.noctuaprojects.com/api/v1"

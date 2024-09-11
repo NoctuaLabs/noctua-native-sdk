@@ -6,7 +6,7 @@
 //
 
 import Foundation
-#if canImport(FirebaseCore)
+#if canImport(FirebaseAnalytics)
 import FirebaseCore
 import FirebaseAnalytics
 #endif
@@ -25,7 +25,7 @@ class FirebaseService {
     let config: FirebaseServiceConfig
     
     init(config: FirebaseServiceConfig) throws {
-#if canImport(FirebaseCore)
+#if canImport(FirebaseAnalytics)
         logger.info("Firebase module detected")
         self.config = config
         
@@ -38,21 +38,20 @@ class FirebaseService {
         }
         
         FirebaseApp.configure()
-
 #else
         throw FirebaseServiceError.firebaseNotFound
 #endif
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
-#if canImport(Firebase)
+#if canImport(FirebaseAnalytics)
         let firebaseEventName = config.eventMap["AdRevenue"] ?? ""
         guard !firebaseEventName.isEmpty else  {
             print("Event name for AdRevenue is not registered in the eventMap")
             return
         }
 
-        var parameters: [String:Encodable] = [
+        var parameters: [String:Any] = [
             "source": source,
             "ad_revenue": revenue,
             AnalyticsParameterCurrency: currency
@@ -66,7 +65,7 @@ class FirebaseService {
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
-#if canImport(Firebase)
+#if canImport(FirebaseAnalytics)
         let firebaseEventName = config.eventMap["Purchase"] ?? ""
         guard !firebaseEventName.isEmpty else  {
             print("Event name for Purchase is not registered in the eventMap")
@@ -87,7 +86,7 @@ class FirebaseService {
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
-#if canImport(Firebase)
+#if canImport(FirebaseAnalytics)
         let firebaseEventName = config.eventMap[eventName] ?? ""
         guard !firebaseEventName.isEmpty else  {
             print("Event name for " + eventName + " is not registered in the eventMap")
