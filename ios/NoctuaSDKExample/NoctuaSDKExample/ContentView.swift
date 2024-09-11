@@ -63,6 +63,19 @@ struct ContentView: View {
                     .cornerRadius(8)
             }
 
+            Button(action: {
+                Noctua.getActiveCurrency("noctua.sdktest.ios.pack1", completion: { (success, message) in
+                    logger.debug("Get Active Currency tapped: \(success), \(message)")
+                });
+            }) {
+                Text("Get Active Currency")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+
         }
         .padding()
     }

@@ -2,18 +2,21 @@ import Foundation
 import os
 import StoreKit
 
-public typealias PurchaseCompletion = (Bool, String) -> Void
+public typealias CompletionCallback = (Bool, String) -> Void
 
 struct NoctuaServiceConfig : Decodable {
     let trackerURL: String?
 }
 
 class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
+    
     let trackerURL: URL
 
-    // Dictionary to store completion handlers for each product
-    private var purchaseCompletions: [String: PurchaseCompletion] = [:]
-    
+    // Used to differentiate between different StoreKit operation
+    private var storeKitOperation: String? = nil
+    // One StoreKit operation at a time
+    private var completionHandler: CompletionCallback? = nil
+
     init(config: NoctuaServiceConfig) throws {
         let url = if config.trackerURL == nil || config.trackerURL!.isEmpty {
             URL(string:"https://kafka-proxy-poc.noctuaprojects.com/api/v1/events")
@@ -36,7 +39,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         payload["source"] = source
         payload["revenue"] = revenue
         payload["currency"] = currency
-        
+
         sendEvent("AdRevenue", payload: payload)
     }
     
@@ -54,7 +57,17 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
 
     }
 
-    func purchaseItem(productId: String, completion: @escaping PurchaseCompletion) {
+    func getActiveCurrency(productId: String, completion: @escaping CompletionCallback) {
+        completionHandler = completion
+        storeKitOperation = "getActiveCurrency"
+        let request = SKProductsRequest(productIdentifiers: Set([productId]))
+        request.delegate = self
+        request.start() // continue to productsRequest
+    }
+
+    func purchaseItem(productId: String, completion: @escaping CompletionCallback) {
+        completionHandler = completion
+        storeKitOperation = "purchaseItem"
         print("Noctua SDK Native: NoctuaService.purchaseItem called with productId: \(productId)")
         initiatePayment(productId: productId, completion: { (success, message) in
             print("purchaseItem: \(success), \(message)")
@@ -96,12 +109,11 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         task.resume()
     }
 
-    private func initiatePayment(productId: String, completion: @escaping PurchaseCompletion) {
-        purchaseCompletions[productId] = completion
+    private func initiatePayment(productId: String, completion: @escaping CompletionCallback) {
         if SKPaymentQueue.canMakePayments() {
             let request = SKProductsRequest(productIdentifiers: Set([productId]))
             request.delegate = self
-            request.start()
+            request.start() // continue to productsRequest
         } else {
             // Handle the case where the user can't make payments
             print("User can't make payments")
@@ -109,26 +121,34 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         }
     }
 
+    // SKProduct related handler. This handler covers both queryProduct and purchaseItem
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        let completion = completionHandler!
         print("productsRequest: \(response.products)")
         if let product = response.products.first {
-            let payment = SKPayment(product: product)
-            SKPaymentQueue.default().add(payment)
+            if (storeKitOperation == "purchaseItem") {
+                let payment = SKPayment(product: product)
+                SKPaymentQueue.default().add(payment) // continue to paymentQueue
+            } else if (storeKitOperation == "getActiveCurrency") {
+                if let currency = product.priceLocale.currencyCode {
+                    print("Product currency: \(currency)")
+                    completion(true, String(currency))
+                } else {
+                    print("Unable to retrieve product currency")
+                    completion(false, "Unable to retrieve product currency")
+                }
+            }
         } else {
             print("Product not found")
-            if let productId = response.invalidProductIdentifiers.first,
-               let completion = purchaseCompletions.removeValue(forKey: productId) {
+            if let productId = response.invalidProductIdentifiers.first {
                 completion(false, "Product not found")
             }
         }
     }
 
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        let completion = completionHandler!
         for transaction in transactions {
-            let productId = transaction.payment.productIdentifier
-            guard let completion = purchaseCompletions[productId] else {
-                continue
-            }
             if let error = transaction.error as? SKError {
                 switch error.code {
                 case .paymentCancelled:
