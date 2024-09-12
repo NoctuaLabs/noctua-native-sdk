@@ -36,13 +36,25 @@ class Noctua {
                 Class.forName("com.adjust.sdk.Adjust")
                 true
             } catch (e: ClassNotFoundException) {
-                Log.w(TAG, "Adjust SDK is not found. Adjust tracking will be disabled.")
                 false
             }
 
-        if (adjustAvailable && config.adjust != null) {
-            adjust = AdjustService(config.adjust)
-            adjust?.onCreate(context)
+        if (!adjustAvailable) {
+            Log.w(TAG, "Adjust SDK is not found.")
+        }
+        else if (config.adjust == null) {
+            Log.w(TAG, "Adjust configuration is not found.")
+        }
+        else {
+            try {
+                adjust = AdjustService(config.adjust, context)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to initialize Adjust SDK: ${e.message}")
+            }
+        }
+
+        if (adjust == null) {
+            Log.w(TAG, "Adjust tracking is disabled.")
         }
 
         val firebaseAvailable =
@@ -50,14 +62,25 @@ class Noctua {
                 Class.forName("com.google.firebase.FirebaseApp")
                 true
             } catch (e: ClassNotFoundException) {
-                Log.w(TAG, "Firebase SDK is not found. Firebase tracking will be disabled.")
                 false
             }
 
-        if (firebaseAvailable && config.firebase != null) {
-            firebase = FirebaseService(config.firebase);
-            firebase?.onCreate(context)
+        if (!firebaseAvailable) {
+            Log.w(TAG, "Firebase SDK is not found.")
+        }
+        else if (config.firebase == null) {
+            Log.w(TAG, "Firebase configuration is not found.")
+        }
+        else {
+            try {
+                firebase = FirebaseService(config.firebase, context)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to initialize Firebase SDK: ${e.message}")
+            }
+        }
 
+        if (firebase == null) {
+            Log.w(TAG, "Firebase tracking is disabled.")
         }
 
         val facebookAvailable =
@@ -65,14 +88,26 @@ class Noctua {
                 Class.forName("com.facebook.FacebookSdk")
                 true
             } catch (e: ClassNotFoundException) {
-                Log.w(TAG, "Firebase SDK is not found. Facebook tracking will be disabled.")
+                Log.w(TAG, "Firebase SDK is not found.")
                 false
             }
 
-        if (facebookAvailable && config.facebook != null) {
-            facebook = FacebookService(config.facebook);
-            facebook?.onCreate(context)
+        if (!facebookAvailable) {
+            Log.w(TAG, "Facebook SDK is not found.")
+        }
+        else if (config.facebook == null) {
+            Log.w(TAG, "Facebook configuration is not found.")
+        }
+        else {
+            try {
+                facebook = FacebookService(config.facebook, context)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to initialize Facebook SDK: ${e.message}")
+            }
+        }
 
+        if (facebook == null) {
+            Log.w(TAG, "Facebook tracking is disabled.")
         }
 
         noctua = config.noctua?.let {
@@ -91,23 +126,11 @@ class Noctua {
     fun onResume() {
         checkInit();
         adjust?.onResume()
-        firebase?.onResume()
-        facebook?.onResume()
     }
 
     fun onPause() {
         checkInit();
         adjust?.onPause()
-        firebase?.onResume()
-        facebook?.onResume()
-    }
-
-    fun trackCustomEvent(eventName: String, payload: MutableMap<String, Any> = mutableMapOf()) {
-        checkInit()
-        adjust?.trackCustomEvent(eventName, payload)
-        firebase?.trackCustomEvent(eventName, payload)
-        facebook?.trackCustomEvent(eventName, payload)
-        noctua?.trackCustomEvent(eventName, payload)
     }
 
     fun trackAdRevenue(
@@ -117,6 +140,22 @@ class Noctua {
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
         checkInit();
+
+        if (source.isEmpty()) {
+            Log.e(TAG, "source is empty")
+            return
+        }
+
+        if (revenue <= 0) {
+            Log.e(TAG, "revenue is negative or zero")
+            return
+        }
+
+        if (currency.isEmpty()) {
+            Log.e(TAG, "currency is empty")
+            return
+        }
+
         adjust?.trackAdRevenue(source, revenue, currency, extraPayload)
         firebase?.trackAdRevenue(source, revenue, currency, extraPayload)
         facebook?.trackAdRevenue(source, revenue, currency, extraPayload)
@@ -131,10 +170,33 @@ class Noctua {
     ) {
         checkInit();
 
+        if (orderId.isEmpty()) {
+            Log.e(TAG, "orderId is empty")
+            return
+        }
+
+        if (amount <= 0) {
+            Log.e(TAG, "amount is negative or zero")
+            return
+        }
+
+        if (currency.isEmpty()) {
+            Log.e(TAG, "currency is empty")
+            return
+        }
+
         adjust?.trackPurchase(orderId, amount, currency, extraPayload)
         firebase?.trackPurchase(orderId, amount, currency, extraPayload)
         facebook?.trackPurchase(orderId, amount, currency, extraPayload)
         noctua?.trackPurchase(orderId, amount, currency, extraPayload)
+    }
+
+    fun trackCustomEvent(eventName: String, payload: MutableMap<String, Any> = mutableMapOf()) {
+        checkInit()
+        adjust?.trackCustomEvent(eventName, payload)
+        firebase?.trackCustomEvent(eventName, payload)
+        facebook?.trackCustomEvent(eventName, payload)
+        noctua?.trackCustomEvent(eventName, payload)
     }
 
     companion object {
