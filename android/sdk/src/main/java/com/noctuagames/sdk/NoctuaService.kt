@@ -49,18 +49,6 @@ internal class NoctuaService(
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        if (source.isEmpty()) {
-            throw IllegalArgumentException("orderId is not set")
-        }
-
-        if (revenue <= 0) {
-            throw IllegalArgumentException("revenue is negative or zero")
-        }
-
-        if (currency.isEmpty()) {
-            throw IllegalArgumentException("currency is not set")
-        }
-
         extraPayload["source"] = source
         extraPayload["revenue"] = revenue
         extraPayload["currency"] = currency
@@ -74,18 +62,6 @@ internal class NoctuaService(
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        if (orderId.isEmpty()) {
-            throw IllegalArgumentException("orderId is not set")
-        }
-
-        if (amount <= 0) {
-            throw IllegalArgumentException("revenue is negative or zero")
-        }
-
-        if (currency.isEmpty()) {
-            throw IllegalArgumentException("currency is not set")
-        }
-
         extraPayload["orderId"] = orderId
         extraPayload["amount"] = amount
         extraPayload["currency"] = currency

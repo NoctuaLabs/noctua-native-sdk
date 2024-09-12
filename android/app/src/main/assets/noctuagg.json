@@ -10,9 +10,7 @@
   },
   "firebase": {
     "eventMap": {
-      "Purchase": "FIREBASE_PURCHASE_EVENT_TOKEN",
-      "AdRevenue": "FIREBASE_AD_REVENUE_EVENT_TOKEN",
-      "TestSendEvent": "FIREBASE_CUSTOM_EVENT_TOKEN"
+      "TestSendEvent": "TestSendEvent"
     }
   },
   "facebook": {

@@ -13,39 +13,29 @@ data class AdjustServiceConfig(
     val eventMap: Map<String, String>,
 )
 
-internal class AdjustService(private val config: AdjustServiceConfig) {
-    private lateinit var context: Context
-    companion object {
-        private val TAG = AdjustService::class.simpleName
-    }
-
+internal class AdjustService(private val config: AdjustServiceConfig, context: Context) {
     init {
         if (config.appToken.isEmpty()) {
-            throw IllegalArgumentException("App token is not set in noctuaggconfig.json")
+            throw IllegalArgumentException("App token is not set")
         }
 
         if (config.eventMap.isEmpty()) {
-            throw IllegalArgumentException("Event map is not set in noctuaggconfig.json")
+            throw IllegalArgumentException("Event map is not set")
         }
 
         if (!config.eventMap.containsKey("Purchase")) {
-            throw IllegalArgumentException("Event name for Purchase is not set in noctuaggconfig.json")
+            throw IllegalArgumentException("Event name for Purchase is not set")
         }
-    }
 
-    fun onCreate(context: Context) {
-        Log.w(TAG, "AdjustTracker.onCreate")
-        this.context = context
         val environment = if (config.environment.isNullOrEmpty()) {
             AdjustConfig.ENVIRONMENT_SANDBOX
         } else {
             config.environment
         }
 
-        Log.w(TAG, "Adjust initialization")
         val adjustConfig = AdjustConfig(context, config.appToken, environment)
-
         Adjust.onCreate(adjustConfig)
+        Log.i(TAG, "Adjust SDK initialized successfully")
     }
 
     fun onResume() {
@@ -78,18 +68,6 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        if (orderId.isEmpty()) {
-            throw IllegalArgumentException("orderId is not set")
-        }
-
-        if (amount <= 0) {
-            throw IllegalArgumentException("revenue is negative or zero")
-        }
-
-        if (currency.isEmpty()) {
-            throw IllegalArgumentException("currency is not set")
-        }
-
         val event = AdjustEvent(config.eventMap["Purchase"])
         event.setRevenue(amount, currency)
         event.orderId = orderId
@@ -103,9 +81,10 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
         if (!config.eventMap.containsKey(eventName)) {
-            Log.w(AdjustService.TAG, "This event is not available in the Adjust event map: $eventName")
+            Log.e(TAG, "$eventName is not available in the event map")
             return
         }
+
         val adjustEvent = AdjustEvent(config.eventMap[eventName])
 
         for ((key, value) in payload) {
@@ -115,4 +94,7 @@ internal class AdjustService(private val config: AdjustServiceConfig) {
         Adjust.trackEvent(adjustEvent)
     }
 
+    companion object {
+        private val TAG = AdjustService::class.simpleName
+    }
 }
