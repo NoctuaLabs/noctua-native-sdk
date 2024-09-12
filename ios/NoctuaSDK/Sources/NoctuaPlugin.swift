@@ -122,6 +122,7 @@ class NoctuaPlugin {
         self.adjust?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
         self.noctua?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
         self.firebase?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
+        self.facebook?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
@@ -130,6 +131,7 @@ class NoctuaPlugin {
         self.adjust?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
         self.noctua?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
         self.firebase?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
+        self.facebook?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
@@ -138,6 +140,7 @@ class NoctuaPlugin {
         self.adjust?.trackCustomEvent(eventName, payload: payload)
         self.noctua?.trackCustomEvent(eventName, payload: payload)
         self.firebase?.trackCustomEvent(eventName, payload: payload)
+        self.facebook?.trackCustomEvent(eventName, payload: payload)
     }
 
     func purchaseItem(productId: String, completion: @escaping CompletionCallback) {

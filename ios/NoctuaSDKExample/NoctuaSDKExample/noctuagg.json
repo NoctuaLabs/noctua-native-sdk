@@ -1,23 +1,21 @@
 {
-    "clientId": "<NOCTUA_CLIENT_ID>",
-    "adjust": {
-        "appToken": "<ADJUST_APP_TOKEN>",
+    "productCode": "noctuaggdev",
+    "clientId": "1-e724f5a9e6f1",
+    "facebook": {
         "eventMap": {
-            "Purchase": "ADJUST_PURCHASE_EVENT_TOKEN",
-            "TestSendEvent": "ADJUST_CUSTOM_EVENT_TOKEN"
+            "Purchase": "Purchase",
+            "TestSendEvent": "TestSendEvent"
         }
     },
     "firebase": {
         "eventMap": {
-            "Purchase": "FIREBASE_PURCHASE_EVENT_TOKEN",
-            "TestSendEvent": "FIREBASE_CUSTOM_EVENT_TOKEN"
+            "AdRevenue": "AdRevenue",
+            "Purchase": "Purchase",
+            "TestSendEvent": "TestSendEvent"
         }
     },
-    "facebook": {
-        "eventMap": {
-            "Purchase": "FACEBOOK_PURCHASE_EVENT_TOKEN",
-            "TestSendEvent": "FACEBOOK_CUSTOM_EVENT_TOKEN"
-        }
-    },
-    "noctua": {}
+    "noctua": {
+        "trackerUrl": "",
+        "baseUrl": "https://sdk-api-v2.noctuaprojects.com/api/v1"
+    }
 }

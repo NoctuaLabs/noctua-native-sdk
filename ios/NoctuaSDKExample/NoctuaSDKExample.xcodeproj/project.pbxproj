@@ -28,6 +28,7 @@
 		B135B7AF2C5AF28D0091DCC8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B135B7B72C5B1B400091DCC8 /* NoctuaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = NoctuaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B135B7BE2C5B3A8D0091DCC8 /* noctuagg.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = noctuagg.json; sourceTree = "<group>"; };
+		B15F9B512C911AAD00006779 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +64,7 @@
 		B135B7A72C5AF28B0091DCC8 /* NoctuaSDKExample */ = {
 			isa = PBXGroup;
 			children = (
+				B15F9B512C911AAD00006779 /* Info.plist */,
 				0C3737F12C60DD3700880FB6 /* GoogleService-Info.plist */,
 				B135B7A82C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift */,
 				B135B7AA2C5AF28B0091DCC8 /* ContentView.swift */,
@@ -356,6 +358,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NoctuaSDKExample/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "NoctuaGames iOS SDK Test";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -390,6 +395,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NoctuaSDKExample/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "NoctuaGames iOS SDK Test";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "NoctuaSDK"
-  spec.version      = "0.1.19"
+  spec.version      = "0.1.20"
   spec.summary      = "Noctua iOS SDK"
   spec.description  = "Noctua SDK is a framework to publish game in Noctua platform"
   spec.homepage     = "https://github.com/NoctuaLabs/noctua-native-sdk"
@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
     firebase.dependency "FirebaseAnalytics", "~> 11.0.0"
   end
   spec.subspec 'FBSDKCoreKit' do |facebook|
-    facebook.dependency "FBSDKCoreKit", "~> 17.0.2"
+    facebook.dependency "FBSDKCoreKit", "~> 17.1.0"
   end
   
   spec.default_subspec = 'Core'
