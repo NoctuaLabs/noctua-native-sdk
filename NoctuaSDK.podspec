@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "NoctuaSDK"
-  spec.version      = "0.1.19"
+  spec.version      = "0.1.20"
   spec.summary      = "Noctua iOS SDK"
   spec.description  = "Noctua SDK is a framework to publish game in Noctua platform"
   spec.homepage     = "https://github.com/NoctuaLabs/noctua-native-sdk"

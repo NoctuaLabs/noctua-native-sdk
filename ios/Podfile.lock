@@ -96,16 +96,16 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - NoctuaSDK (0.1.18):
-    - NoctuaSDK/Core (= 0.1.18)
-  - NoctuaSDK/Adjust (0.1.18):
+  - NoctuaSDK (0.1.20):
+    - NoctuaSDK/Core (= 0.1.20)
+  - NoctuaSDK/Adjust (0.1.20):
     - Adjust (~> 4.38.4)
-  - NoctuaSDK/Core (0.1.18)
-  - NoctuaSDK/FBSDKCoreKit (0.1.18):
+  - NoctuaSDK/Core (0.1.20)
+  - NoctuaSDK/FBSDKCoreKit (0.1.20):
     - FBSDKCoreKit (~> 17.1.0)
-  - NoctuaSDK/Firebase (0.1.18):
+  - NoctuaSDK/Firebase (0.1.20):
     - Firebase (~> 11.0.0)
-  - NoctuaSDK/FirebaseAnalytics (0.1.18):
+  - NoctuaSDK/FirebaseAnalytics (0.1.20):
     - FirebaseAnalytics (~> 11.0.0)
   - PromisesObjC (2.4.0)
 
@@ -149,7 +149,7 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: 6e49ffac7d3f2c3ded9cc663f912a13b67bbd0de
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  NoctuaSDK: 3f9f58d047698752b0055efaac31fdddf8056fed
+  NoctuaSDK: ecba47a5eed2442e6283eebb261be2226dca48df
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
 PODFILE CHECKSUM: bfdd591ac7d62168c344f0861fd0b998938c2666
