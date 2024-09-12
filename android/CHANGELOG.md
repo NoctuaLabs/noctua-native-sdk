@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.8] - 2024-09-12
+
+### 🚜 Refactor
+
+- Makes tracker initialization and tracking events more robust to errors
+
 ## [android-sdk-v0.1.7] - 2024-09-10
 
 ### ⚙️ Miscellaneous Tasks
