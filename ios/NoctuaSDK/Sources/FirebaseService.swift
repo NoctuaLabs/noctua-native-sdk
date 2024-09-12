@@ -37,7 +37,9 @@ class FirebaseService {
             throw FirebaseServiceError.invalidConfig("no eventToken for purchase")
         }
         
-        FirebaseApp.configure()
+        if (FirebaseApp.app() == nil) {
+            FirebaseApp.configure()
+        }
 #else
         throw FirebaseServiceError.firebaseNotFound
 #endif
