@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.9] - 2024-09-13
+
+### 🐛 Bug Fixes
+
+- Use exact facebook version to be able to publish to maven central
+
 ## [android-sdk-v0.1.8] - 2024-09-12
 
 ### 🚜 Refactor
