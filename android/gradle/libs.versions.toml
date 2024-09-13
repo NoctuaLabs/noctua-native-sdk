@@ -1,7 +1,7 @@
 [versions]
 adjustAndroid = "4.38.5"
 agp = "8.6.0"
-facebookCore = "latest.release"
+facebookCore = "17.0.1"
 firebaseBom = "33.2.0"
 gson = "2.10.1"
 installreferrer = "2.2"
