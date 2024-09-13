@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.11] - 2024-09-13
+
+### 🐛 Bug Fixes
+
+- Remove firebase bom to makes maven publish green
+
 ## [android-sdk-v0.1.10] - 2024-09-13
 
 ### 🐛 Bug Fixes
