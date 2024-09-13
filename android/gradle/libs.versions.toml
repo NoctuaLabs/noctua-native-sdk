@@ -2,7 +2,7 @@
 adjustAndroid = "4.38.5"
 agp = "8.6.0"
 facebookCore = "17.0.1"
-firebaseBom = "33.2.0"
+firebaseAnalytics = "22.1.0"
 gson = "2.10.1"
 installreferrer = "2.2"
 kotlin = "2.0.0"
@@ -23,8 +23,7 @@ playServicesAppset = "16.1.0"
 adjust-android = { module = "com.adjust.sdk:adjust-android", version.ref = "adjustAndroid" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 facebook-core = { module = "com.facebook.android:facebook-core", version.ref = "facebookCore" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 installreferrer = { module = "com.android.installreferrer:installreferrer", version.ref = "installreferrer" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

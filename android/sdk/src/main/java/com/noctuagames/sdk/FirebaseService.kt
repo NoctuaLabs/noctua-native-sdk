@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import android.os.Bundle
 import com.google.firebase.FirebaseApp
-
 import com.google.firebase.analytics.FirebaseAnalytics
 
 data class FirebaseServiceConfig(
