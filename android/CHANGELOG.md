@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.10] - 2024-09-13
+
+### 🐛 Bug Fixes
+
+- Disable facebook temporarily so Maven will accept this version
+
 ## [android-sdk-v0.1.9] - 2024-09-13
 
 ### 🐛 Bug Fixes
