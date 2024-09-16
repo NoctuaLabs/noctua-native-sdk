@@ -14,9 +14,12 @@
     }
   },
   "facebook": {
+    "appId": "FACEBOOK_APP_ID",
+    "clientToken": "FACEBOOK_CLIENT_TOKEN",
+    "enableDebug": true,
     "eventMap": {
-      "AdRevenue": "FACEBOOK_AD_REVENUE_EVENT_TOKEN",
-      "TestSendEvent": "FACEBOOK_CUSTOM_EVENT_TOKEN"
+      "AdRevenue": "ad_revenue",
+      "TestSendEvent": "test_send_event"
     }
   },
   "noctua": {

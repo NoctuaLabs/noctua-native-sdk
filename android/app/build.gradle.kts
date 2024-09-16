@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.noctuagames.unrealsdktest"
+    namespace = "com.noctuagames.android.sdktest"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.noctuagames.unrealsdktest"
+        applicationId = "com.noctuagames.android.sdktest"
         minSdk = 29
         targetSdk = 34
         versionCode = 188

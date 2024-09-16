@@ -47,33 +47,31 @@ class FirebaseService {
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
-        let firebaseEventName = config.eventMap["AdRevenue"] ?? ""
-        guard !firebaseEventName.isEmpty else  {
-            print("Event name for AdRevenue is not registered in the eventMap")
-            return
-        }
+        let eventName = config.eventMap["AdRevenue"] ?? "ad_revenue"
 
         var parameters: [String:Any] = [
-            "source": source,
-            "ad_revenue": revenue,
+            AnalyticsParameterAdSource: source,
+            AnalyticsParameterValue: revenue,
             AnalyticsParameterCurrency: currency
         ]
         
         for (key, value) in extraPayload {
             parameters[key] = value
         }
-        Analytics.logEvent(firebaseEventName, parameters: parameters)
+
+        Analytics.logEvent(eventName, parameters: parameters)
+
+        logger.debug("'\(eventName)' tracked: "
+            + "source: \(source), "
+            + "revenue: \(revenue), "
+            + "currency: \(currency), "
+            + "extraPayload: \(extraPayload)"
+        )
 #endif
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
-        let firebaseEventName = config.eventMap["Purchase"] ?? ""
-        guard !firebaseEventName.isEmpty else  {
-            print("Event name for Purchase is not registered in the eventMap")
-            return
-        }
-                                                
         var parameters: [String: Any] = [
             AnalyticsParameterTransactionID: orderId,
             AnalyticsParameterValue: amount,
@@ -83,19 +81,29 @@ class FirebaseService {
         for (key, value) in extraPayload {
             parameters[key] = value
         }
-        Analytics.logEvent(firebaseEventName, parameters: parameters)
+
+        Analytics.logEvent(AnalyticsEventPurchase, parameters: parameters)
+
+        logger.debug("'\(AnalyticsEventPurchase)' tracked: "
+            + "currency: \(currency), "
+            + "amount: \(amount), "
+            + "orderId: \(orderId), "
+            + "extraPayload: \(extraPayload)"
+        )
 #endif
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
-        let firebaseEventName = config.eventMap[eventName] ?? ""
-        guard !firebaseEventName.isEmpty else  {
-            print("Event name for " + eventName + " is not registered in the eventMap")
+        let eventName = config.eventMap[eventName] ?? ""
+        guard !eventName.isEmpty else  {
+            logger.error("'\(eventName)' (custom) is not available in the eventMap")
             return
         }
        
-        Analytics.logEvent(firebaseEventName, parameters: payload)
+        Analytics.logEvent(eventName, parameters: payload)
+
+        logger.debug("'\(eventName)' (custom) tracked: payload: \(payload)"
 #endif
     }
     

@@ -3,7 +3,6 @@ package com.noctuagames.sdk
 import android.content.Context
 import android.util.Log
 import com.google.gson.GsonBuilder
-import com.google.gson.FieldNamingPolicy
 import java.io.IOException
 
 data class NoctuaConfig(
@@ -14,19 +13,18 @@ data class NoctuaConfig(
     val noctua: NoctuaServiceConfig?,
 )
 
-class Noctua {
-    private lateinit var clientId: String
-    private var adjust: AdjustService? = null
-    private var firebase: FirebaseService? = null
-    private var facebook: FacebookService? = null
-    private var noctua: NoctuaService? = null
+class Noctua(context: Context) {
+    private val clientId: String
+    private val adjust: AdjustService?
+    private val firebase: FirebaseService?
+    private val facebook: FacebookService?
+    private val noctua: NoctuaService?
 
-    fun init(context: Context) {
-        Log.w(TAG, "init")
+    init {
         val config = loadAppConfig(context)
 
         if (config.clientId.isNullOrEmpty()) {
-            throw IllegalArgumentException("clientId is not set in noctuagg.json")
+            throw IllegalArgumentException("clientId is not set")
         }
 
         this.clientId = config.clientId
@@ -41,15 +39,16 @@ class Noctua {
 
         if (!adjustAvailable) {
             Log.w(TAG, "Adjust SDK is not found.")
-        }
-        else if (config.adjust == null) {
+            adjust = null
+        } else if (config.adjust == null) {
             Log.w(TAG, "Adjust configuration is not found.")
-        }
-        else {
-            try {
-                adjust = AdjustService(config.adjust, context)
+            adjust = null
+        } else {
+            adjust = try {
+                AdjustService(config.adjust, context)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Adjust SDK: ${e.message}")
+                null
             }
         }
 
@@ -67,15 +66,18 @@ class Noctua {
 
         if (!firebaseAvailable) {
             Log.w(TAG, "Firebase SDK is not found.")
+            firebase = null
         }
         else if (config.firebase == null) {
             Log.w(TAG, "Firebase configuration is not found.")
+            firebase = null
         }
         else {
-            try {
-                firebase = FirebaseService(config.firebase, context)
+            firebase = try {
+                FirebaseService(config.firebase, context)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Firebase SDK: ${e.message}")
+                null
             }
         }
 
@@ -85,7 +87,7 @@ class Noctua {
 
         val facebookAvailable =
             try {
-                Class.forName("com.facebook.FacebookSdk")
+                Class.forName("com.facebook.appevents.AppEventsLogger")
                 true
             } catch (e: ClassNotFoundException) {
                 Log.w(TAG, "Firebase SDK is not found.")
@@ -94,15 +96,18 @@ class Noctua {
 
         if (!facebookAvailable) {
             Log.w(TAG, "Facebook SDK is not found.")
+            facebook = null
         }
         else if (config.facebook == null) {
             Log.w(TAG, "Facebook configuration is not found.")
+            facebook = null
         }
         else {
-            try {
-                facebook = FacebookService(config.facebook, context)
+            facebook = try {
+                FacebookService(config.facebook, context)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Facebook SDK: ${e.message}")
+                null
             }
         }
 
@@ -117,19 +122,11 @@ class Noctua {
         noctua?.trackFirstInstall()
     }
 
-    private fun checkInit() {
-        if (!this::clientId.isInitialized) {
-            throw IllegalArgumentException("SDK not initialized. Call init() first.")
-        }
-    }
-
     fun onResume() {
-        checkInit();
         adjust?.onResume()
     }
 
     fun onPause() {
-        checkInit();
         adjust?.onPause()
     }
 
@@ -139,8 +136,6 @@ class Noctua {
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        checkInit();
-
         if (source.isEmpty()) {
             Log.e(TAG, "source is empty")
             return
@@ -168,8 +163,6 @@ class Noctua {
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        checkInit();
-
         if (orderId.isEmpty()) {
             Log.e(TAG, "orderId is empty")
             return
@@ -192,7 +185,6 @@ class Noctua {
     }
 
     fun trackCustomEvent(eventName: String, payload: MutableMap<String, Any> = mutableMapOf()) {
-        checkInit()
         adjust?.trackCustomEvent(eventName, payload)
         firebase?.trackCustomEvent(eventName, payload)
         facebook?.trackCustomEvent(eventName, payload)
@@ -201,18 +193,29 @@ class Noctua {
 
     companion object {
         private val TAG = Noctua::class.simpleName
-        private val instance = Noctua()
+        private lateinit var instance: Noctua
 
-        fun init(context: Context) {
+        fun init(context: Context)  {
             Log.w(TAG, "init")
-            instance.init(context)
+
+            instance = Noctua(context)
         }
 
         fun onResume() {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
             instance.onResume()
         }
 
         fun onPause() {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
             instance.onPause()
         }
 
@@ -222,6 +225,11 @@ class Noctua {
             currency: String,
             extraPayload: MutableMap<String, Any> = mutableMapOf()
         ) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
             instance.trackAdRevenue(source, revenue, currency, extraPayload)
         }
 
@@ -231,10 +239,20 @@ class Noctua {
             currency: String,
             extraPayload: MutableMap<String, Any> = mutableMapOf()
         ) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
             instance.trackPurchase(orderId, amount, currency, extraPayload)
         }
 
         fun trackCustomEvent(eventName: String, payload: MutableMap<String, Any> = mutableMapOf()) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
             instance.trackCustomEvent(eventName, payload)
         }
     }

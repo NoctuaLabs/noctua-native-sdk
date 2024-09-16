@@ -10,15 +10,14 @@ struct NoctuaConfig : Decodable {
 }
 
 class NoctuaPlugin {
-    let config: NoctuaConfig
-    let noctua: NoctuaService?
-    let adjust: AdjustService?
-    let firebase: FirebaseService?
-    let facebook: FacebookService?
+    private let config: NoctuaConfig
+    private let noctua: NoctuaService?
+    private let adjust: AdjustService?
+    private let firebase: FirebaseService?
+    private let facebook: FacebookService?
 
     init(config: NoctuaConfig) {
         self.config = config
-        
 
         if self.config.noctua == nil {
             logger.warning("config for NoctuaService not found")
@@ -117,30 +116,54 @@ class NoctuaPlugin {
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
-        logger.debug("source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
-        
+        if source.isEmpty {
+            logger.error("source is empty")
+            return
+        }
+
+        if revenue <= 0 {
+            logger.error("revenue is negative or zero")
+            return
+        }
+
+        if currency.isEmpty {
+            logger.error("currency is empty")
+            return
+        }
+
         self.adjust?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
-        self.noctua?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
         self.firebase?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
         self.facebook?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
+        self.noctua?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
-        logger.debug("orderId: \(orderId), amount: \(amount), extraPayload: \(extraPayload)")
-        
+        if orderId.isEmpty {
+            logger.error("orderId is empty")
+            return
+        }
+
+        if amount <= 0 {
+            logger.error("amount is negative or zero")
+            return
+        }
+
+        if currency.isEmpty {
+            logger.error("currency is empty")
+            return
+        }
+
         self.adjust?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
-        self.noctua?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
         self.firebase?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
         self.facebook?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
+        self.noctua?.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
-        logger.debug("eventName: \(eventName), payload: \(payload)")
-        
         self.adjust?.trackCustomEvent(eventName, payload: payload)
-        self.noctua?.trackCustomEvent(eventName, payload: payload)
         self.firebase?.trackCustomEvent(eventName, payload: payload)
         self.facebook?.trackCustomEvent(eventName, payload: payload)
+        self.noctua?.trackCustomEvent(eventName, payload: payload)
     }
 
     func purchaseItem(productId: String, completion: @escaping CompletionCallback) {

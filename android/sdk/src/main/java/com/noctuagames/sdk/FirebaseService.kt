@@ -15,9 +15,6 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
     private val analytics: FirebaseAnalytics
 
     init {
-        if (config.eventMap.isEmpty()) {
-            throw IllegalArgumentException("Event map config for Firebase is not set")
-        }
         if (FirebaseApp.getApps(context).isEmpty()) {
             FirebaseApp.initializeApp(context)
         }
@@ -36,16 +33,21 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
         val eventName = config.eventMap["AdRevenue"] ?: "ad_revenue"
 
         val bundle = Bundle().apply {
-            putString("source", source)
-            putDouble("ad_revenue", revenue)
-            putString("currency", currency)
+            putString(FirebaseAnalytics.Param.AD_SOURCE, source)
+            putDouble(FirebaseAnalytics.Param.VALUE, revenue)
+            putString(FirebaseAnalytics.Param.CURRENCY, currency)
             putExtras(extraPayload)
         }
 
         analytics.logEvent(eventName, bundle)
+
         Log.d(
             TAG,
-            "$eventName event logged: source: $source, revenue: $revenue, currency: $currency"
+            "'$eventName' tracked: " +
+                    "source: $source, " +
+                    "revenue: $revenue, " +
+                    "currency: $currency, " +
+                    "extraPayload: $extraPayload"
         )
     }
 
@@ -56,16 +58,17 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
         val bundle = Bundle().apply {
-            putString(FirebaseAnalytics.Param.CURRENCY, currency)
-            putDouble(FirebaseAnalytics.Param.VALUE, amount)
             putString(FirebaseAnalytics.Param.TRANSACTION_ID, orderId)
+            putDouble(FirebaseAnalytics.Param.VALUE, amount)
+            putString(FirebaseAnalytics.Param.CURRENCY, currency)
             putExtras(extraPayload)
         }
 
         analytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
+
         Log.d(
             TAG,
-            "${FirebaseAnalytics.Event.PURCHASE} event logged: " +
+            "'${FirebaseAnalytics.Event.PURCHASE}' tracked: " +
                     "currency: $currency, " +
                     "amount: $amount, " +
                     "orderId: $orderId, " +
@@ -74,10 +77,16 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        val eventKey = config.eventMap[eventName] ?: eventName
+        val eventKey = config.eventMap[eventName]
+
+        if (eventKey == null) {
+            Log.e(TAG, "'$eventName' (custom) is not available in the event map")
+            return
+        }
 
         analytics.logEvent(eventKey, Bundle().apply { putExtras(payload) })
-        Log.d(TAG, "$eventName event logged with payload: $payload")
+
+        Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
     }
 
     companion object {

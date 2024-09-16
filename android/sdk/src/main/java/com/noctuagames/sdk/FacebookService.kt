@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
 import java.util.Currency
 
@@ -14,27 +15,29 @@ References:
 * */
 
 data class FacebookServiceConfig(
-    val eventMap: Map<String, String>,
+    val enableDebug: Boolean = false,
+    val advertiserIdCollectionEnabled: Boolean = true,
+    val autoLogAppEventsEnabled: Boolean = true,
+    val eventMap: Map<String, String> = mapOf(),
 )
 
 class FacebookService(private val config: FacebookServiceConfig, context: Context) {
-    companion object {
-        private val TAG = FacebookService::class.simpleName
-    }
-
     private val eventsLogger: AppEventsLogger
 
     init {
-        if (config.eventMap.isEmpty()) {
-            throw IllegalArgumentException("Event map for Facebook is not set in noctuaggconfig.json")
-        }
-        if (!config.eventMap.containsKey("AdRevenue")) {
-            throw IllegalArgumentException("Event name for Facebook Purchase is not set in noctuaggconfig.json")
+        if (config.enableDebug) {
+            FacebookSdk.setIsDebugEnabled(true)
+            FacebookSdk.addLoggingBehavior(com.facebook.LoggingBehavior.APP_EVENTS)
+        } else {
+            FacebookSdk.setIsDebugEnabled(false)
+            FacebookSdk.removeLoggingBehavior(com.facebook.LoggingBehavior.APP_EVENTS)
         }
 
+        FacebookSdk.setAutoLogAppEventsEnabled(config.autoLogAppEventsEnabled)
+        FacebookSdk.setAdvertiserIDCollectionEnabled(config.advertiserIdCollectionEnabled)
         FacebookSdk.setAutoInitEnabled(true)
         FacebookSdk.fullyInitialize()
-        FacebookSdk.setAdvertiserIDCollectionEnabled(true)
+
         eventsLogger = AppEventsLogger.newLogger(context)
 
         Log.i(TAG, "FacebookService initialized")
@@ -46,6 +49,8 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
+        val eventName = config.eventMap["AdRevenue"] ?: "ad_revenue"
+
         val bundle = Bundle().apply {
             putString("source", source)
             putDouble("ad_revenue", revenue)
@@ -53,10 +58,15 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
             putExtras(extraPayload)
         }
 
-        eventsLogger.logEvent(config.eventMap["AdRevenue"], bundle)
+        eventsLogger.logEvent(eventName, bundle)
+
         Log.d(
             TAG,
-            "Ad revenue event logged: Source: $source, Revenue: $revenue, Currency: $currency"
+            "Ad revenue tracked: " +
+                    "source: $source, " +
+                    "revenue: $revenue, " +
+                    "currency: $currency, " +
+                    "extraPayload: $extraPayload"
         )
     }
 
@@ -66,25 +76,37 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        // Put the metadata as is into the bundle, just like legacy codebase
         eventsLogger.logPurchase(
             purchaseAmount = amount.toBigDecimal(),
             currency = Currency.getInstance(currency),
             parameters = Bundle().apply {
-                putString("transaction_id", orderId)
+                putString(AppEventsConstants.EVENT_PARAM_ORDER_ID, orderId)
                 putExtras(extraPayload)
             }
         )
 
-        Log.d(TAG, "Purchase event logged: $currency, $amount, $orderId, $extraPayload")
+        Log.d(
+            TAG,
+            "Purchase tracked: " +
+                    "orderId: $orderId, " +
+                    "amount: $amount, " +
+                    "currency: $currency, " +
+                    "extraPayload: $extraPayload"
+        )
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
         if (!config.eventMap.containsKey(eventName)) {
-            Log.w(TAG, "This event is not available in the Facebook event map: $eventName")
+            Log.e(TAG, "$eventName event is not available in the event map")
             return
         }
 
         eventsLogger.logEvent(config.eventMap[eventName], Bundle().apply { putExtras(payload) })
+
+        Log.d(TAG, "$eventName (custom) tracked: payload: $payload")
+    }
+
+    companion object {
+        private val TAG = FacebookService::class.simpleName
     }
 }
