@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.12] - 2024-09-16
+
+### 🚜 Refactor
+
+- Add logging and change parameters to tracker
+
 ## [android-sdk-v0.1.11] - 2024-09-13
 
 ### 🐛 Bug Fixes
