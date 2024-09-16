@@ -1,4 +1,4 @@
-package com.noctuagames.unrealsdktest
+package com.noctuagames.android.sdktest
 
 import android.os.Bundle
 import android.util.Log

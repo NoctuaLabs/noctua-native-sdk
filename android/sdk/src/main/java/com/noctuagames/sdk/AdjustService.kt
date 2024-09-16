@@ -24,7 +24,7 @@ internal class AdjustService(private val config: AdjustServiceConfig, context: C
         }
 
         if (!config.eventMap.containsKey("Purchase")) {
-            throw IllegalArgumentException("Event name for Purchase is not set")
+            throw IllegalArgumentException("Event token for Purchase is not set")
         }
 
         val environment = if (config.environment.isNullOrEmpty()) {
@@ -81,7 +81,7 @@ internal class AdjustService(private val config: AdjustServiceConfig, context: C
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
         if (!config.eventMap.containsKey(eventName)) {
-            Log.e(TAG, "$eventName is not available in the event map")
+            Log.e(TAG, "$eventName event token is not available in the event map")
             return
         }
 
