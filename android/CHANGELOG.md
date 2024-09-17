@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.1.13] - 2024-09-17
+
+### 🐛 Bug Fixes
+
+- Fail Firebase initialization if not configured correctly
+
 ## [android-sdk-v0.1.12] - 2024-09-16
 
 ### 🚜 Refactor
