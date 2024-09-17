@@ -16,7 +16,9 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
 
     init {
         if (FirebaseApp.getApps(context).isEmpty()) {
-            FirebaseApp.initializeApp(context)
+            if (FirebaseApp.initializeApp(context) == null) {
+                throw Exception("Failed to initialize Firebase Analytics")
+            }
         }
 
         analytics = FirebaseAnalytics.getInstance(context)
