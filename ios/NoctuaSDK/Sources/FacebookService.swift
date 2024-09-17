@@ -17,6 +17,12 @@ enum FacebookServiceError : Error {
 }
 
 struct FacebookServiceConfig : Codable {
+    let enableDebug: Bool?
+    let advertiserIdCollectionEnabled: Bool?
+    let autologEventsEnabled: Bool?
+    let appId: String
+    let clientToken: String
+    let displayName: String
     let eventMap: [String:String]
 }
 
@@ -28,6 +34,16 @@ class FacebookService {
         logger.info("Facebook module detected")
         self.config = config
         
+        if config.enableDebug ?? false {
+            Settings.shared.enableLoggingBehavior(.appEvents)
+        }
+        
+        Settings.shared.isAdvertiserIDCollectionEnabled = config.advertiserIdCollectionEnabled ?? false
+        Settings.shared.isAutoLogAppEventsEnabled = config.advertiserIdCollectionEnabled ?? false
+        Settings.shared.appID = config.appId
+        Settings.shared.clientToken = config.clientToken
+        Settings.shared.displayName = config.displayName
+        ApplicationDelegate.shared.initializeSDK()
         AppEvents.shared.activateApp()
 #else
         throw FacebookServiceError.facebookNotFound
@@ -41,7 +57,7 @@ class FacebookService {
         var parameters: [AppEvents.ParameterName: Any] = [
             AppEvents.ParameterName("source"): source,
             AppEvents.ParameterName("ad_revenue"): revenue,
-            AppEvents.ParameterName("currency"): currency
+            AppEvents.ParameterName.currency: currency
         ]
         
         for (key, value) in extraPayload {
@@ -50,19 +66,14 @@ class FacebookService {
 
         AppEvents.shared.logEvent(AppEvents.Name(eventName), parameters: parameters)
 
-        logger.debug("'\(eventName)' tracked: "
-            + "source: \(source), "
-            + "revenue: \(revenue), "
-            + "currency: \(currency), "
-            + "extraPayload: \(extraPayload)"
-        )
+        logger.debug("'\(eventName)' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
 #endif
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(FBSDKCoreKit)
         var parameters: [AppEvents.ParameterName: Any] = [
-            AppEvents.ParameterName(FBSDKAppEventParameterNameOrderID): orderId,
+            AppEvents.ParameterName.orderID: orderId,
         ]
         
         for (key, value) in extraPayload {
@@ -71,12 +82,7 @@ class FacebookService {
 
         AppEvents.shared.logPurchase(amount: amount, currency: currency, parameters: parameters)
         
-        logger.debug("'\(AnalyticsEventPurchase)' tracked: "
-            + "currency: \(currency), "
-            + "amount: \(amount), "
-            + "orderId: \(orderId), "
-            + "extraPayload: \(extraPayload)"
-        )
+        logger.debug("Purchase tracked: currency: \(currency), amount: \(amount), orderId: \(orderId), extraPayload: \(extraPayload)")
 #endif
     }
     

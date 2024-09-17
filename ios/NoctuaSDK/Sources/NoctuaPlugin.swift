@@ -30,6 +30,7 @@ class NoctuaPlugin {
             if self.noctua == nil {
                 logger.warning("NoctuaService disabled due to initialization error")
             }
+            
             logger.info("NoctuaService initialized")
         }
         
