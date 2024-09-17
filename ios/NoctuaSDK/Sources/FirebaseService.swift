@@ -40,6 +40,7 @@ class FirebaseService {
         if (FirebaseApp.app() == nil) {
             FirebaseApp.configure()
         }
+        
 #else
         throw FirebaseServiceError.firebaseNotFound
 #endif
@@ -61,12 +62,7 @@ class FirebaseService {
 
         Analytics.logEvent(eventName, parameters: parameters)
 
-        logger.debug("'\(eventName)' tracked: "
-            + "source: \(source), "
-            + "revenue: \(revenue), "
-            + "currency: \(currency), "
-            + "extraPayload: \(extraPayload)"
-        )
+        logger.debug("'\(eventName)' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
 #endif
     }
     
@@ -84,12 +80,7 @@ class FirebaseService {
 
         Analytics.logEvent(AnalyticsEventPurchase, parameters: parameters)
 
-        logger.debug("'\(AnalyticsEventPurchase)' tracked: "
-            + "currency: \(currency), "
-            + "amount: \(amount), "
-            + "orderId: \(orderId), "
-            + "extraPayload: \(extraPayload)"
-        )
+        logger.debug("'\(AnalyticsEventPurchase)' tracked: currency: \(currency), amount: \(amount), orderId: \(orderId), extraPayload: \(extraPayload)")
 #endif
     }
     
@@ -103,12 +94,12 @@ class FirebaseService {
        
         Analytics.logEvent(eventName, parameters: payload)
 
-        logger.debug("'\(eventName)' (custom) tracked: payload: \(payload)"
+        logger.debug("'\(eventName)' (custom) tracked: payload: \(payload)")
 #endif
     }
     
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: NoctuaPlugin.self)
+        category: String(describing: FirebaseService.self)
     )
 }

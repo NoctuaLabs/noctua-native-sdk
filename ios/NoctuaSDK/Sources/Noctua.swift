@@ -48,7 +48,14 @@ func loadConfig() throws -> NoctuaConfig {
     do {
         let data = try Data(contentsOf: URL(fileURLWithPath: path))
         config = try JSONDecoder().decode(NoctuaConfig.self, from: data)
-    } catch {
+    } 
+    catch DecodingError.valueNotFound(let type, let context) {
+        throw ConfigurationError.missingKey("type: \(type), desc: \(context.debugDescription)")
+    } 
+    catch DecodingError.keyNotFound(let key, let context) {
+        throw ConfigurationError.missingKey("type: \(key), desc: \(context.debugDescription)")
+    }
+    catch {
         throw ConfigurationError.invalidFormat
     }
     
