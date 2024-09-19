@@ -18,6 +18,7 @@ data class FacebookServiceConfig(
     val enableDebug: Boolean = false,
     val advertiserIdCollectionEnabled: Boolean = true,
     val autoLogAppEventsEnabled: Boolean = true,
+    val disableCustomEvent: Boolean = false,
     val eventMap: Map<String, String> = mapOf(),
 )
 
@@ -96,6 +97,10 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        if (config.disableCustomEvent) {
+            return
+        }
+
         if (!config.eventMap.containsKey(eventName)) {
             Log.e(TAG, "$eventName event is not available in the event map")
             return
@@ -103,7 +108,7 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
 
         eventsLogger.logEvent(config.eventMap[eventName], Bundle().apply { putExtras(payload) })
 
-        Log.d(TAG, "$eventName (custom) tracked: payload: $payload")
+        Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
     }
 
     companion object {

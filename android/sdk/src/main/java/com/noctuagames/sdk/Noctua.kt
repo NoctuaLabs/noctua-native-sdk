@@ -116,7 +116,13 @@ class Noctua(context: Context) {
         }
 
         noctua = config.noctua?.let {
-            NoctuaService(it, context, adjust != null)
+            if (it.disableTracker) {
+                Log.w(TAG, "Noctua tracking is disabled.")
+
+                null
+            } else {
+                NoctuaService(it, context, adjust != null)
+            }
         }
 
         noctua?.trackFirstInstall()

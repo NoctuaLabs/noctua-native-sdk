@@ -6,11 +6,15 @@ public typealias CompletionCallback = (Bool, String) -> Void
 
 struct NoctuaServiceConfig : Decodable {
     let trackerURL: String?
+    let disableCustomEvent: Bool?
+    let disableTracker: Bool?
 }
 
 class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
     
     let trackerURL: URL
+    let disableCustomEvent: Bool
+    let disableTracker: Bool
 
     // Used to differentiate between different StoreKit operation
     private var storeKitOperation: String? = nil
@@ -29,6 +33,8 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         }
         
         trackerURL = url!
+        disableCustomEvent = config.disableCustomEvent ?? false
+        disableTracker = config.disableTracker ?? false
 
         super.init()
         SKPaymentQueue.default().add(self)
@@ -53,8 +59,11 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
+        if (disableCustomEvent) {
+            return
+        }
+        
         sendEvent(eventName, payload: payload)
-
     }
 
     func getActiveCurrency(productId: String, completion: @escaping CompletionCallback) {
@@ -76,6 +85,10 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     }
     
     private func sendEvent(_ eventName: String, payload: [String:Any]) {
+        if (disableTracker) {
+            return
+        }
+        
         var payload = payload
         payload["event_name"] = eventName
 

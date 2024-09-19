@@ -18,6 +18,7 @@ enum FirebaseServiceError : Error {
 }
 
 struct FirebaseServiceConfig : Codable {
+    let disableCustomEvent: Bool?
     let eventMap: [String:String]
 }
 
@@ -86,6 +87,10 @@ class FirebaseService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
+        if (config.disableCustomEvent ?? false) {
+            return
+        }
+        
         let eventName = config.eventMap[eventName] ?? ""
         guard !eventName.isEmpty else  {
             logger.error("'\(eventName)' (custom) is not available in the eventMap")
