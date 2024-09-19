@@ -23,6 +23,7 @@ struct FacebookServiceConfig : Codable {
     let appId: String
     let clientToken: String
     let displayName: String
+    let disableCustomEvent: Bool?
     let eventMap: [String:String]
 }
 
@@ -88,6 +89,10 @@ class FacebookService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FBSDKCoreKit)
+        if (config.disableCustomEvent ?? false) {
+            return
+        }
+        
         let eventName = config.eventMap[eventName] ?? ""
         guard !eventName.isEmpty else  {
             logger.error("'\(eventName)' is not available in the eventMap")

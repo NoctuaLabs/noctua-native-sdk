@@ -11,6 +11,7 @@ enum AdjustServiceError : Error {
 struct AdjustServiceConfig : Codable {
     let appToken: String
     let environment: String?
+    let disableCustomEvent: Bool?
     let eventMap: [String:String]
 }
 
@@ -69,6 +70,10 @@ class AdjustService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(Adjust)
+        if (config.disableCustomEvent ?? false) {
+            return
+        }
+        
         let event = ADJEvent(eventToken: config.eventMap[eventName]!)!
 
         for (key, value) in payload {
