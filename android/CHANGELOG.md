@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.2.0] - 2024-09-19
+
+### 🚀 Features
+
+- Disable custom events on Android
+
 ## [android-sdk-v0.1.13] - 2024-09-17
 
 ### 🐛 Bug Fixes
