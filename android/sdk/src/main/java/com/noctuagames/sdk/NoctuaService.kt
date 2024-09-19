@@ -16,6 +16,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 data class NoctuaServiceConfig(
     val trackerURL: String,
+    val disableCustomEvent: Boolean = false,
+    val disableTracker: Boolean = false,
 )
 
 internal class NoctuaService(
@@ -27,6 +29,11 @@ internal class NoctuaService(
         config?.trackerURL ?: "https://kafka-proxy-poc.noctuaprojects.com/api/v1/events"
 
     private val deviceInfo = DeviceInfo(context).getDeviceInfoMap()
+    private val disableCustomEvent = config?.disableCustomEvent ?: false
+
+    init {
+        Log.i(TAG, "NoctuaService initialized successfully")
+    }
 
     fun trackFirstInstall(extraPayload: MutableMap<String, Any> = mutableMapOf()) {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -70,6 +77,10 @@ internal class NoctuaService(
     }
 
     fun trackCustomEvent(eventName: String, payload: MutableMap<String, Any> = mutableMapOf()) {
+        if (disableCustomEvent) {
+            return
+        }
+
         sendEvent(eventName, payload)
     }
 

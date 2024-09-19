@@ -10,6 +10,7 @@ import com.adjust.sdk.AdjustEvent
 data class AdjustServiceConfig(
     val appToken: String,
     val environment: String?,
+    val disableCustomEvent: Boolean = false,
     val eventMap: Map<String, String>,
 )
 
@@ -80,6 +81,10 @@ internal class AdjustService(private val config: AdjustServiceConfig, context: C
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        if (config.disableCustomEvent) {
+            return
+        }
+
         if (!config.eventMap.containsKey(eventName)) {
             Log.e(TAG, "$eventName event token is not available in the event map")
             return
