@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.2.1] - 2024-10-01
+
+### 🐛 Bug Fixes
+
+- Undo removing important permission gms.permission.AD_ID
+
 ## [android-sdk-v0.2.0] - 2024-09-19
 
 ### 🚀 Features
