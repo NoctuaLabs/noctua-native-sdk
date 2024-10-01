@@ -2,7 +2,9 @@ import Foundation
 
 @objc public class Noctua: NSObject {
     @objc public static func initNoctua() throws {
-        plugin = NoctuaPlugin(config: try loadConfig())
+        if plugin == nil {
+            plugin = NoctuaPlugin(config: try loadConfig())
+        }
     }
     
     @objc public static func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any] = [:]) {

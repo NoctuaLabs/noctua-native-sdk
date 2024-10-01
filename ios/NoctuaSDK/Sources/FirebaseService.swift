@@ -39,6 +39,7 @@ class FirebaseService {
         }
         
         FirebaseApp.configure()
+        Analytics.setAnalyticsCollectionEnabled(true)
         
 #else
         throw FirebaseServiceError.firebaseNotFound
