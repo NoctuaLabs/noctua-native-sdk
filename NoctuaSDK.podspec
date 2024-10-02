@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "NoctuaSDK"
-  spec.version      = "0.1.25"
+  spec.version      = "0.1.26"
   spec.summary      = "Noctua iOS SDK"
   spec.description  = "Noctua SDK is a framework to publish game in Noctua platform"
   spec.homepage     = "https://github.com/NoctuaLabs/noctua-native-sdk"
@@ -13,7 +13,6 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => "https://github.com/NoctuaLabs/noctua-native-sdk.git", :tag => "ios-sdk-v#{spec.version}" }
   
   spec.frameworks = "WebKit", "StoreKit", "AppTrackingTransparency", "AdServices", "AdSupport"
-  spec.static_framework = true
 
   spec.subspec 'Core' do |core|
     core.ios.source_files  = "ios/NoctuaSDK/Sources/**/*.{h,m,swift}"
