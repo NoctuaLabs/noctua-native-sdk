@@ -2,12 +2,18 @@
     "productCode": "noctuaggdev",
     "clientId": "1-e724f5a9e6f1",
     "facebook": {
+        "appId": "<FB_APP_ID>",
+        "clientToken": "<FB_CLIENT_TOKEN>",
+        "displayName": "SDK Test Noctua",
+        "enableDebug": true,
         "eventMap": {
-            "Purchase": "Purchase",
-            "TestSendEvent": "TestSendEvent"
+            "AdRevenue": "ad_revenue",
+            "Purchase": "purchase",
+            "TestSendEvent": "test_send_event"
         }
     },
     "firebase": {
+        "disableCustomEvent": false,
         "eventMap": {
             "AdRevenue": "AdRevenue",
             "Purchase": "Purchase",
@@ -16,6 +22,8 @@
     },
     "noctua": {
         "trackerUrl": "",
-        "baseUrl": "https://sdk-api-v2.noctuaprojects.com/api/v1"
+        "baseUrl": "https://sdk-api-v2.noctuaprojects.com/api/v1",
+        "disableCustomEvent": false,
+        "disableTracker": true
     }
 }
