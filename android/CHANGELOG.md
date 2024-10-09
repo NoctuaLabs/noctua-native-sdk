@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.0] - 2024-10-09
+
+### 🚀 Features
+
+- Add AccountRepository to sdk
+
 ## [android-sdk-v0.2.1] - 2024-10-01
 
 ### 🐛 Bug Fixes
