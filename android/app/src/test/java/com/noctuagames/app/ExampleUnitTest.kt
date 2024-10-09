@@ -1,6 +1,5 @@
-package com.noctua.example
+package com.noctuagames.app
 
-import android.content.pm.PackageManager
 import org.junit.Test
 
 import org.junit.Assert.*

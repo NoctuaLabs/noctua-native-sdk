@@ -19,6 +19,7 @@ class Noctua(context: Context) {
     private val firebase: FirebaseService?
     private val facebook: FacebookService?
     private val noctua: NoctuaService?
+    private val accounts: AccountRepository = AccountRepository(context)
 
     init {
         val config = loadAppConfig(context)
@@ -260,6 +261,26 @@ class Noctua(context: Context) {
             }
 
             instance.trackCustomEvent(eventName, payload)
+        }
+
+        fun getAccounts(): List<Account> {
+            return instance.accounts.getAll()
+        }
+
+        fun getAccount(userId: Long, gameId: Long): Account? {
+            return instance.accounts.getSingle(userId, gameId)
+        }
+
+        fun getAccountsByUserId(userId: Long): List<Account> {
+            return instance.accounts.getByUserId(userId)
+        }
+
+        fun putAccount(account: Account) {
+            instance.accounts.put(account)
+        }
+
+        fun deleteAccount(account: Account): Int {
+            return instance.accounts.delete(account.userId, account.gameId)
         }
     }
 }
