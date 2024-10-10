@@ -78,16 +78,27 @@ class AccountContentProvider : ContentProvider() {
     }
 
     private class DatabaseHelper(context: Context) :
-        SQLiteOpenHelper(context, "accounts.db", null, 3) {
+        SQLiteOpenHelper(context, "accounts.db", null, 1) {
         override fun onCreate(db: SQLiteDatabase) {
             db.execSQL(
                 """
                 CREATE TABLE accounts (
-                    userId INTEGER NOT NULL,
-                    gameId INTEGER NOT NULL,
-                    playerId INTEGER NOT NULL,
-                    accessToken TEXT,
-                    PRIMARY KEY (userId, gameId) ON CONFLICT REPLACE
+                    user_id INTEGER NOT NULL,
+                    game_id INTEGER NOT NULL,
+                    player_id INTEGER NOT NULL,
+                    user_is_guest BOOLEAN,
+                    user_nickname TEXT,
+                    user_email TEXT, 
+                    credential_id INTEGER,
+                    credential_provider TEXT,
+                    credential_display_text TEXT,
+                    game_name TEXT,
+                    game_platform_id INTEGER,
+                    game_platform_name TEXT,
+                    game_platform_bundle_id TEXT,
+                    player_access_token TEXT NOT NULL,
+                    player_username TEXT,
+                    PRIMARY KEY (user_id, game_id) ON CONFLICT REPLACE
                 )
             """
             )
@@ -96,6 +107,10 @@ class AccountContentProvider : ContentProvider() {
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
             db.execSQL("DROP TABLE IF EXISTS accounts")
             onCreate(db)
+        }
+
+        override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+            onUpgrade(db, oldVersion, newVersion)
         }
     }
 }
