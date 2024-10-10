@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.1] - 2024-10-10
+
+### 🚜 Refactor
+
+- Add columns to accounts that is useful to UI
+
 ## [android-sdk-v0.3.0] - 2024-10-09
 
 ### 🚀 Features
