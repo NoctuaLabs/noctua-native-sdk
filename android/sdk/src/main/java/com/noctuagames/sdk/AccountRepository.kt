@@ -20,12 +20,14 @@ data class Account(
     val gamePlatformName: String?,
     val gamePlatformBundleId: String?,
     val playerAccessToken: String,
-    val playerUsername: String?
+    val playerUsername: String?,
+    var lastUpdated: Long = System.currentTimeMillis()
 )
 
 
 class AccountRepository(private val context: Context) {
     fun put(account: Account) {
+        account.lastUpdated = System.currentTimeMillis()
         context.contentResolver.insert(AccountContentProvider.CONTENT_URI, fromAccount(account))
     }
 
@@ -114,6 +116,7 @@ private fun fromAccount(account: Account): ContentValues {
         put("game_platform_bundle_id", account.gamePlatformBundleId)
         put("player_access_token", account.playerAccessToken)
         put("player_username", account.playerUsername)
+        put("last_updated", account.lastUpdated)
     }
 }
 
@@ -133,6 +136,7 @@ private fun toAccount(cursor: Cursor): Account {
         gamePlatformName = cursor.getString(cursor.getColumnIndexOrThrow("game_platform_name")),
         gamePlatformBundleId = cursor.getString(cursor.getColumnIndexOrThrow("game_platform_bundle_id")),
         playerAccessToken = cursor.getString(cursor.getColumnIndexOrThrow("player_access_token")),
-        playerUsername = cursor.getString(cursor.getColumnIndexOrThrow("player_username"))
+        playerUsername = cursor.getString(cursor.getColumnIndexOrThrow("player_username")),
+        lastUpdated = cursor.getLong(cursor.getColumnIndexOrThrow("last_updated"))
     )
 }
