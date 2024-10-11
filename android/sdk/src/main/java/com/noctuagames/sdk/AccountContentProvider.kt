@@ -78,30 +78,18 @@ class AccountContentProvider : ContentProvider() {
     }
 
     private class DatabaseHelper(context: Context) :
-        SQLiteOpenHelper(context, "accounts.db", null, 1) {
+        SQLiteOpenHelper(context, "accounts.db", null, 3) {
         override fun onCreate(db: SQLiteDatabase) {
             db.execSQL(
                 """
                 CREATE TABLE accounts (
                     user_id INTEGER NOT NULL,
                     game_id INTEGER NOT NULL,
-                    player_id INTEGER NOT NULL,
-                    user_is_guest BOOLEAN,
-                    user_nickname TEXT,
-                    user_email TEXT, 
-                    credential_id INTEGER,
-                    credential_provider TEXT,
-                    credential_display_text TEXT,
-                    game_name TEXT,
-                    game_platform_id INTEGER,
-                    game_platform_name TEXT,
-                    game_platform_bundle_id TEXT,
-                    player_access_token TEXT NOT NULL,
-                    player_username TEXT,
+                    raw_data TEXT,
                     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     PRIMARY KEY (user_id, game_id) ON CONFLICT REPLACE
                 )
-            """
+                """
             )
         }
 
