@@ -98,6 +98,7 @@ class AccountContentProvider : ContentProvider() {
                     game_platform_bundle_id TEXT,
                     player_access_token TEXT NOT NULL,
                     player_username TEXT,
+                    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     PRIMARY KEY (user_id, game_id) ON CONFLICT REPLACE
                 )
             """
