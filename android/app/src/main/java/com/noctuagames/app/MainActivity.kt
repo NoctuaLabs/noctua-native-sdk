@@ -84,68 +84,13 @@ fun MainScreen() {
             Text("Get Adjust Metadata")
         }
 
-        val games = listOf(
-            1L to "GameOne",
-            2L to "GameTwo",
-        )
-
-        val bundles = listOf(
-            1L to "com.noctua.android.gameone",
-            2L to "com.noctua.android.gametwo",
-        )
-
-        val users = listOf(
-            "PlayerOne" to "playerone@example.com",
-            "GamerGal" to "gamergal@example.com",
-            "NoctuaFan" to "noctuafan@example.com",
-        )
-
-        val credentials = listOf(
-            "google",
-            "facebook",
-            "discord",
-            "noctua",
-        )
-
-        val platforms = listOf(
-            1L to "Windows",
-            2L to "Android",
-            3L to "iOS"
-        )
-
-        val players = listOf(
-            1L to "CharOne",
-            2L to "CharTwo",
-            3L to "CharThree",
-            4L to "CharFour",
-            5L to "CharFive",
-            6L to "CharSix",
-        )
-
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                val game = games.random()
-                val userId = (1L..users.size).random()
-                val platform = platforms.random()
-                val player = players.random()
-
                 val randomAccount = Account(
-                    userId = userId,
-                    gameId = game.first,
-                    playerId = player.first,
-                    userIsGuest = (0..1).random() == 1,
-                    userNickname = users[userId.toInt() - 1].first,
-                    userEmail = users[userId.toInt() - 1].second,
-                    credentialId = (1..1000L).random(),
-                    credentialProvider = credentials.random(),
-                    credentialDisplayText = UUID.randomUUID().toString().substring(0, 8),
-                    gameName = game.second,
-                    gamePlatformId = platform.first,
-                    gamePlatformName = platform.second,
-                    gamePlatformBundleId = bundles[game.first.toInt() - 1].second,
-                    playerAccessToken = UUID.randomUUID().toString().substring(0, 8),
-                    playerUsername = UUID.randomUUID().toString().substring(0, 8)
+                    userId = (1L..3).random(),
+                    gameId = (1L..3).random(),
+                    rawData = UUID.randomUUID().toString()
                 )
                 Noctua.putAccount(randomAccount)
                 Log.d("MainActivity", "Random account saved: $randomAccount")
