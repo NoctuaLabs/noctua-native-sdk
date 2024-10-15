@@ -18,6 +18,7 @@
             android:name=".AccountContentProvider"
             android:authorities="com.noctuagames.sdk.provider"
             android:exported="true"
+            android:permission="com.noctuagames.sdk.permission.ACCESS_PROVIDER"
             tools:ignore="ExportedContentProvider" />
     </application>
 
