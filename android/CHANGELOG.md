@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.4] - 2024-10-15
+
+### 🐛 Bug Fixes
+
+- Add explicit Account constructor that receives 3 parameters
+
 ## [android-sdk-v0.3.3] - 2024-10-15
 
 ### 🐛 Bug Fixes
