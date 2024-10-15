@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.3] - 2024-10-15
+
+### 🐛 Bug Fixes
+
+- Remove unneeded kotlin compose libs
+
 ## [android-sdk-v0.3.2] - 2024-10-15
 
 ### 🐛 Bug Fixes
