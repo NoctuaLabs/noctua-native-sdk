@@ -9,13 +9,19 @@ data class Account(
     val userId: Long,
     val gameId: Long,
     val rawData: String,
-    var lastUpdated: Long = System.currentTimeMillis()
-)
+    val lastUpdated: Long
+) {
+    constructor(userId: Long, gameId: Long, rawData: String) : this(
+        userId = userId,
+        gameId = gameId,
+        rawData = rawData,
+        lastUpdated = System.currentTimeMillis()
+    )
+}
 
 
 class AccountRepository(private val context: Context) {
     fun put(account: Account) {
-        account.lastUpdated = System.currentTimeMillis()
         context.contentResolver.insert(AccountContentProvider.CONTENT_URI, fromAccount(account))
     }
 
