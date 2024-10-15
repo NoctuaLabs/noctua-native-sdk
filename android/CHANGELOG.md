@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.2] - 2024-10-15
+
+### 🐛 Bug Fixes
+
+- Add last_updated to account repository
+- Save raw data instead of a lot of columns
+
 ## [android-sdk-v0.3.1] - 2024-10-10
 
 ### 🚜 Refactor
