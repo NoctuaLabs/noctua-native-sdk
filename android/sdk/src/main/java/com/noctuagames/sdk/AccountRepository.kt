@@ -3,6 +3,11 @@ package com.noctuagames.sdk
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
 
 
 data class Account(
@@ -20,14 +25,50 @@ data class Account(
 }
 
 
-class AccountRepository(private val context: Context) {
+class AccountRepository(private val context: Context, private val otherAuthorities: List<String>) {
+    private val authority: String = getAppPackage() + ".provider"
+    private val TAG = this::class.simpleName
+    private val contentUri: Uri = Uri.parse("content://${authority}/accounts")
+    private val contentResolver = context.contentResolver
+    private val otherAccounts: MutableMap<String, List<Account>> = ConcurrentHashMap()
+
+    suspend fun syncOtherAccounts() {
+        Log.d(TAG, "otherAuthorities: $otherAuthorities")
+
+        for (authority in otherAuthorities) {
+            val uri = Uri.parse("content://$authority/accounts")
+            val accounts = mutableListOf<Account>()
+
+            withContext(Dispatchers.IO) {
+                val cursor = contentResolver.query(uri, null, null, null, null)
+
+                if (cursor == null) {
+                    Log.w(TAG, "Failed to query $uri")
+                }
+
+                cursor?.use {
+                    while (it.moveToNext()) {
+                        accounts.add(toAccount(it))
+                    }
+                }
+            }
+
+            Log.d(TAG, "found ${accounts.size} accounts in $authority")
+
+            if (accounts.isNotEmpty()) {
+                otherAccounts[authority] = accounts
+            }
+        }
+
+        Log.d(TAG, "otherAccounts: ${otherAccounts.keys}")
+    }
+
     fun put(account: Account) {
-        context.contentResolver.insert(AccountContentProvider.CONTENT_URI, fromAccount(account))
+        contentResolver.insert(contentUri, fromAccount(account))
     }
 
     fun getAll(): List<Account> {
-        val uri = AccountContentProvider.CONTENT_URI
-        val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
+        val cursor: Cursor? = context.contentResolver.query(contentUri, null, null, null, null)
         val accounts = mutableListOf<Account>()
 
         cursor?.use {
@@ -35,26 +76,36 @@ class AccountRepository(private val context: Context) {
                 accounts.add(toAccount(it))
             }
         }
+
+        Log.d(TAG, "getAll ${accounts.size} accounts in $authority")
+
+        otherAccounts.values.flatten().let { accounts.addAll(it) }
+
+        Log.d(TAG, "getAll ${accounts.size} accounts in $authority and ${otherAccounts.keys}")
 
         return accounts
     }
 
     fun getSingle(userId: Long, gameId: Long): Account? {
-        val uri = AccountContentProvider.CONTENT_URI
         val selection = "user_id=? AND game_id=?"
         val args = arrayOf(userId.toString(), gameId.toString())
-        val cursor: Cursor? = context.contentResolver.query(uri, null, selection, args, null)
+        val cursor: Cursor? = context.contentResolver.query(contentUri, null, selection, args, null)
 
-        return cursor?.use {
+        var account = cursor?.use {
             if (it.moveToNext()) toAccount(it) else null
         }
+
+        if (account != null) {
+            return account
+        }
+
+        return otherAccounts.values.flatten().find { it.userId == userId && it.gameId == gameId }
     }
 
     fun getByUserId(userId: Long): List<Account> {
-        val uri = AccountContentProvider.CONTENT_URI
         val selection = "user_id=?"
         val args = arrayOf(userId.toString())
-        val cursor: Cursor? = context.contentResolver.query(uri, null, selection, args, null)
+        val cursor: Cursor? = contentResolver.query(contentUri, null, selection, args, null)
         val accounts = mutableListOf<Account>()
 
         cursor?.use {
@@ -63,33 +114,15 @@ class AccountRepository(private val context: Context) {
             }
         }
 
-        return accounts
-    }
-
-    fun getByGameId(gameId: Long): List<Account> {
-        val uri = AccountContentProvider.CONTENT_URI
-        val selection = "game_id=?"
-        val args = arrayOf(gameId.toString())
-        val cursor: Cursor? = context.contentResolver.query(uri, null, selection, args, null)
-        val accounts = mutableListOf<Account>()
-
-        cursor?.use {
-            while (it.moveToNext()) {
-                accounts.add(toAccount(it))
-            }
-        }
+        otherAccounts.values.flatten().filter { it.userId == userId }.let { accounts.addAll(it) }
 
         return accounts
     }
 
     fun delete(userId: Long, gameId: Long): Int {
-        val uri = AccountContentProvider.CONTENT_URI
+        val args = arrayOf(userId.toString(), gameId.toString())
 
-        return context.contentResolver.delete(
-            uri,
-            "user_id=? AND game_id=?",
-            arrayOf(userId.toString(), gameId.toString())
-        )
+        return contentResolver.delete(contentUri, "user_id=? AND game_id=?", args)
     }
 }
 

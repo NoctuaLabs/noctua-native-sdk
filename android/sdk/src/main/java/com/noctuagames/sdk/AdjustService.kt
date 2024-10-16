@@ -15,6 +15,8 @@ data class AdjustServiceConfig(
 )
 
 internal class AdjustService(private val config: AdjustServiceConfig, context: Context) {
+    private val TAG = this::class.simpleName
+
     init {
         if (config.appToken.isEmpty()) {
             throw IllegalArgumentException("App token is not set")
@@ -97,9 +99,5 @@ internal class AdjustService(private val config: AdjustServiceConfig, context: C
         }
 
         Adjust.trackEvent(adjustEvent)
-    }
-
-    companion object {
-        private val TAG = AdjustService::class.simpleName
     }
 }

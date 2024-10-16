@@ -23,6 +23,7 @@ data class FacebookServiceConfig(
 )
 
 class FacebookService(private val config: FacebookServiceConfig, context: Context) {
+    private val TAG = this::class.simpleName
     private val eventsLogger: AppEventsLogger
 
     init {
@@ -109,9 +110,5 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
         eventsLogger.logEvent(config.eventMap[eventName], Bundle().apply { putExtras(payload) })
 
         Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
-    }
-
-    companion object {
-        private val TAG = FacebookService::class.simpleName
     }
 }

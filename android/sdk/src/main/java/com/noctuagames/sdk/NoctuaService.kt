@@ -25,6 +25,7 @@ internal class NoctuaService(
     private val context: Context,
     private val withAdjust: Boolean = false
 ) {
+    private val TAG = this::class.simpleName
     private val trackerURL =
         config?.trackerURL ?: "https://kafka-proxy-poc.noctuaprojects.com/api/v1/events"
 
@@ -122,7 +123,6 @@ internal class NoctuaService(
     }
 
     private companion object {
-        private val TAG = NoctuaService::class.simpleName
         private const val PREFS_NAME = "NoctuaTrackerPrefs"
         private const val KEY_FIRST_INSTALL = "isFirstInstall"
     }

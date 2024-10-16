@@ -13,6 +13,7 @@ data class FirebaseServiceConfig(
 
 
 class FirebaseService(private val config: FirebaseServiceConfig, context: Context) {
+    private val TAG = this::class.simpleName
     private val analytics: FirebaseAnalytics
 
     init {
@@ -94,9 +95,5 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
         analytics.logEvent(eventKey, Bundle().apply { putExtras(payload) })
 
         Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
-    }
-
-    companion object {
-        private val TAG = FirebaseService::class.simpleName
     }
 }

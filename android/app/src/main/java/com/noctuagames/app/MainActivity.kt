@@ -21,9 +21,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Noctua.init(this)
+        val offset = if (this.packageName.endsWith("1")) 1000 else 2000
 
         setContent {
-            MainScreen()
+            MainScreen(offset)
         }
     }
 
@@ -39,8 +40,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen() {
-    var data by remember { mutableStateOf(listOf<Account>()) }
+fun MainScreen(offset: Int) {
+    var data by remember { mutableStateOf(Noctua.getAccounts()) }
 
     Column(
         modifier = Modifier
@@ -87,9 +88,17 @@ fun MainScreen() {
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+                data = Noctua.getAccounts()
+            }) {
+            Text("Load accounts")
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
                 val randomAccount = Account(
                     userId = (1L..3).random(),
-                    gameId = (1L..3).random(),
+                    gameId = (1L..3).random() + offset,
                     rawData = UUID.randomUUID().toString()
                 )
                 Noctua.putAccount(randomAccount)

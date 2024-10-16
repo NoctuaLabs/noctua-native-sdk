@@ -12,11 +12,13 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.noctuagames.sdk.permission.ACCESS_PROVIDER" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <application>
+    <application android:requestLegacyExternalStorage="true">
         <provider
             android:name=".AccountContentProvider"
-            android:authorities="com.noctuagames.sdk.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="true"
             android:permission="com.noctuagames.sdk.permission.ACCESS_PROVIDER"
             tools:ignore="ExportedContentProvider" />
