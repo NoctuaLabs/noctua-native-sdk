@@ -3,18 +3,14 @@ package com.noctuagames.sdk
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.Context
-import android.content.UriMatcher
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
 
 class AccountContentProvider : ContentProvider() {
-
-    companion object {
-        const val AUTHORITY = "com.noctuagames.sdk.provider"
-        val CONTENT_URI: Uri = Uri.parse("content://$AUTHORITY/accounts")
-    }
+    val authority: String = getAppPackage() + ".provider"
+    val contentUri: Uri = Uri.parse("content://${authority}/accounts")
 
     private lateinit var dbHelper: DatabaseHelper
 
@@ -39,7 +35,7 @@ class AccountContentProvider : ContentProvider() {
 
         context?.contentResolver?.notifyChange(uri, null)
 
-        return Uri.withAppendedPath(CONTENT_URI, id.toString())
+        return Uri.withAppendedPath(contentUri, id.toString())
     }
 
     override fun update(
@@ -74,7 +70,7 @@ class AccountContentProvider : ContentProvider() {
     }
 
     override fun getType(uri: Uri): String {
-        return "vnd.android.cursor.dir/vnd.$AUTHORITY.accounts"
+        return "vnd.android.cursor.dir/vnd.$authority.accounts"
     }
 
     private class DatabaseHelper(context: Context) :

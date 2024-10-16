@@ -3,6 +3,10 @@ package com.noctuagames.sdk
 import android.content.Context
 import android.util.Log
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.IOException
 
 data class NoctuaConfig(
@@ -19,7 +23,9 @@ class Noctua(context: Context) {
     private val firebase: FirebaseService?
     private val facebook: FacebookService?
     private val noctua: NoctuaService?
-    private val accounts: AccountRepository = AccountRepository(context)
+    private val accounts: AccountRepository
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var otherAuthorities: List<String> = emptyList()
 
     init {
         val config = loadAppConfig(context)
@@ -61,7 +67,7 @@ class Noctua(context: Context) {
             try {
                 Class.forName("com.google.firebase.FirebaseApp")
                 true
-            } catch (e: ClassNotFoundException) {
+            } catch (_: ClassNotFoundException) {
                 false
             }
 
@@ -90,7 +96,7 @@ class Noctua(context: Context) {
             try {
                 Class.forName("com.facebook.appevents.AppEventsLogger")
                 true
-            } catch (e: ClassNotFoundException) {
+            } catch (_: ClassNotFoundException) {
                 Log.w(TAG, "Firebase SDK is not found.")
                 false
             }
@@ -127,10 +133,35 @@ class Noctua(context: Context) {
         }
 
         noctua?.trackFirstInstall()
+
+
+
+        val packageRepo = PackageRepository(context)
+        val otherApps = packageRepo.getAllPackageInfos()
+
+        if (otherApps.none { it.packageName == getAppPackage() }) {
+            packageRepo.insertOrUpdatePackage(PackageInfo(getAppPackage()))
+        }
+
+        otherAuthorities = otherApps
+            .filter { it.packageName != getAppPackage() }
+            .map { it.packageName + ".provider" }
+
+        accounts = AccountRepository(context, otherAuthorities)
+
+        coroutineScope.launch {
+            accounts.syncOtherAccounts()
+        }
+
+        Log.i(TAG, "Noctua initialized")
     }
 
     fun onResume() {
         adjust?.onResume()
+
+        coroutineScope.launch {
+            accounts.syncOtherAccounts()
+        }
     }
 
     fun onPause() {
@@ -199,10 +230,10 @@ class Noctua(context: Context) {
     }
 
     companion object {
-        private val TAG = Noctua::class.simpleName
+        private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
 
-        fun init(context: Context)  {
+        fun init(context: Context) {
             Log.w(TAG, "init")
 
             instance = Noctua(context)
