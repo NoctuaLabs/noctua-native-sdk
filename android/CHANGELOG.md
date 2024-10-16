@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.6] - 2024-10-16
+
+### 🐛 Bug Fixes
+
+- Makes content provider distributed across apps
+
 ## [android-sdk-v0.3.5] - 2024-10-15
 
 ### 🐛 Bug Fixes
