@@ -2,6 +2,8 @@ package com.noctuagames.sdk
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
@@ -25,22 +27,45 @@ data class Account(
 }
 
 
-class AccountRepository(private val context: Context, private val otherAuthorities: List<String>) {
-    private val authority: String = getAppPackage() + ".provider"
+class AccountRepository(private val context: Context, private val publishedApps: List<String>) {
+    private val authority: String = "${context.packageName}.noctuaaccountprovider"
     private val TAG = this::class.simpleName
-    private val contentUri: Uri = Uri.parse("content://${authority}/accounts")
+    private val contentUri: Uri = Uri.parse("content://${authority}/noctua_accounts")
     private val contentResolver = context.contentResolver
     private val otherAccounts: MutableMap<String, List<Account>> = ConcurrentHashMap()
 
     suspend fun syncOtherAccounts() {
-        Log.d(TAG, "otherAuthorities: $otherAuthorities")
+        val otherApps = try {
+            Log.i(TAG, "${context.packageName} getting other installed apps")
 
-        for (authority in otherAuthorities) {
-            val uri = Uri.parse("content://$authority/accounts")
+            getOtherInstalledApps(context)
+        } catch (e: Exception) {
+            Log.w(TAG, "${context.packageName} failed to get installed apps: ${e.message}")
+
+            publishedApps.filter { it != context.packageName }
+        }
+
+        Log.i(TAG, "${context.packageName} otherApps: $otherApps")
+
+        for (authority in otherApps.map { "$it.noctuaaccountprovider" }) {
+            val uri = Uri.parse("content://$authority/noctua_accounts")
             val accounts = mutableListOf<Account>()
 
             withContext(Dispatchers.IO) {
-                val cursor = contentResolver.query(uri, null, null, null, null)
+                var cursor: Cursor? = null
+
+                try {
+                    cursor = contentResolver.query(uri, null, null, null, null)
+                }
+                catch (e: Exception) {
+                    Log.w(TAG, "${e.javaClass.simpleName}: ${e.message}")
+
+                    if (e.message?.contains("Permission Denial") == true) {
+                        Log.w(TAG, "Permission denied for $uri")
+                    }
+
+                    return@withContext
+                }
 
                 if (cursor == null) {
                     Log.w(TAG, "Failed to query $uri")
@@ -60,7 +85,7 @@ class AccountRepository(private val context: Context, private val otherAuthoriti
             }
         }
 
-        Log.d(TAG, "otherAccounts: ${otherAccounts.keys}")
+        Log.d(TAG, "${context.packageName} otherAccounts: ${otherAccounts.keys}")
     }
 
     fun put(account: Account) {
@@ -142,4 +167,19 @@ private fun toAccount(cursor: Cursor): Account {
         rawData = cursor.getString(cursor.getColumnIndexOrThrow("raw_data")),
         lastUpdated = cursor.getLong(cursor.getColumnIndexOrThrow("last_updated"))
     )
+}
+
+private fun getOtherInstalledApps(context: Context): List<String> {
+    val flags = PackageManager.GET_META_DATA or PackageManager.GET_PERMISSIONS
+    val packages = context.packageManager.getInstalledPackages(flags)
+    val permission = "com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER"
+
+    return packages
+        .filter { pkg ->
+            (pkg.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0
+                    && pkg.applicationInfo.enabled
+                    && pkg.permissions?.any { it.name == permission } == true
+                    && pkg.packageName != context.packageName
+        }
+        .map { it.packageName }
 }

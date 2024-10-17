@@ -8,19 +8,18 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <permission
-        android:name="com.noctuagames.sdk.permission.ACCESS_PROVIDER"
+        android:name="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.noctuagames.sdk.permission.ACCESS_PROVIDER" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
-    <application android:requestLegacyExternalStorage="true">
+    <application >
         <provider
             android:name=".AccountContentProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="${applicationId}.noctuaaccountprovider"
             android:exported="true"
-            android:permission="com.noctuagames.sdk.permission.ACCESS_PROVIDER"
+            android:permission="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER"
             tools:ignore="ExportedContentProvider" />
     </application>
 

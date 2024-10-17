@@ -1,6 +1,8 @@
 package com.noctuagames.sdk
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.util.Log
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +19,7 @@ data class NoctuaConfig(
     val noctua: NoctuaServiceConfig?,
 )
 
-class Noctua(context: Context) {
+class Noctua(context: Context, publishedApps: List<String>) {
     private val clientId: String
     private val adjust: AdjustService?
     private val firebase: FirebaseService?
@@ -25,7 +27,6 @@ class Noctua(context: Context) {
     private val noctua: NoctuaService?
     private val accounts: AccountRepository
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-    private var otherAuthorities: List<String> = emptyList()
 
     init {
         val config = loadAppConfig(context)
@@ -74,12 +75,10 @@ class Noctua(context: Context) {
         if (!firebaseAvailable) {
             Log.w(TAG, "Firebase SDK is not found.")
             firebase = null
-        }
-        else if (config.firebase == null) {
+        } else if (config.firebase == null) {
             Log.w(TAG, "Firebase configuration is not found.")
             firebase = null
-        }
-        else {
+        } else {
             firebase = try {
                 FirebaseService(config.firebase, context)
             } catch (e: Exception) {
@@ -104,12 +103,10 @@ class Noctua(context: Context) {
         if (!facebookAvailable) {
             Log.w(TAG, "Facebook SDK is not found.")
             facebook = null
-        }
-        else if (config.facebook == null) {
+        } else if (config.facebook == null) {
             Log.w(TAG, "Facebook configuration is not found.")
             facebook = null
-        }
-        else {
+        } else {
             facebook = try {
                 FacebookService(config.facebook, context)
             } catch (e: Exception) {
@@ -134,20 +131,7 @@ class Noctua(context: Context) {
 
         noctua?.trackFirstInstall()
 
-
-
-        val packageRepo = PackageRepository(context)
-        val otherApps = packageRepo.getAllPackageInfos()
-
-        if (otherApps.none { it.packageName == getAppPackage() }) {
-            packageRepo.insertOrUpdatePackage(PackageInfo(getAppPackage()))
-        }
-
-        otherAuthorities = otherApps
-            .filter { it.packageName != getAppPackage() }
-            .map { it.packageName + ".provider" }
-
-        accounts = AccountRepository(context, otherAuthorities)
+        accounts = AccountRepository(context, publishedApps)
 
         coroutineScope.launch {
             accounts.syncOtherAccounts()
@@ -233,10 +217,10 @@ class Noctua(context: Context) {
         private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
 
-        fun init(context: Context) {
+        fun init(context: Context, publishedApps: List<String>) {
             Log.w(TAG, "init")
 
-            instance = Noctua(context)
+            instance = Noctua(context, publishedApps)
         }
 
         fun onResume() {
@@ -324,8 +308,7 @@ fun loadAppConfig(context: Context): NoctuaConfig {
             val json = String(buffer)
 
             // Create a Gson instance with custom field naming policy
-            val gson = GsonBuilder()
-                .create()
+            val gson = GsonBuilder().create()
 
             return gson.fromJson(json, NoctuaConfig::class.java)
         }

@@ -18,24 +18,24 @@ fun Bundle.putExtras(extraPayload: Map<String, Any?>) {
     }
 }
 
-fun getAppPackage(): String {
-    var appPackageName = ""
-
-    val clazz = try {
-        @SuppressLint("PrivateApi")
-        Class.forName("android.app.ActivityThread")
-    } catch (e: Exception) {
-        null
-    }
-
-    if (clazz != null) {
-        try {
-            val method = clazz.getDeclaredMethod("currentPackageName")
-            appPackageName = method.invoke(clazz) as String
-        } catch (e: Exception) {
-            appPackageName = ""
-        }
-    }
-
-    return appPackageName
-}
+//fun getAppPackage(): String {
+//    var appPackageName = ""
+//
+//    val clazz = try {
+//        @SuppressLint("PrivateApi")
+//        Class.forName("android.app.ActivityThread")
+//    } catch (e: Exception) {
+//        null
+//    }
+//
+//    if (clazz != null) {
+//        try {
+//            val method = clazz.getDeclaredMethod("currentPackageName")
+//            appPackageName = method.invoke(clazz) as String
+//        } catch (e: Exception) {
+//            appPackageName = ""
+//        }
+//    }
+//
+//    return appPackageName
+//}
