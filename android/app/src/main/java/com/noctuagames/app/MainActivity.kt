@@ -20,9 +20,12 @@ import java.util.UUID
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Noctua.init(this)
-        val offset = if (this.packageName.endsWith("1")) 1000 else 2000
-
+        Noctua.init(this, emptyList())
+        val offset = when (this.packageName) {
+            "com.noctuagames.app1" -> 1000
+            "com.noctuagames.app2" -> 2000
+            else -> 0
+        }
         setContent {
             MainScreen(offset)
         }
@@ -113,8 +116,11 @@ fun MainScreen(offset: Int) {
             onClick = {
                 val accounts = Noctua.getAccounts()
                 if (accounts.isNotEmpty()) {
-                    val accountToDelete = accounts.random()
-                    Noctua.deleteAccount(accountToDelete)
+                    val accountToDelete = accounts
+                        .filter { it.gameId in offset..(offset + 999) }
+                        .randomOrNull()
+                    accountToDelete?.let { Noctua.deleteAccount(it) }
+
                     Log.d("MainActivity", "Deleted account: $accountToDelete")
                     data = Noctua.getAccounts()
                 } else {

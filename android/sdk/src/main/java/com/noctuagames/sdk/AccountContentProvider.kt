@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
 
-class AccountContentProvider : ContentProvider() {
-    val authority: String = getAppPackage() + ".provider"
-    val contentUri: Uri = Uri.parse("content://${authority}/accounts")
+class AccountContentProvider() : ContentProvider() {
+    val authority: String = "${context?.packageName}.noctuaaccountprovider"
+    val contentUri: Uri = Uri.parse("content://${authority}/noctua_accounts")
 
     private lateinit var dbHelper: DatabaseHelper
 
@@ -70,7 +70,7 @@ class AccountContentProvider : ContentProvider() {
     }
 
     override fun getType(uri: Uri): String {
-        return "vnd.android.cursor.dir/vnd.$authority.accounts"
+        return "vnd.android.cursor.dir/vnd.$authority.noctua_accounts"
     }
 
     private class DatabaseHelper(context: Context) :
