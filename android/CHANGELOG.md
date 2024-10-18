@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.7] - 2024-10-18
+
+### 🐛 Bug Fixes
+
+- Use getInstalledApps instead of sending intent
+
 ## [android-sdk-v0.3.6] - 2024-10-16
 
 ### 🐛 Bug Fixes
