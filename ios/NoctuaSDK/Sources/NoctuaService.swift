@@ -5,67 +5,19 @@ import StoreKit
 public typealias CompletionCallback = (Bool, String) -> Void
 
 struct NoctuaServiceConfig : Decodable {
-    let trackerURL: String?
-    let disableCustomEvent: Bool?
-    let disableTracker: Bool?
 }
 
 class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
-    
-    let trackerURL: URL
-    let disableCustomEvent: Bool
-    let disableTracker: Bool
-
     // Used to differentiate between different StoreKit operation
     private var storeKitOperation: String? = nil
     // One StoreKit operation at a time
     private var completionHandler: CompletionCallback? = nil
 
     init(config: NoctuaServiceConfig) throws {
-        let url = if config.trackerURL == nil || config.trackerURL!.isEmpty {
-            URL(string:"https://kafka-proxy-poc.noctuaprojects.com/api/v1/events")
-        } else {
-            URL(string: config.trackerURL!)
-        }
-        
-        guard url != nil else {
-            throw InitError.invalidArgument(config.trackerURL!)
-        }
-        
-        trackerURL = url!
-        disableCustomEvent = config.disableCustomEvent ?? false
-        disableTracker = config.disableTracker ?? false
-
         super.init()
         SKPaymentQueue.default().add(self)
     }
     
-    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
-        var payload = extraPayload
-        payload["source"] = source
-        payload["revenue"] = revenue
-        payload["currency"] = currency
-
-        sendEvent("AdRevenue", payload: payload)
-    }
-    
-    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
-        var payload = extraPayload
-        payload["orderId"] = orderId
-        payload["amount"] = amount
-        payload["currency"] = currency
-        
-        sendEvent("Purchase", payload: payload)
-    }
-    
-    func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
-        if (disableCustomEvent) {
-            return
-        }
-        
-        sendEvent(eventName, payload: payload)
-    }
-
     func getActiveCurrency(productId: String, completion: @escaping CompletionCallback) {
         completionHandler = completion
         storeKitOperation = "getActiveCurrency"
@@ -84,44 +36,6 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         })
     }
     
-    private func sendEvent(_ eventName: String, payload: [String:Any]) {
-        if (disableTracker) {
-            return
-        }
-        
-        var payload = payload
-        payload["event_name"] = eventName
-
-        let bodyData = try? JSONEncoder().encode(payload.mapValues { AnyEncodable($0) })
-        
-        guard bodyData != nil else {
-            self.logger.error("unable to encode event \(eventName) as json: \(payload)")
-            return
-        }
-        
-        var request = URLRequest(url: trackerURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = bodyData
-
-        let task = URLSession.shared.dataTask(with: request) { 
-            (data, response, error) in
-            
-            guard error == nil else {
-                self.logger.error("Sending event \(eventName) failed")
-                return
-            }
-            
-            if response == nil {
-                self.logger.warning("Event \(eventName) sent with no response")
-            }
-            
-            self.logger.debug("Event \(eventName) sent, payload: \(bodyData!)")
-        }
-
-        task.resume()
-    }
-
     private func initiatePayment(productId: String, completion: @escaping CompletionCallback) {
         if SKPaymentQueue.canMakePayments() {
             let request = SKProductsRequest(productIdentifiers: Set([productId]))
@@ -251,38 +165,3 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         category: String(describing: NoctuaService.self)
     )
 }
-
-private struct AnyEncodable: Encodable {
-    private let value: Encodable
-
-    init(_ value: Any) {
-        let cfValue = value as CFTypeRef
-        let typeID = CFGetTypeID(cfValue)
-        
-        if typeID == CFBooleanGetTypeID() {
-            self.value = (value as! Bool)
-        } else if typeID == CFNumberGetTypeID() {
-            let number = value as! NSNumber
-            switch CFNumberGetType(number as CFNumber) {
-            case .charType:
-                self.value = number.boolValue
-            case .sInt8Type, .sInt16Type, .sInt32Type, .sInt64Type, .intType, .shortType, .longType, .longLongType:
-                self.value = number.intValue
-            case .float32Type, .float64Type, .floatType, .doubleType, .cgFloatType:
-                self.value = number.doubleValue
-            default:
-                self.value = number.stringValue
-            }
-        } else if let value = value as? NSString {
-            self.value = value as String
-        } else {
-            self.value = "\(value)"
-        }
-    }
-
-    func encode(to encoder: Encoder) throws {
-        try value.encode(to: encoder)
-    }
-}
-
-
