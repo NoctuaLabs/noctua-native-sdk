@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.8] - 2024-10-28
+
+### 🚜 Refactor
+
+- Remove unused noctua tracker
+
 ## [android-sdk-v0.3.7] - 2024-10-18
 
 ### 🐛 Bug Fixes
