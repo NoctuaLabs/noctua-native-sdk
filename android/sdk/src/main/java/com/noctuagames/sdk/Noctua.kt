@@ -16,7 +16,6 @@ data class NoctuaConfig(
     val adjust: AdjustServiceConfig?,
     val firebase: FirebaseServiceConfig?,
     val facebook: FacebookServiceConfig?,
-    val noctua: NoctuaServiceConfig?,
 )
 
 class Noctua(context: Context, publishedApps: List<String>) {
@@ -24,7 +23,6 @@ class Noctua(context: Context, publishedApps: List<String>) {
     private val adjust: AdjustService?
     private val firebase: FirebaseService?
     private val facebook: FacebookService?
-    private val noctua: NoctuaService?
     private val accounts: AccountRepository
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -119,18 +117,6 @@ class Noctua(context: Context, publishedApps: List<String>) {
             Log.w(TAG, "Facebook tracking is disabled.")
         }
 
-        noctua = config.noctua?.let {
-            if (it.disableTracker) {
-                Log.w(TAG, "Noctua tracking is disabled.")
-
-                null
-            } else {
-                NoctuaService(it, context, adjust != null)
-            }
-        }
-
-        noctua?.trackFirstInstall()
-
         accounts = AccountRepository(context, publishedApps)
 
         coroutineScope.launch {
@@ -176,7 +162,6 @@ class Noctua(context: Context, publishedApps: List<String>) {
         adjust?.trackAdRevenue(source, revenue, currency, extraPayload)
         firebase?.trackAdRevenue(source, revenue, currency, extraPayload)
         facebook?.trackAdRevenue(source, revenue, currency, extraPayload)
-        noctua?.trackAdRevenue(source, revenue, currency, extraPayload)
     }
 
     fun trackPurchase(
@@ -203,14 +188,12 @@ class Noctua(context: Context, publishedApps: List<String>) {
         adjust?.trackPurchase(orderId, amount, currency, extraPayload)
         firebase?.trackPurchase(orderId, amount, currency, extraPayload)
         facebook?.trackPurchase(orderId, amount, currency, extraPayload)
-        noctua?.trackPurchase(orderId, amount, currency, extraPayload)
     }
 
     fun trackCustomEvent(eventName: String, payload: MutableMap<String, Any> = mutableMapOf()) {
         adjust?.trackCustomEvent(eventName, payload)
         firebase?.trackCustomEvent(eventName, payload)
         facebook?.trackCustomEvent(eventName, payload)
-        noctua?.trackCustomEvent(eventName, payload)
     }
 
     companion object {
