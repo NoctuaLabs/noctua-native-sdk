@@ -6,7 +6,12 @@ import android.util.Log
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
+import java.io.Serializable
 import java.util.Currency
+import java.util.Date
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
 
 /*
 References:
@@ -18,8 +23,7 @@ data class FacebookServiceConfig(
     val enableDebug: Boolean = false,
     val advertiserIdCollectionEnabled: Boolean = true,
     val autoLogAppEventsEnabled: Boolean = true,
-    val disableCustomEvent: Boolean = false,
-    val eventMap: Map<String, String> = mapOf(),
+    val disableCustomEvent: Boolean = false
 )
 
 class FacebookService(private val config: FacebookServiceConfig, context: Context) {
@@ -51,8 +55,6 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        val eventName = config.eventMap["AdRevenue"] ?: "ad_revenue"
-
         val bundle = Bundle().apply {
             putString("source", source)
             putDouble("ad_revenue", revenue)
@@ -60,7 +62,7 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
             putExtras(extraPayload)
         }
 
-        eventsLogger.logEvent(eventName, bundle)
+        eventsLogger.logEvent("ad_revenue", bundle)
 
         Log.d(
             TAG,
@@ -102,12 +104,10 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
             return
         }
 
-        if (!config.eventMap.containsKey(eventName)) {
-            Log.e(TAG, "$eventName event is not available in the event map")
-            return
-        }
+        val eventName = payload["suffix"]?.let { "fb_${eventName}_${it}" } ?: "fb_$eventName"
+        val payload = payload.filterKeys { it != "suffix" }
 
-        eventsLogger.logEvent(config.eventMap[eventName], Bundle().apply { putExtras(payload) })
+        eventsLogger.logEvent(eventName, Bundle().apply { putExtras(payload) })
 
         Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
     }

@@ -7,8 +7,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 
 data class FirebaseServiceConfig(
-    val disableCustomEvent: Boolean = false,
-    val eventMap: Map<String, String>,
+    val disableCustomEvent: Boolean = false
 )
 
 
@@ -34,8 +33,6 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        val eventName = config.eventMap["AdRevenue"] ?: "ad_revenue"
-
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.AD_SOURCE, source)
             putDouble(FirebaseAnalytics.Param.VALUE, revenue)
@@ -43,11 +40,11 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
             putExtras(extraPayload)
         }
 
-        analytics.logEvent(eventName, bundle)
+        analytics.logEvent("ad_revenue", bundle)
 
         Log.d(
             TAG,
-            "'$eventName' tracked: " +
+            "'ad_revenue' tracked: " +
                     "source: $source, " +
                     "revenue: $revenue, " +
                     "currency: $currency, " +
@@ -85,14 +82,10 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
             return
         }
 
-        val eventKey = config.eventMap[eventName]
+        val eventName = payload["suffix"]?.let { "gf_${eventName}_${it}" } ?: "gf_$eventName"
+        val payload = payload.filterKeys { it != "suffix" }
 
-        if (eventKey == null) {
-            Log.e(TAG, "'$eventName' (custom) is not available in the event map")
-            return
-        }
-
-        analytics.logEvent(eventKey, Bundle().apply { putExtras(payload) })
+        analytics.logEvent(eventName, Bundle().apply { putExtras(payload) })
 
         Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
     }
