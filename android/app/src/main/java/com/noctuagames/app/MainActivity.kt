@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.noctuagames.sdk.Account
 import com.noctuagames.sdk.Noctua
+import java.time.DayOfWeek
+import java.time.Instant
+import java.util.Date
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
@@ -74,7 +77,20 @@ fun MainScreen(offset: Int) {
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                Noctua.trackCustomEvent("TestSendEvent", mutableMapOf("k1" to "v1", "k2" to "v2"))
+                Noctua.trackCustomEvent(
+                    "TestSendEvent",
+                    mutableMapOf(
+                        "k1" to 0.123f,
+                        "k2" to 0.123,
+                        "k3" to 123,
+                        "k4" to 123L,
+                        "k5" to true,
+                        "k6" to "string",
+                        "k7" to Date.from(Instant.now()),
+                        "k8" to DayOfWeek.SATURDAY,
+                        "suffix" to 123,
+                    )
+                )
                 Log.d("MainActivity", "Custom event tracked")
             }) {
             Text("Track Custom Event")
