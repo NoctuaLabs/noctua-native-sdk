@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.3.9] - 2024-11-02
+
+### 🚜 Refactor
+
+- Remove event map from Facebook and Firebase
+
 ## [android-sdk-v0.3.8] - 2024-10-28
 
 ### 🚜 Refactor
