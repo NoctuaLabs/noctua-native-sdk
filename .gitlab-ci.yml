@@ -124,3 +124,91 @@ publish-android-sdk:
     - git remote add github https://github.com/NoctuaLabs/noctua-native-sdk.git
     - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md "./noctua-$NEW_VERSION_TAG.aar"
     - git remote remove github
+
+bump-version-ios-sdk:
+  extends: .bump-version
+  stage: bump-version
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - ios/**/*
+        - NoctuaSDK.podspec
+      when: always
+  variables:
+    GIT_STRATEGY: fetch # reuse workspace
+    GIT_DEPTH: 0 # avoid shallow clone to give cliff all the info it needs
+  script:
+    - cd ios
+    - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
+    - NEW_VERSION = echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/"
+    - if [ -n "$(git diff --name-only HEAD -- ./NoctuaSDK.podspec)" ]; then
+        echo "Bumping version for next release";
+        sed -r "s/(spec.version *= *)\".*\"/\1$(echo $NEW_VERSION)/" ../NoctuaSDK.podspec;
+        git add NoctuaSDK.podspec;
+        git commit -m "bump version to $(cat version.txt) [skip ci]";
+        git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip;
+        else
+        echo "No version bump required";
+      fi
+
+release-ios-sdk:
+  extends: .bump-version
+  stage: release
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - ios/**/*
+        - NoctuaSDK.podspec
+      when: manual
+      needs:
+        - bump-version-ios-sdk
+  variables:
+    GIT_STRATEGY: fetch # reuse workspace
+    GIT_DEPTH: 0 # avoid shallow clone to give cliff all the info it needs
+  script:
+    - cd ios
+    - git fetch --tags
+    - git checkout $CI_COMMIT_BRANCH
+    - git pull
+    - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
+    - NEW_VERSION = echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/"
+    - sed -r "s/(spec.version *= *)\".*\"/\1$(echo $NEW_VERSION)/" ../NoctuaSDK.podspec
+    - git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bump > CHANGELOG.md
+    - git add CHANGELOG.md
+    - git commit -m "Release $NEW_VERSION_TAG"
+    - git tag -a $NEW_VERSION_TAG -m "Release $NEW_VERSION_TAG"
+    - git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
+    
+publish-ios-sdk:
+  stage: publish
+  tags:
+    - macmini
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - ios/**/*
+        - NoctuaSDK.podspec
+      when: on_success
+      needs:
+        - release-ios-sdk
+  variables:
+    GIT_STRATEGY: fetch # reuse workspace
+    GIT_DEPTH: 0 # avoid shallow clone to give cliff all the info it needs
+  script:
+    - cd ios
+    - git fetch --tags
+    - git checkout $CI_COMMIT_BRANCH
+    - git pull
+    - git clean -dxf
+    - wget "https://github.com/orhun/git-cliff/releases/download/v2.4.0/git-cliff-2.4.0-x86_64-unknown-linux-gnu.tar.gz"
+    - tar -xvf git-cliff-2.4.0-x86_64-unknown-linux-gnu.tar.gz
+    - cp ./git-cliff-2.4.0/git-cliff /usr/local/bin/
+    - chmod +x ./git-cliff-2.4.0/git-cliff
+    - NEW_VERSION_TAG=$(./git-cliff-2.4.0/git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
+    - ./git-cliff-2.4.0/git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --latest > GithubRelease.md
+    - curl -sS https://webi.sh/gh | sh
+    - echo $GITHUB_ACCESS_TOKEN | gh auth login --with-token
+    - git remote add github https://github.com/NoctuaLabs/noctua-native-sdk.git
+    - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md
+    - git remote remove github
+    - pod trunk push ../NoctuaSDK.podspec --allow-warnings || echo "Failed to push to pod trunk. Please push manually from registered pod maintainer workstattion using 'pod trunk push ../NoctuaSDK.podspec --allow-warnings'"
