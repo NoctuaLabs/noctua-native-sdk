@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.2.4] - 2024-11-04
+
+### 🐛 Bug Fixes
+
+- Fix CI version DSL error so that it can be pushed
+
 ## [ios-sdk-v0.2.3] - 2024-11-04
 
 ### 🐛 Bug Fixes
