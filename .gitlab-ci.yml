@@ -140,10 +140,10 @@ bump-version-ios-sdk:
   script:
     - cd ios
     - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
-    - NEW_VERSION = echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/"
+    - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/")
     - if [ -n "$(git diff --name-only HEAD -- ./NoctuaSDK.podspec)" ]; then
         echo "Bumping version for next release";
-        sed -r "s/(spec.version *= *)\".*\"/\1$(echo $NEW_VERSION)/" ../NoctuaSDK.podspec;
+        sed -r "s/(spec.version *= *)\".*\"/\1$(echo $NEW_VERSION)/" ../NoctuaSDK.podspec > ../NoctuaSDK.podspec.tmp && mv ../NoctuaSDK.podspec.tmp ../NoctuaSDK.podspec;
         git add NoctuaSDK.podspec;
         git commit -m "bump version to $(cat version.txt) [skip ci]";
         git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip;
@@ -171,8 +171,9 @@ release-ios-sdk:
     - git checkout $CI_COMMIT_BRANCH
     - git pull
     - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
-    - NEW_VERSION = echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/"
-    - sed -r "s/(spec.version *= *)\".*\"/\1$(echo $NEW_VERSION)/" ../NoctuaSDK.podspec
+    - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/")
+    - sed -r "s/(spec.version *= *)\".*\"/\1$(echo $NEW_VERSION)/" ../NoctuaSDK.podspec > ../NoctuaSDK.podspec.tmp && mv ../NoctuaSDK.podspec.tmp ../NoctuaSDK.podspec
+    - git add ../NoctuaSDK.podspec
     - git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bump > CHANGELOG.md
     - git add CHANGELOG.md
     - git commit -m "Release $NEW_VERSION_TAG"

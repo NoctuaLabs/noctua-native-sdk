@@ -47,7 +47,7 @@ Pod::Spec.new do |spec|
     end
   end
   
-  # Download Facebook-Static XCFramwework from Facebook SDK release on Github
+  # Download Facebook-Static XCFramwework from Facebook SDK releases on Github
   spec.prepare_command = <<-CMD
     echo "Downloading FacebookSDK-Static_XCFramework"
     VERSION="17.0.2"
