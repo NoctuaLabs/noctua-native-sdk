@@ -50,7 +50,7 @@ Pod::Spec.new do |spec|
   # Download Facebook-Static XCFramwework
   spec.prepare_command = <<-CMD
     echo "Downloading FacebookSDK-Static_XCFramework"
-    VERSION="17.3.0"
+    VERSION="17.0.2"
     ZIPFILE="FacebookSDK-Static_XCFramework.zip"
     URL="https://github.com/facebook/facebook-ios-sdk/releases/download/v${VERSION}/${ZIPFILE}"
     DESTINATION="ios/NoctuaSDK"
