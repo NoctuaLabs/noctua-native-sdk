@@ -19,7 +19,6 @@ enum FirebaseServiceError : Error {
 
 struct FirebaseServiceConfig : Codable {
     let disableCustomEvent: Bool?
-    let eventMap: [String:String]
 }
 
 class FirebaseService {
@@ -29,14 +28,6 @@ class FirebaseService {
 #if canImport(FirebaseAnalytics)
         logger.info("Firebase module detected")
         self.config = config
-        
-        guard !config.eventMap.isEmpty else {
-            throw FirebaseServiceError.invalidConfig("eventMap is empty")
-        }
-        
-        guard config.eventMap.keys.contains("Purchase") else {
-            throw FirebaseServiceError.invalidConfig("no eventToken for purchase")
-        }
         
         FirebaseApp.configure()
         Analytics.setAnalyticsCollectionEnabled(true)
@@ -48,8 +39,6 @@ class FirebaseService {
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
-        let eventName = config.eventMap["AdRevenue"] ?? "ad_revenue"
-
         var parameters: [String:Any] = [
             AnalyticsParameterAdSource: source,
             AnalyticsParameterValue: revenue,
@@ -60,9 +49,9 @@ class FirebaseService {
             parameters[key] = value
         }
 
-        Analytics.logEvent(eventName, parameters: parameters)
+        Analytics.logEvent("ad_revenue", parameters: parameters)
 
-        logger.debug("'\(eventName)' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
+        logger.debug("'ad_revenue' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
 #endif
     }
     
@@ -90,15 +79,12 @@ class FirebaseService {
             return
         }
         
-        let eventName = config.eventMap[eventName] ?? ""
-        guard !eventName.isEmpty else  {
-            logger.error("'\(eventName)' (custom) is not available in the eventMap")
-            return
-        }
-       
-        Analytics.logEvent(eventName, parameters: payload)
+        let suffix = (payload["suffix"] as? CustomStringConvertible).flatMap { "\($0)".isEmpty ? nil : "_\($0)" } ?? ""
+        let payload = payload.filter { $0.key != "suffix" }
+        
+        Analytics.logEvent("gf_\(eventName)\(suffix)", parameters: payload)
 
-        logger.debug("'\(eventName)' (custom) tracked: payload: \(payload)")
+        logger.debug("'gf_\(eventName)\(suffix)' (custom) tracked: payload: \(payload)")
 #endif
     }
     

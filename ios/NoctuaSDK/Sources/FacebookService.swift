@@ -24,7 +24,6 @@ struct FacebookServiceConfig : Codable {
     let clientToken: String
     let displayName: String
     let disableCustomEvent: Bool?
-    let eventMap: [String:String]
 }
 
 class FacebookService {
@@ -53,8 +52,6 @@ class FacebookService {
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(FBSDKCoreKit)
-        let eventName = config.eventMap["AdRevenue"] ?? "ad_revenue"
-
         var parameters: [AppEvents.ParameterName: Any] = [
             AppEvents.ParameterName("source"): source,
             AppEvents.ParameterName("ad_revenue"): revenue,
@@ -65,9 +62,9 @@ class FacebookService {
             parameters[AppEvents.ParameterName(key)] = value
         }
 
-        AppEvents.shared.logEvent(AppEvents.Name(eventName), parameters: parameters)
+        AppEvents.shared.logEvent(AppEvents.Name("ad_revenue"), parameters: parameters)
 
-        logger.debug("'\(eventName)' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
+        logger.debug("'ad_revenue' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
 #endif
     }
     
@@ -93,20 +90,20 @@ class FacebookService {
             return
         }
         
-        let eventName = config.eventMap[eventName] ?? ""
-        guard !eventName.isEmpty else  {
-            logger.error("'\(eventName)' is not available in the eventMap")
-            return
-        }
-        
+        let suffix = (payload["suffix"] as? CustomStringConvertible).flatMap { "\($0)".isEmpty ? nil : "_\($0)" } ?? ""
+
         var parameters:[AppEvents.ParameterName: Any] = [:]
         for (key, value) in payload {
+            if (key == "suffix") {
+                continue
+            }
+            
             parameters[AppEvents.ParameterName(key)] = value
         }
 
-        AppEvents.shared.logEvent(AppEvents.Name(eventName), parameters: parameters)
+        AppEvents.shared.logEvent(AppEvents.Name("fb_\(eventName)\(suffix)"), parameters: parameters)
         
-        logger.debug("'\(eventName)' (custom) tracked: \(payload)")
+        logger.debug("'fb_\(eventName)\(suffix)' (custom) tracked: \(parameters)")
 #endif
     }
     

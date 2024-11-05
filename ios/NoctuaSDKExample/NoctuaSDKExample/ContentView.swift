@@ -39,7 +39,7 @@ struct ContentView: View {
             }
             
             Button(action: {
-                Noctua.trackCustomEvent("TestSendEvent", payload: ["k1": "v1", "k2" : "v2"])
+                Noctua.trackCustomEvent("TestSendEvent", payload: ["k1": "v1", "k2" : "v2", "suffix": 123])
                 logger.debug("Track Custom Event tapped")
             }) {
                 Text("Track Custom Event")
