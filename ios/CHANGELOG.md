@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.3.0] - 2024-11-05
+
+### 🚀 Features
+
+- Add dynamic event suffix to facebook and firebase
+
 ## [ios-sdk-v0.2.5] - 2024-11-05
 
 ### 🐛 Bug Fixes
