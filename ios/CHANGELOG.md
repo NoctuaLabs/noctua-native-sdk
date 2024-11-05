@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.2.5] - 2024-11-05
+
+### 🐛 Bug Fixes
+
+- Another attempt to fix version DSL in podspec
+
 ## [ios-sdk-v0.2.4] - 2024-11-04
 
 ### 🐛 Bug Fixes
