@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.4.0] - 2024-11-08
+
+### 🚀 Features
+
+- Android firebase crashlytics
+- Add the Google services plugin and Crashlytics plugin
+- Add button crash me android
+- Google services json android
+
+### 📚 Documentation
+
+- Add manual release guide [skip ci]
+
 ## [android-sdk-v0.3.9] - 2024-11-02
 
 ### 🚜 Refactor
