@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.4.1] - 2024-11-08
+
+### 🐛 Bug Fixes
+
+- Downgrade plugin crashlytics 3.0.2 -> 2.9.5
+
 ## [android-sdk-v0.4.0] - 2024-11-08
 
 ### 🚀 Features
