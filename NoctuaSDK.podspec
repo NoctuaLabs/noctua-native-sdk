@@ -26,6 +26,10 @@ Pod::Spec.new do |spec|
   spec.subspec "FirebaseAnalytics" do |firebase|
     firebase.dependency "FirebaseAnalytics", "~> 11.0.0"
   end
+
+  spec.subspec "Crashlytics" do |firebase|
+    firebase.dependency "FirebaseCrashlytics", "~> 11.3.0"
+  end
   
   spec.subspec "FacebookSDK" do |facebook|
     facebook.platform     = :ios, "14.0"
