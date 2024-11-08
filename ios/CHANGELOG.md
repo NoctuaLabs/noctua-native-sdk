@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.4.0] - 2024-11-08
+
+### 🚀 Features
+
+- IOS firebase crashlytics
+
+### 🐛 Bug Fixes
+
+- Rename Crashlytics to FirebaseCrashlytics
+
+### 📚 Documentation
+
+- Add manual release guide [skip ci]
+
 ## [ios-sdk-v0.3.0] - 2024-11-05
 
 ### 🚀 Features
