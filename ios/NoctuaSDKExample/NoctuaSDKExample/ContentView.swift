@@ -75,6 +75,17 @@ struct ContentView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
+            
+            Button(action: {
+                fatalError("Crash was triggered")
+            }) {
+                Text("Crash Me")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
 
         }
         .padding()

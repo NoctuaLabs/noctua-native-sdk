@@ -146,6 +146,14 @@ fun MainScreen(offset: Int) {
             Text("Delete Random Account")
         }
 
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                throw RuntimeException("Test Crash")
+            }) {
+            Text("Crash Me")
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
