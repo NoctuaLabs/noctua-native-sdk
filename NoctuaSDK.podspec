@@ -27,7 +27,7 @@ Pod::Spec.new do |spec|
     firebase.dependency "FirebaseAnalytics", "~> 11.0.0"
   end
 
-  spec.subspec "Crashlytics" do |firebase|
+  spec.subspec "FirebaseCrashlytics" do |firebase|
     firebase.dependency "FirebaseCrashlytics", "~> 11.3.0"
   end
   
