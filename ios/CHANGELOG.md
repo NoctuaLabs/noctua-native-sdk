@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.5.0] - 2024-11-10
+
+### 🚀 Features
+
+- Save accounts in shared keychain
+
 ## [ios-sdk-v0.4.0] - 2024-11-08
 
 ### 🚀 Features
