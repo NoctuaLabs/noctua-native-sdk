@@ -12,7 +12,7 @@ Pod::Spec.new do |spec|
   spec.static_framework = true
   
   spec.source       = { :git => "https://github.com/NoctuaLabs/noctua-native-sdk.git", :tag => "ios-sdk-v#{spec.version}" }
-  spec.frameworks = "WebKit", "StoreKit", "AppTrackingTransparency", "AdServices", "AdSupport"
+  spec.frameworks = "WebKit", "StoreKit", "AppTrackingTransparency", "AdServices", "AdSupport", "Security"
   spec.default_subspec = "Core"
 
   spec.subspec "Core" do |core|

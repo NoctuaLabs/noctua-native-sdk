@@ -11,6 +11,7 @@ struct NoctuaConfig : Decodable {
 
 class NoctuaPlugin {
     private let config: NoctuaConfig
+    private let accountRepo: AccountRepository
     private let noctua: NoctuaService?
     private let adjust: AdjustService?
     private let firebase: FirebaseService?
@@ -18,6 +19,8 @@ class NoctuaPlugin {
 
     init(config: NoctuaConfig) {
         self.config = config
+        
+        self.accountRepo = AccountRepository()
 
         if self.config.noctua == nil {
             logger.warning("config for NoctuaService not found")
@@ -174,6 +177,45 @@ class NoctuaPlugin {
         logger.debug("productId: \(productId)")
         
         self.noctua?.getActiveCurrency(productId: productId, completion: completion)
+    }
+    
+    func putAccount(gameId: Int64, playerId: Int64, rawData: String) {
+        let account = Account(playerId: playerId, gameId: gameId, rawData: rawData)
+        
+        accountRepo.put(account)
+    }
+    
+    func getAllAccounts() -> [[String:Any]] {
+        let accounts = accountRepo.getAll()
+        
+        return accounts.map {
+            account in
+            [
+                "playerId": account.playerId,
+                "gameId": account.gameId,
+                "rawData": account.rawData,
+                "lastUpdated": account.lastUpdated
+            ]
+        }
+    }
+    
+    func getSingleAccount(gameId: Int64, playerId: Int64) -> [String:Any]? {
+        let account = accountRepo.getSingle(gameId: gameId, playerId: playerId)
+        
+        if account == nil {
+            return nil
+        }
+        
+        return [
+            "playerId": account!.playerId,
+            "gameId": account!.gameId,
+            "rawData": account!.rawData,
+            "lastUpdated": account!.lastUpdated
+        ]
+    }
+    
+    func deleteAccount(gameId: Int64, playerId: Int64) {
+        accountRepo.delete(gameId: gameId, playerId: playerId)
     }
     
     private let logger = Logger(
