@@ -27,6 +27,22 @@ import Foundation
         plugin?.getActiveCurrency(productId: productId, completion: completion)
     }
     
+    @objc public static func putAccount(gameId: Int64, playerId: Int64, rawData: String) {
+        plugin?.putAccount(gameId: gameId, playerId: playerId, rawData: rawData)
+    }
+    
+    @objc public static func getAllAccounts() -> [[String:Any]] {
+        return plugin?.getAllAccounts() ?? []
+    }
+    
+    @objc public static func getSingleAccount(gameId: Int64, playerId: Int64) -> [String:Any]? {
+        return plugin?.getSingleAccount(gameId: gameId, playerId: playerId)
+    }
+    
+    @objc public static func deleteAccount(gameId: Int64, playerId: Int64) {
+        plugin?.deleteAccount(gameId: gameId, playerId: playerId)
+    }
+    
     static var plugin: NoctuaPlugin?
 }
 

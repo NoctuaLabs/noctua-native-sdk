@@ -11,15 +11,17 @@ import os
 
 @main
 struct NoctuaSDKExampleApp: App {
-    let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "NoctuaSDKExampleApp")
+    let gameId: Int64
     
     init() {
         try! Noctua.initNoctua()
+        
+        gameId = if (Bundle.main.bundleIdentifier?.contains("unity") ?? false) { 1 } else { 2 }
     }
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(gameId: gameId)
         }
     }
 }
