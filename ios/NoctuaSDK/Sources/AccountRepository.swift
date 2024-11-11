@@ -19,10 +19,8 @@ class AccountRepository {
     func put(_ account: Account) {
         let credentials = toCredentials(account)
         
-        // Delete any existing item
         SecItemDelete(credentials as CFDictionary)
         
-        // Add the new item
         let status = SecItemAdd(credentials as CFDictionary, nil)
         if status != errSecSuccess {
             logger.error("Error adding account to keychain: \(status)")
@@ -105,7 +103,7 @@ class AccountRepository {
     private func fromCredentials(_ credentials: [String: Any]) -> Account? {
         guard
             let valueData = credentials[kSecValueData as String] as? Data,
-            let stringValue = String(data: valueData, encoding: .utf8),
+            let stringValue = String(data: valueData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
             let compositeId = credentials[kSecAttrAccount as String] as? String
         else {
             logger.error("Error parsing credentials")
@@ -113,19 +111,18 @@ class AccountRepository {
             return nil
         }
         
-        let parts = stringValue.split(separator: "\n")
-
-        guard
-            parts.count >= 2,
-            let rawData = parts.first,
-            let lastUpdatedString = parts.last,
-            let lastUpdated = Int64(lastUpdatedString)
+        guard let separatorIndex = stringValue.lastIndex(of: "\n")
         else {
             logger.error("Error parsing account data from credentials")
             
             return nil
         }
         
+        let rawData = stringValue[..<separatorIndex]
+        let lastUpdatedStart = stringValue.index(after: separatorIndex)
+        let lastUpdatedString = stringValue[lastUpdatedStart...]
+        let lastUpdated = Int64(lastUpdatedString) ?? 0
+
         let idParts = compositeId.split(separator: "_")
         
         guard idParts.count == 2, let gameId = Int64(idParts[0]), let playerId = Int64(idParts[1]) else {
