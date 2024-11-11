@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.5.1] - 2024-11-11
+
+### ⚙️ Miscellaneous Tasks
+
+- Fix CI GH release
+
 ## [ios-sdk-v0.5.0] - 2024-11-10
 
 ### 🚀 Features
