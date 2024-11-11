@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.5.2] - 2024-11-11
+
+### 🐛 Bug Fixes
+
+- Split rawData and lastUpdated with correct separator index
+
 ## [ios-sdk-v0.5.1] - 2024-11-11
 
 ### ⚙️ Miscellaneous Tasks
