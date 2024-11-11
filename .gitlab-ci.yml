@@ -207,6 +207,7 @@ publish-ios-sdk:
     - NEW_VERSION_TAG=$(./git-cliff-2.4.0/git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
     - ./git-cliff-2.4.0/git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --latest > GithubRelease.md
     - curl -sS https://webi.sh/gh | sh
+    - source ~/.config/envman/PATH.env
     - echo $GITHUB_ACCESS_TOKEN | gh auth login --with-token
     - git remote add github https://github.com/NoctuaLabs/noctua-native-sdk.git
     - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md
