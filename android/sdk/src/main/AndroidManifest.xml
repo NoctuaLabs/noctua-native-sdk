@@ -14,7 +14,7 @@
     <uses-permission android:name="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
-    <application >
+    <application android:gwpAsanMode="always">
         <provider
             android:name=".AccountContentProvider"
             android:authorities="${applicationId}.noctuaaccountprovider"
