@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.4.2] - 2024-11-12
+
+### 🐛 Bug Fixes
+
+- Add isCrashlyticsCollectionEnabled = true
+
 ## [android-sdk-v0.4.1] - 2024-11-08
 
 ### 🐛 Bug Fixes
