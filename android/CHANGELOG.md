@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.5.0] - 2024-11-12
+
+### 🚀 Features
+
+- Crashlytics ndk android
+
+### 🐛 Bug Fixes
+
+- Remove enable crashlytics by programmatically
+
 ## [android-sdk-v0.4.2] - 2024-11-12
 
 ### 🐛 Bug Fixes
