@@ -5,7 +5,6 @@ import android.util.Log
 import android.os.Bundle
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 data class FirebaseServiceConfig(
     val disableCustomEvent: Boolean = false
@@ -15,7 +14,6 @@ data class FirebaseServiceConfig(
 class FirebaseService(private val config: FirebaseServiceConfig, context: Context) {
     private val TAG = this::class.simpleName
     private val analytics: FirebaseAnalytics
-    private val crashlytics: FirebaseCrashlytics
 
     init {
         if (FirebaseApp.getApps(context).isEmpty()) {
@@ -25,8 +23,6 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
         }
 
         analytics = FirebaseAnalytics.getInstance(context)
-        crashlytics = FirebaseCrashlytics.getInstance()
-        crashlytics.isCrashlyticsCollectionEnabled = true
 
         Log.i(TAG, "Firebase Analytics initialized successfully")
     }
