@@ -119,6 +119,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.facebook.core)
     testImplementation(libs.junit)
 }
