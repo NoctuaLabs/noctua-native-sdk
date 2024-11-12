@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.6.0] - 2024-11-12
+
+### 🚀 Features
+
+- Enable GWP-ASan
+
 ## [android-sdk-v0.5.0] - 2024-11-12
 
 ### 🚀 Features
