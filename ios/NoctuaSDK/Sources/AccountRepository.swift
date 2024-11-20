@@ -17,39 +17,56 @@ struct Account : Encodable {
 
 class AccountRepository {
     func put(_ account: Account) {
-        let credentials = toCredentials(account)
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccessGroup as String: keychainAccessGroup,
+            kSecAttrService as String: serviceName,
+            kSecAttrAccount as String: "\(account.gameId)_\(account.playerId)",
+        ]
         
-        SecItemDelete(credentials as CFDictionary)
+        let attributesToUpdate = [
+            kSecValueData as String: "\(account.rawData)\n\(account.lastUpdated)".data(using: .utf8)!
+        ]
         
-        let status = SecItemAdd(credentials as CFDictionary, nil)
-        if status != errSecSuccess {
-            logger.error("Error adding account to keychain: \(status)")
+        let status = SecItemUpdate(query as CFDictionary, attributesToUpdate as CFDictionary)
+        if status == errSecItemNotFound {
+            let addStatus = SecItemAdd(toCredentials(account) as CFDictionary, nil)
+            if addStatus != errSecSuccess {
+                logger.error("error adding account to keychain: \(addStatus)")
+                
+                return
+            }
+        } else if status != errSecSuccess {
+            logger.error("error updating account in keychain: \(status)")
             
             return
         }
         
-        logger.debug("Added account '\(account.gameId)_\(account.playerId)' to keychain")
+        logger.debug("added account '\(account.gameId)_\(account.playerId)' to keychain")
     }
     
     func getAll() -> [Account] {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccessGroup as String: keychainAccessGroup,
+            kSecAttrService as String: serviceName,
             kSecMatchLimit as String: kSecMatchLimitAll,
             kSecReturnAttributes as String: true,
-            kSecReturnData as String: true,
-            kSecAttrAccessGroup as String: keychainAccessGroup
+            kSecReturnData as String: true
         ]
         
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
         
         guard status == errSecSuccess, let items = result as? [[String: Any]] else {
-            logger.error("Error retrieving all accounts: \(status)")
+            if status != errSecItemNotFound {
+                logger.error("error retrieving all accounts: \(status)")
+            }
             
             return []
         }
         
-        logger.debug("Retrieved \(items.count) accounts")
+        logger.debug("retrieved \(items.count) accounts")
         
         return items.compactMap { fromCredentials($0) }
     }
@@ -57,17 +74,21 @@ class AccountRepository {
     func getSingle(gameId: Int64, playerId: Int64) -> Account? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccessGroup as String: keychainAccessGroup,
+            kSecAttrService as String: serviceName,
             kSecAttrAccount as String: "\(gameId)_\(playerId)",
             kSecReturnAttributes as String: true,
-            kSecReturnData as String: true,
-            kSecAttrAccessGroup as String: keychainAccessGroup
+            kSecReturnData as String: true
         ]
         
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
         
         guard status == errSecSuccess, let credentials = result as? [String: Any] else {
-            logger.error("Error retrieving account: \(status)")
+            if status != errSecItemNotFound {
+                logger.error("error retrieving account: \(status)")
+            }
+            
             return nil
         }
         
@@ -81,39 +102,43 @@ class AccountRepository {
     func delete(gameId: Int64, playerId: Int64) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: "\(gameId)_\(playerId)",
-            kSecAttrAccessGroup as String: keychainAccessGroup
+            kSecAttrAccessGroup as String: keychainAccessGroup,
+            kSecAttrService as String: serviceName,
+            kSecAttrAccount as String: "\(gameId)_\(playerId)"
         ]
         
         let status = SecItemDelete(query as CFDictionary)
         if status != errSecSuccess {
-            logger.error("Error deleting account: \(status)")
+            logger.error("error deleting account: \(status)")
         }
     }
     
     private func toCredentials(_ account: Account) -> [String: Any] {
         return [
             kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccessGroup as String: keychainAccessGroup,
+            kSecAttrService as String: serviceName,
             kSecAttrAccount as String: "\(account.gameId)_\(account.playerId)",
-            kSecValueData as String: "\(account.rawData)\n\(account.lastUpdated)".data(using: .utf8)!,
-            kSecAttrAccessGroup as String: keychainAccessGroup
+            kSecValueData as String: "\(account.rawData)\n\(account.lastUpdated)".data(using: .utf8)!
         ]
     }
     
     private func fromCredentials(_ credentials: [String: Any]) -> Account? {
+        let compositeId: String = credentials[kSecAttrAccount as String] as? String ?? ""
+
         guard
+            compositeId != "",
             let valueData = credentials[kSecValueData as String] as? Data,
-            let stringValue = String(data: valueData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-            let compositeId = credentials[kSecAttrAccount as String] as? String
+            let stringValue = String(data: valueData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines)
         else {
-            logger.error("Error parsing credentials")
+            logger.error("error parsing credentials \(compositeId)")
             
             return nil
         }
         
         guard let separatorIndex = stringValue.lastIndex(of: "\n")
         else {
-            logger.error("Error parsing account data from credentials")
+            logger.error("error parsing account data from credentials")
             
             return nil
         }
@@ -126,7 +151,7 @@ class AccountRepository {
         let idParts = compositeId.split(separator: "_")
         
         guard idParts.count == 2, let gameId = Int64(idParts[0]), let playerId = Int64(idParts[1]) else {
-            logger.error("Error parsing account ID from compositeId")
+            logger.error("error parsing account ID from compositeId")
             
             return nil
         }
@@ -135,6 +160,7 @@ class AccountRepository {
     }
 
     private let keychainAccessGroup = "\(Bundle.main.infoDictionary?["AppIdPrefix"] ?? "")com.noctuagames.accounts"
+    private let serviceName = "com.noctuagames.accounts.AccountRepository"
     
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
