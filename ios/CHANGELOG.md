@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.5.3] - 2024-11-20
+
+### 🐛 Bug Fixes
+
+- Use update instead of delete + add in AccountRepository
+
 ## [ios-sdk-v0.5.2] - 2024-11-11
 
 ### 🐛 Bug Fixes
