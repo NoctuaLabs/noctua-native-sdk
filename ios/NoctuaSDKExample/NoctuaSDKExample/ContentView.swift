@@ -29,9 +29,11 @@ class AccountViewModel: ObservableObject {
     @Published var accounts: [AccountModel] = []
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountViewModel")
     
+    init() {
+        loadAccounts()
+    }
+    
     func loadAccounts() {
-        let accountsDict = Noctua.getAllAccounts()
-        
         accounts = Noctua.getAllAccounts().map {
             account in
             AccountModel(
