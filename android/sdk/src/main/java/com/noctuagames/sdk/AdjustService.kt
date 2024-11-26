@@ -8,6 +8,10 @@ import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustEvent
 
 data class AdjustServiceConfig(
+    val android: AdjustServiceAndroidConfig,
+)
+
+data class AdjustServiceAndroidConfig(
     val appToken: String,
     val environment: String?,
     val disableCustomEvent: Boolean = false,
@@ -18,25 +22,25 @@ internal class AdjustService(private val config: AdjustServiceConfig, context: C
     private val TAG = this::class.simpleName
 
     init {
-        if (config.appToken.isEmpty()) {
+        if (config.android.appToken.isEmpty()) {
             throw IllegalArgumentException("App token is not set")
         }
 
-        if (config.eventMap.isEmpty()) {
+        if (config.android.eventMap.isEmpty()) {
             throw IllegalArgumentException("Event map is not set")
         }
 
-        if (!config.eventMap.containsKey("Purchase")) {
+        if (!config.android.eventMap.containsKey("Purchase")) {
             throw IllegalArgumentException("Event token for Purchase is not set")
         }
 
-        val environment = if (config.environment.isNullOrEmpty()) {
+        val environment = if (config.android.environment.isNullOrEmpty()) {
             AdjustConfig.ENVIRONMENT_SANDBOX
         } else {
-            config.environment
+            config.android.environment
         }
 
-        val adjustConfig = AdjustConfig(context, config.appToken, environment)
+        val adjustConfig = AdjustConfig(context, config.android.appToken, environment)
         Adjust.onCreate(adjustConfig)
         Log.i(TAG, "Adjust SDK initialized successfully")
     }
@@ -71,7 +75,7 @@ internal class AdjustService(private val config: AdjustServiceConfig, context: C
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        val event = AdjustEvent(config.eventMap["Purchase"])
+        val event = AdjustEvent(config.android.eventMap["Purchase"])
         event.setRevenue(amount, currency)
         event.orderId = orderId
 
@@ -83,16 +87,16 @@ internal class AdjustService(private val config: AdjustServiceConfig, context: C
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        if (config.disableCustomEvent) {
+        if (config.android.disableCustomEvent) {
             return
         }
 
-        if (!config.eventMap.containsKey(eventName)) {
+        if (!config.android.eventMap.containsKey(eventName)) {
             Log.e(TAG, "$eventName event token is not available in the event map")
             return
         }
 
-        val adjustEvent = AdjustEvent(config.eventMap[eventName])
+        val adjustEvent = AdjustEvent(config.android.eventMap[eventName])
 
         for ((key, value) in payload) {
             adjustEvent.addCallbackParameter(key, value.toString())

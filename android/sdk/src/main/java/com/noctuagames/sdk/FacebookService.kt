@@ -20,6 +20,10 @@ References:
 * */
 
 data class FacebookServiceConfig(
+    val android: FacebookServiceAndroidConfig
+)
+
+data class FacebookServiceAndroidConfig(
     val enableDebug: Boolean = false,
     val advertiserIdCollectionEnabled: Boolean = true,
     val autoLogAppEventsEnabled: Boolean = true,
@@ -31,7 +35,7 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
     private val eventsLogger: AppEventsLogger
 
     init {
-        if (config.enableDebug) {
+        if (config.android.enableDebug) {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(com.facebook.LoggingBehavior.APP_EVENTS)
         } else {
@@ -39,8 +43,8 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
             FacebookSdk.removeLoggingBehavior(com.facebook.LoggingBehavior.APP_EVENTS)
         }
 
-        FacebookSdk.setAutoLogAppEventsEnabled(config.autoLogAppEventsEnabled)
-        FacebookSdk.setAdvertiserIDCollectionEnabled(config.advertiserIdCollectionEnabled)
+        FacebookSdk.setAutoLogAppEventsEnabled(config.android.autoLogAppEventsEnabled)
+        FacebookSdk.setAdvertiserIDCollectionEnabled(config.android.advertiserIdCollectionEnabled)
         FacebookSdk.setAutoInitEnabled(true)
         FacebookSdk.fullyInitialize()
 
@@ -100,7 +104,7 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        if (config.disableCustomEvent) {
+        if (config.android.disableCustomEvent) {
             return
         }
 

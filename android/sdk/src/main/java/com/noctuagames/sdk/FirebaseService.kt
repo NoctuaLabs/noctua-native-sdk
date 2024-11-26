@@ -7,6 +7,10 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 
 data class FirebaseServiceConfig(
+    val android: FirebbaseServiceAndroidConfig
+)
+
+data class FirebbaseServiceAndroidConfig(
     val disableCustomEvent: Boolean = false
 )
 
@@ -78,7 +82,7 @@ class FirebaseService(private val config: FirebaseServiceConfig, context: Contex
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        if (config.disableCustomEvent) {
+        if (config.android.disableCustomEvent) {
             return
         }
 
