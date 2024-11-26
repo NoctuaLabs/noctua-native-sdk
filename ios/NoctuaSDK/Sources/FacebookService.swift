@@ -17,6 +17,10 @@ enum FacebookServiceError : Error {
 }
 
 struct FacebookServiceConfig : Codable {
+    let ios: FacebookServiceIosConfig?
+}
+
+struct FacebookServiceIosConfig : Codable {
     let enableDebug: Bool?
     let advertiserIdCollectionEnabled: Bool?
     let autologEventsEnabled: Bool?
@@ -34,15 +38,15 @@ class FacebookService {
         logger.info("Facebook module detected")
         self.config = config
         
-        if config.enableDebug ?? false {
+        if config.ios?.enableDebug ?? false {
             Settings.shared.enableLoggingBehavior(.appEvents)
         }
         
-        Settings.shared.isAdvertiserIDCollectionEnabled = config.advertiserIdCollectionEnabled ?? false
-        Settings.shared.isAutoLogAppEventsEnabled = config.advertiserIdCollectionEnabled ?? false
-        Settings.shared.appID = config.appId
-        Settings.shared.clientToken = config.clientToken
-        Settings.shared.displayName = config.displayName
+        Settings.shared.isAdvertiserIDCollectionEnabled = config.ios?.advertiserIdCollectionEnabled ?? false
+        Settings.shared.isAutoLogAppEventsEnabled = config.ios?.advertiserIdCollectionEnabled ?? false
+        Settings.shared.appID = config.ios?.appId
+        Settings.shared.clientToken = config.ios?.clientToken
+        Settings.shared.displayName = config.ios?.displayName
         ApplicationDelegate.shared.initializeSDK()
         AppEvents.shared.activateApp()
 #else
@@ -86,7 +90,7 @@ class FacebookService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FBSDKCoreKit)
-        if (config.disableCustomEvent ?? false) {
+        if (config.ios?.disableCustomEvent ?? false) {
             return
         }
         

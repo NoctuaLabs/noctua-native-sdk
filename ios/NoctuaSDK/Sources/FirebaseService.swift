@@ -18,6 +18,10 @@ enum FirebaseServiceError : Error {
 }
 
 struct FirebaseServiceConfig : Codable {
+    let ios: FirebaseServiceIosConfig?
+}
+
+struct FirebaseServiceIosConfig : Codable {
     let disableCustomEvent: Bool?
 }
 
@@ -75,7 +79,7 @@ class FirebaseService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
-        if (config.disableCustomEvent ?? false) {
+        if (config.ios?.disableCustomEvent ?? false) {
             return
         }
         
