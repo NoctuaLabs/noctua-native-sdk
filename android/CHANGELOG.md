@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.7.0] - 2024-11-27
+
+### 🚀 Features
+
+- Add multiple plaftorm support for event tracker in noctuagg.json.
+
 ## [android-sdk-v0.6.0] - 2024-11-12
 
 ### 🚀 Features
