@@ -27,7 +27,7 @@ class AdjustService {
 #if canImport(Adjust)
         self.config = config
         
-        guard ((config.eventMap.isEmpty) == nil) else {
+        guard !config.eventMap.isEmpty else {
             throw AdjustServiceError.invalidConfig("eventMap is empty")
         }
         
@@ -35,12 +35,12 @@ class AdjustService {
             throw AdjustServiceError.invalidConfig("no eventToken for purchase")
         }
         
-        let environment = config.environment?.isEmpty == false
+        let environment = ((config.environment?.isEmpty) == nil)
             ? config.environment!
             : "sandbox"
 
         let appToken = config.appToken ?? ""
-        guard appToken.isEmpty == false else {
+        guard !appToken.isEmpty else {
             throw AdjustServiceError.invalidConfig("appToken is empty")
         }
         let adjustConfig = ADJConfig(appToken: appToken, environment: environment)
@@ -68,7 +68,7 @@ class AdjustService {
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Adjust)
         let eventToken = config.eventMap["Purchase"]! ?? ""
-        guard eventToken.isEmpty == false else {
+        guard !eventToken.isEmpty else {
             logger.warning("no eventToken for purchase")
             return
         }
@@ -91,7 +91,7 @@ class AdjustService {
             return
         }
         let eventToken = config.eventMap[eventName]! ?? ""
-        guard eventToken.isEmpty == false else {
+        guard !eventToken.isEmpty else {
             logger.warning("no eventToken for \(eventName)")
             return
         }
