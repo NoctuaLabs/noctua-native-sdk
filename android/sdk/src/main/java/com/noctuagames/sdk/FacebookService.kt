@@ -30,12 +30,12 @@ data class FacebookServiceAndroidConfig(
     val disableCustomEvent: Boolean = false
 )
 
-class FacebookService(private val config: FacebookServiceConfig, context: Context) {
+class FacebookService(private val config: FacebookServiceAndroidConfig, context: Context) {
     private val TAG = this::class.simpleName
     private val eventsLogger: AppEventsLogger
 
     init {
-        if (config.android.enableDebug) {
+        if (config.enableDebug) {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(com.facebook.LoggingBehavior.APP_EVENTS)
         } else {
@@ -43,8 +43,8 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
             FacebookSdk.removeLoggingBehavior(com.facebook.LoggingBehavior.APP_EVENTS)
         }
 
-        FacebookSdk.setAutoLogAppEventsEnabled(config.android.autoLogAppEventsEnabled)
-        FacebookSdk.setAdvertiserIDCollectionEnabled(config.android.advertiserIdCollectionEnabled)
+        FacebookSdk.setAutoLogAppEventsEnabled(config.autoLogAppEventsEnabled)
+        FacebookSdk.setAdvertiserIDCollectionEnabled(config.advertiserIdCollectionEnabled)
         FacebookSdk.setAutoInitEnabled(true)
         FacebookSdk.fullyInitialize()
 
@@ -104,7 +104,7 @@ class FacebookService(private val config: FacebookServiceConfig, context: Contex
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        if (config.android.disableCustomEvent) {
+        if (config.disableCustomEvent) {
             return
         }
 

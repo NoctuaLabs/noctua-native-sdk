@@ -110,9 +110,12 @@ class Noctua(context: Context, publishedApps: List<String>) {
         } else if (config.facebook == null) {
             Log.w(TAG, "Facebook configuration is not found.")
             facebook = null
+	} else if (config.facebook.android == null) {
+	    Log.w(TAG, "Facebook configuration for Android is not found.")
+	    facebook = null
         } else {
             facebook = try {
-                FacebookService(config.facebook, context)
+                FacebookService(config.facebook.android, context)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Facebook SDK: ${e.message}")
                 null
