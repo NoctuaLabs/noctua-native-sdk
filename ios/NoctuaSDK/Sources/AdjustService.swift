@@ -87,11 +87,12 @@ class AdjustService {
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(Adjust)
         if (config.ios?.disableCustomEvent ?? false) {
-            logger.warning("no eventToken for \(eventName)")
+            logger.warning("custom event is disabled")
             return
         }
         let eventToken = config.ios?.eventMap[eventName]! ?? ""
         guard eventToken.isEmpty == false else {
+            logger.warning("no eventToken for \(eventName)")
             return
         }
         let event = ADJEvent(eventToken: eventToken)!
