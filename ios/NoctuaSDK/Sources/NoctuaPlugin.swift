@@ -68,10 +68,14 @@ class NoctuaPlugin {
             logger.warning("config for FirebaseService not found")
             
             self.firebase = nil
+        } else if self.config.firebase?.ios == nil {
+            logger.warning("config for FirebaseService not found")
+
+            self.firebase = nil
         }
         else {
             do {
-                self.firebase = try FirebaseService(config: self.config.firebase!)
+                self.firebase = try FirebaseService(config: (self.config.firebase?.ios!)!)
                 logger.info("FirebaseService initialized")
             }
             catch FirebaseServiceError.firebaseNotFound {

@@ -26,9 +26,9 @@ struct FirebaseServiceIosConfig : Codable {
 }
 
 class FirebaseService {
-    let config: FirebaseServiceConfig
+    let config: FirebaseServiceIosConfig
     
-    init(config: FirebaseServiceConfig) throws {
+    init(config: FirebaseServiceIosConfig) throws {
 #if canImport(FirebaseAnalytics)
         logger.info("Firebase module detected")
         self.config = config
@@ -79,7 +79,7 @@ class FirebaseService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
-        if (config.ios?.disableCustomEvent ?? false) {
+        if (config.disableCustomEvent ?? false) {
             return
         }
         
