@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.5.4] - 2024-11-27
+
+### Facebook
+
+- Recheck platform specific config before init then pass the platform specific config as param.
+
+### Firebase
+
+- Recheck platform specific config before init then pass the platform specific config as param.
+
 ## [ios-sdk-v0.5.3] - 2024-11-20
 
 ### 🐛 Bug Fixes
