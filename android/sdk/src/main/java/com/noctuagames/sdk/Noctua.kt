@@ -50,7 +50,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             Log.w(TAG, "Adjust configuration is not found.")
             adjust = null
         } else if (config.adjust.android == null) {
-            Log.w(TAG, "Adjust configuration for Android is not found.")
+            Log.w(TAG, "Adjust configuration for Android platform is not found.")
             adjust = null
         } else {
             adjust = try {
@@ -80,7 +80,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             Log.w(TAG, "Firebase configuration is not found.")
             firebase = null
         } else if (config.firebase.android == null) {
-            Log.w(TAG, "Firebase configuration for Android is not found.")
+            Log.w(TAG, "Firebase configuration for Android platform is not found.")
             firebase = null
         } else {
             firebase = try {
@@ -111,7 +111,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             Log.w(TAG, "Facebook configuration is not found.")
             facebook = null
 	} else if (config.facebook.android == null) {
-	    Log.w(TAG, "Facebook configuration for Android is not found.")
+	    Log.w(TAG, "Facebook configuration for Android platform is not found.")
 	    facebook = null
         } else {
             facebook = try {
