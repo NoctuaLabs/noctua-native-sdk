@@ -31,7 +31,7 @@ struct FacebookServiceIosConfig : Codable {
 }
 
 class FacebookService {
-    let config: FacebookServiceConfig
+    let config: FacebookServiceIosConfig
     
     init(config: FacebookServiceIosConfig) throws {
 #if canImport(FBSDKCoreKit)
