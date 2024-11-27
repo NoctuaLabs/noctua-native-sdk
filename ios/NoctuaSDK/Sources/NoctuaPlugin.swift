@@ -41,10 +41,14 @@ class NoctuaPlugin {
             logger.warning("config for AdjustService not found")
             
             self.adjust = nil
+        } else if self.config.adjust?.ios == nil {
+            logger.warning("config for AdjustService IOS not found")
+
+            self.adjust = nil
         }
         else {
             do {
-                self.adjust = try AdjustService(config: self.config.adjust!)
+                self.adjust = try AdjustService(config: (self.config.adjust?.ios!)!)
                 logger.info("AdjustService initialized")
             }
             catch AdjustServiceError.adjustNotFound {

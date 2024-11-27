@@ -21,30 +21,30 @@ struct AdjustServiceIosConfig : Codable {
 }
 
 class AdjustService {
-    let config: AdjustServiceConfig
+    let config: AdjustServiceIosConfig
     
-    init(config: AdjustServiceConfig) throws {
+    init(config: AdjustServiceIosConfig) throws {
 #if canImport(Adjust)
         self.config = config
         
-        guard ((config.ios?.eventMap.isEmpty) == nil) else {
+        guard ((config.eventMap.isEmpty) == nil) else {
             throw AdjustServiceError.invalidConfig("eventMap is empty")
         }
         
-        guard ((config.ios?.eventMap.keys.contains("Purchase")) != nil) else {
+        guard ((config.eventMap.keys.contains("Purchase")) != nil) else {
             throw AdjustServiceError.invalidConfig("no eventToken for purchase")
         }
         
-        let environment = config.ios?.environment?.isEmpty == false
-            ? config.ios!.environment!
+        let environment = config.environment?.isEmpty == false
+            ? config.environment!
             : "sandbox"
 
-        let appToken = config.ios?.appToken ?? ""
+        let appToken = config.appToken ?? ""
         guard appToken.isEmpty == false else {
             throw AdjustServiceError.invalidConfig("appToken is empty")
         }
         let adjustConfig = ADJConfig(appToken: appToken, environment: environment)
-        adjustConfig?.logLevel = if config.ios?.environment == "production" { ADJLogLevelWarn } else { ADJLogLevelDebug }
+        adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevelWarn } else { ADJLogLevelDebug }
         
         Adjust.appDidLaunch(adjustConfig)
 #else
@@ -67,7 +67,7 @@ class AdjustService {
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Adjust)
-        let eventToken = config.ios?.eventMap["Purchase"]! ?? ""
+        let eventToken = config.eventMap["Purchase"]! ?? ""
         guard eventToken.isEmpty == false else {
             logger.warning("no eventToken for purchase")
             return
@@ -86,11 +86,11 @@ class AdjustService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(Adjust)
-        if (config.ios?.disableCustomEvent ?? false) {
+        if (config.disableCustomEvent ?? false) {
             logger.warning("custom event is disabled")
             return
         }
-        let eventToken = config.ios?.eventMap[eventName]! ?? ""
+        let eventToken = config.eventMap[eventName]! ?? ""
         guard eventToken.isEmpty == false else {
             logger.warning("no eventToken for \(eventName)")
             return
