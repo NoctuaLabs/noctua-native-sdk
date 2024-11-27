@@ -95,10 +95,14 @@ class NoctuaPlugin {
             logger.warning("config for FacebookService not found")
             
             self.facebook = nil
+        } else if self.config.facebook?.ios == nil {
+            logger.warning("config for FacebookService not found")
+
+            self.facebook = nil
         }
         else {
             do {
-                self.facebook = try FacebookService(config: self.config.facebook!)
+                self.facebook = try FacebookService(config: (self.config.facebook?.ios!)!)
                 logger.info("FacebookService initialized")
             }
             catch FacebookServiceError.facebookNotFound {

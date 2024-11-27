@@ -2,6 +2,7 @@ import Foundation
 #if canImport(Adjust)
 import Adjust
 #endif
+import os
 
 enum AdjustServiceError : Error {
     case adjustNotFound
@@ -68,6 +69,7 @@ class AdjustService {
 #if canImport(Adjust)
         let eventToken = config.ios?.eventMap["Purchase"]! ?? ""
         guard eventToken.isEmpty == false else {
+            logger.warning("no eventToken for purchase")
             return
         }
         let purchase = ADJEvent(eventToken: eventToken)!
@@ -85,6 +87,7 @@ class AdjustService {
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(Adjust)
         if (config.ios?.disableCustomEvent ?? false) {
+            logger.warning("no eventToken for \(eventName)")
             return
         }
         let eventToken = config.ios?.eventMap[eventName]! ?? ""
@@ -100,4 +103,9 @@ class AdjustService {
         Adjust.trackEvent(event)
 #endif
     }
+
+    private let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: AdjustService.self)
+    )
 }
