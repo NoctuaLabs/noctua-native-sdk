@@ -17,6 +17,10 @@ enum FacebookServiceError : Error {
 }
 
 struct FacebookServiceConfig : Codable {
+    let ios: FacebookServiceIosConfig?
+}
+
+struct FacebookServiceIosConfig : Codable {
     let enableDebug: Bool?
     let advertiserIdCollectionEnabled: Bool?
     let autologEventsEnabled: Bool?
@@ -27,9 +31,9 @@ struct FacebookServiceConfig : Codable {
 }
 
 class FacebookService {
-    let config: FacebookServiceConfig
+    let config: FacebookServiceIosConfig
     
-    init(config: FacebookServiceConfig) throws {
+    init(config: FacebookServiceIosConfig) throws {
 #if canImport(FBSDKCoreKit)
         logger.info("Facebook module detected")
         self.config = config

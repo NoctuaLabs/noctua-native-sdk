@@ -41,10 +41,14 @@ class NoctuaPlugin {
             logger.warning("config for AdjustService not found")
             
             self.adjust = nil
+        } else if self.config.adjust?.ios == nil {
+            logger.warning("config for AdjustService IOS not found")
+
+            self.adjust = nil
         }
         else {
             do {
-                self.adjust = try AdjustService(config: self.config.adjust!)
+                self.adjust = try AdjustService(config: (self.config.adjust?.ios!)!)
                 logger.info("AdjustService initialized")
             }
             catch AdjustServiceError.adjustNotFound {
@@ -68,10 +72,14 @@ class NoctuaPlugin {
             logger.warning("config for FirebaseService not found")
             
             self.firebase = nil
+        } else if self.config.firebase?.ios == nil {
+            logger.warning("config for FirebaseService not found")
+
+            self.firebase = nil
         }
         else {
             do {
-                self.firebase = try FirebaseService(config: self.config.firebase!)
+                self.firebase = try FirebaseService(config: (self.config.firebase?.ios!)!)
                 logger.info("FirebaseService initialized")
             }
             catch FirebaseServiceError.firebaseNotFound {
@@ -95,10 +103,14 @@ class NoctuaPlugin {
             logger.warning("config for FacebookService not found")
             
             self.facebook = nil
+        } else if self.config.facebook?.ios == nil {
+            logger.warning("config for FacebookService not found")
+
+            self.facebook = nil
         }
         else {
             do {
-                self.facebook = try FacebookService(config: self.config.facebook!)
+                self.facebook = try FacebookService(config: (self.config.facebook?.ios!)!)
                 logger.info("FacebookService initialized")
             }
             catch FacebookServiceError.facebookNotFound {

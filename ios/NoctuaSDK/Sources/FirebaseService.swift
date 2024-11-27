@@ -18,13 +18,17 @@ enum FirebaseServiceError : Error {
 }
 
 struct FirebaseServiceConfig : Codable {
+    let ios: FirebaseServiceIosConfig?
+}
+
+struct FirebaseServiceIosConfig : Codable {
     let disableCustomEvent: Bool?
 }
 
 class FirebaseService {
-    let config: FirebaseServiceConfig
+    let config: FirebaseServiceIosConfig
     
-    init(config: FirebaseServiceConfig) throws {
+    init(config: FirebaseServiceIosConfig) throws {
 #if canImport(FirebaseAnalytics)
         logger.info("Firebase module detected")
         self.config = config
