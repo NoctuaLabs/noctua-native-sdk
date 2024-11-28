@@ -8,17 +8,13 @@ import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustEvent
 
 data class AdjustServiceConfig(
-    val android: AdjustServiceAndroidConfig,
-)
-
-data class AdjustServiceAndroidConfig(
     val appToken: String,
     val environment: String?,
     val disableCustomEvent: Boolean = false,
     val eventMap: Map<String, String>,
 )
 
-internal class AdjustService(private val config: AdjustServiceAndroidConfig, context: Context) {
+internal class AdjustService(private val config: AdjustServiceConfig, context: Context) {
     private val TAG = this::class.simpleName
 
     init {
