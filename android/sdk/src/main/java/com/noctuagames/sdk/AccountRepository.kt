@@ -35,15 +35,7 @@ class AccountRepository(private val context: Context, private val publishedApps:
     private val otherAccounts: MutableMap<String, List<Account>> = ConcurrentHashMap()
 
     suspend fun syncOtherAccounts() {
-        val otherApps = try {
-            Log.i(TAG, "${context.packageName} getting other installed apps")
-
-            getOtherInstalledApps(context)
-        } catch (e: Exception) {
-            Log.w(TAG, "${context.packageName} failed to get installed apps: ${e.message}")
-
-            publishedApps.filter { it != context.packageName }
-        }
+        val otherApps = publishedApps.filter { it != context.packageName }
 
         Log.i(TAG, "${context.packageName} otherApps: $otherApps")
 
@@ -167,19 +159,4 @@ private fun toAccount(cursor: Cursor): Account {
         rawData = cursor.getString(cursor.getColumnIndexOrThrow("raw_data")),
         lastUpdated = cursor.getLong(cursor.getColumnIndexOrThrow("last_updated"))
     )
-}
-
-private fun getOtherInstalledApps(context: Context): List<String> {
-    val flags = PackageManager.GET_META_DATA or PackageManager.GET_PERMISSIONS
-    val packages = context.packageManager.getInstalledPackages(flags)
-    val permission = "com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER"
-
-    return packages
-        .filter { pkg ->
-            (pkg.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0
-                    && pkg.applicationInfo.enabled
-                    && pkg.permissions?.any { it.name == permission } == true
-                    && pkg.packageName != context.packageName
-        }
-        .map { it.packageName }
 }

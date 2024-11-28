@@ -1,5 +1,6 @@
 package com.noctuagames.app
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Label
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,14 +25,14 @@ import java.util.UUID
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Noctua.init(this, emptyList())
+        Noctua.init(this, listOf("com.noctuagames.android.unitysdktest", "com.noctuagames.android.secondexamplegame"))
         val offset = when (this.packageName) {
-            "com.noctuagames.app1" -> 1000
-            "com.noctuagames.app2" -> 2000
+            "com.noctuagames.android.unitysdktest" -> 1000
+            "com.noctuagames.android.secondexamplegame" -> 2000
             else -> 0
         }
         setContent {
-            MainScreen(offset)
+            MainScreen(offset, this.packageName)
         }
     }
 
@@ -46,7 +48,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(offset: Int) {
+fun MainScreen(offset: Int, packageName: String) {
     var data by remember { mutableStateOf(Noctua.getAccounts()) }
 
     Column(
@@ -55,6 +57,9 @@ fun MainScreen(offset: Int) {
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        Text(text = "Package Name: $packageName")
+
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {

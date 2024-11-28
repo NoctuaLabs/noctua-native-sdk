@@ -9,10 +9,9 @@
 
     <permission
         android:name="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER"
-        android:protectionLevel="signature" />
+        android:protectionLevel="normal" />
 
     <uses-permission android:name="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
     <application android:gwpAsanMode="always">
         <provider
@@ -22,5 +21,4 @@
             android:permission="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER"
             tools:ignore="ExportedContentProvider" />
     </application>
-
 </manifest>
