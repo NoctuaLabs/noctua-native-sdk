@@ -36,8 +36,8 @@ class AdjustService {
         }
         
         let environment = ((config.environment?.isEmpty) == nil)
-            ? config.environment!
-            : "sandbox"
+            ? "sandbox"
+            : config.environment!
 
         let appToken = config.appToken
         guard !appToken.isEmpty else {
