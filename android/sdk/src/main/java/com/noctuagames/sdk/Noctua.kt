@@ -49,9 +49,12 @@ class Noctua(context: Context, publishedApps: List<String>) {
         } else if (config.adjust == null) {
             Log.w(TAG, "Adjust configuration is not found.")
             adjust = null
+        } else if (config.adjust.android == null) {
+            Log.w(TAG, "Adjust configuration for Android platform is not found.")
+            adjust = null
         } else {
             adjust = try {
-                AdjustService(config.adjust, context)
+                AdjustService(config.adjust.android, context)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Adjust SDK: ${e.message}")
                 null
@@ -76,9 +79,12 @@ class Noctua(context: Context, publishedApps: List<String>) {
         } else if (config.firebase == null) {
             Log.w(TAG, "Firebase configuration is not found.")
             firebase = null
+        } else if (config.firebase.android == null) {
+            Log.w(TAG, "Firebase configuration for Android platform is not found.")
+            firebase = null
         } else {
             firebase = try {
-                FirebaseService(config.firebase, context)
+                FirebaseService(config.firebase.android, context)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Firebase SDK: ${e.message}")
                 null
@@ -104,9 +110,12 @@ class Noctua(context: Context, publishedApps: List<String>) {
         } else if (config.facebook == null) {
             Log.w(TAG, "Facebook configuration is not found.")
             facebook = null
+	} else if (config.facebook.android == null) {
+	    Log.w(TAG, "Facebook configuration for Android platform is not found.")
+	    facebook = null
         } else {
             facebook = try {
-                FacebookService(config.facebook, context)
+                FacebookService(config.facebook.android, context)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Facebook SDK: ${e.message}")
                 null

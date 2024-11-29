@@ -20,13 +20,17 @@ References:
 * */
 
 data class FacebookServiceConfig(
+    val android: FacebookServiceAndroidConfig
+)
+
+data class FacebookServiceAndroidConfig(
     val enableDebug: Boolean = false,
     val advertiserIdCollectionEnabled: Boolean = true,
     val autoLogAppEventsEnabled: Boolean = true,
     val disableCustomEvent: Boolean = false
 )
 
-class FacebookService(private val config: FacebookServiceConfig, context: Context) {
+class FacebookService(private val config: FacebookServiceAndroidConfig, context: Context) {
     private val TAG = this::class.simpleName
     private val eventsLogger: AppEventsLogger
 
