@@ -30,8 +30,8 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
             throw IllegalArgumentException("Event map is not set")
         }
 
-        if (!config.eventMap.containsKey("Purchase")) {
-            throw IllegalArgumentException("Event token for Purchase is not set")
+        if (!config.eventMap.containsKey("purchase")) {
+            throw IllegalArgumentException("Event token for purchase is not set")
         }
 
         val environment = if (config.environment.isNullOrEmpty()) {
@@ -75,7 +75,7 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        val event = AdjustEvent(config.eventMap["Purchase"])
+        val event = AdjustEvent(config.eventMap["purchase"])
         event.setRevenue(amount, currency)
         event.orderId = orderId
 
