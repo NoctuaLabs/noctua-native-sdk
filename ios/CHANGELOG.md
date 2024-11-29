@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.5.5] - 2024-11-29
+
+### 🐛 Bug Fixes
+
+- Reverse logic code environment mode adjust ios
+- Change Purchase to purchase adjust ios
+
+### 🚜 Refactor
+
+- Refactor logic code environment check
+
 ## [ios-sdk-v0.5.4] - 2024-11-27
 
 ### Facebook
