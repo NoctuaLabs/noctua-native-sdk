@@ -35,9 +35,7 @@ class AdjustService {
             throw AdjustServiceError.invalidConfig("no eventToken for purchase")
         }
         
-        let environment = ((config.environment?.isEmpty) == nil)
-            ? "sandbox"
-            : config.environment!
+        let environment = config.environment?.isEmpty ?? true ? "sandbox" : config.environment!
 
         let appToken = config.appToken
         guard !appToken.isEmpty else {
