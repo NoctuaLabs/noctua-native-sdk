@@ -7,11 +7,15 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 
 data class FirebaseServiceConfig(
+    val android: FirebaseServiceAndroidConfig
+)
+
+data class FirebaseServiceAndroidConfig(
     val disableCustomEvent: Boolean = false
 )
 
 
-class FirebaseService(private val config: FirebaseServiceConfig, context: Context) {
+class FirebaseService(private val config: FirebaseServiceAndroidConfig, context: Context) {
     private val TAG = this::class.simpleName
     private val analytics: FirebaseAnalytics
 
