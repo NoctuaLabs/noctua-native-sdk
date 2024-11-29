@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.8.0] - 2024-11-29
+
+### 🚀 Features
+
+- Unified config android
+
+### 🚜 Refactor
+
+- "Purchase" to "purchase" android
+
 ## [android-sdk-v0.7.1] - 2024-11-28
 
 ### 🚜 Refactor
