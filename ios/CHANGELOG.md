@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.5.7] - 2024-12-04
+
+### 🐛 Bug Fixes
+
+- Add more null check guard for Adjust tracker.
+
 ## [ios-sdk-v0.5.6] - 2024-12-04
 
 ### 🐛 Bug Fixes
