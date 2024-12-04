@@ -88,10 +88,14 @@ class AdjustService {
             logger.warning("custom event is disabled")
             return
         }
+
+        // Check for null
         guard let eventToken = config.eventMap[eventName] else {
             logger.warning("no eventToken for \(eventName)")
             return
         }
+
+        // Check for empty string
         guard !eventToken.isEmpty else {
             logger.warning("no eventToken for \(eventName)")
             return
