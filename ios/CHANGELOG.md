@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.5.6] - 2024-12-04
+
+### 🐛 Bug Fixes
+
+- Guard Adjust event map with null check.
+
 ## [ios-sdk-v0.5.5] - 2024-11-29
 
 ### 🐛 Bug Fixes
