@@ -20,4 +20,9 @@
         </activity>
     </application>
 
+    <queries>
+        <provider android:authorities="com.noctuagames.android.unitysdktest.noctuaaccountprovider" />
+        <provider android:authorities="com.noctuagames.android.sdktest.noctuaaccountprovider" />
+    </queries>
+
 </manifest>

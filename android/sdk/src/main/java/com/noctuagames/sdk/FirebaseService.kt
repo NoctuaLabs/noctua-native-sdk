@@ -7,7 +7,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 
 data class FirebaseServiceConfig(
-    val android: FirebaseServiceAndroidConfig
+    val android: FirebaseServiceAndroidConfig?
 )
 
 data class FirebaseServiceAndroidConfig(

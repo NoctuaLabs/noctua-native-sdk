@@ -7,18 +7,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <permission
-        android:name="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER"
-        android:protectionLevel="normal" />
-
-    <uses-permission android:name="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER" />
-
     <application android:gwpAsanMode="always">
         <provider
             android:name=".AccountContentProvider"
             android:authorities="${applicationId}.noctuaaccountprovider"
             android:exported="true"
-            android:permission="com.noctuagames.sdk.permission.ACCESS_ACCOUNT_PROVIDER"
             tools:ignore="ExportedContentProvider" />
     </application>
 </manifest>
