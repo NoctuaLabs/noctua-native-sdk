@@ -8,7 +8,7 @@ import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustEvent
 
 data class AdjustServiceConfig(
-    val android: AdjustServiceAndroidConfig,
+    val android: AdjustServiceAndroidConfig?,
 )
 
 data class AdjustServiceAndroidConfig(

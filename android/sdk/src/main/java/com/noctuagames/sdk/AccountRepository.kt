@@ -1,5 +1,6 @@
 package com.noctuagames.sdk
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.ApplicationInfo
@@ -26,21 +27,20 @@ data class Account(
     )
 }
 
-
-class AccountRepository(private val context: Context, private val publishedApps: List<String>) {
+class AccountRepository(private val context: Context) {
     private val authority: String = "${context.packageName}.noctuaaccountprovider"
     private val TAG = this::class.simpleName
     private val contentUri: Uri = Uri.parse("content://${authority}/noctua_accounts")
     private val contentResolver = context.contentResolver
     private val otherAccounts: MutableMap<String, List<Account>> = ConcurrentHashMap()
+    private val otherApps: List<String> = getOtherApps(context)
 
     suspend fun syncOtherAccounts() {
-        val otherApps = publishedApps.filter { it != context.packageName }
-
         Log.i(TAG, "${context.packageName} otherApps: $otherApps")
 
-        for (authority in otherApps.map { "$it.noctuaaccountprovider" }) {
-            val uri = Uri.parse("content://$authority/noctua_accounts")
+        for (otherApp in otherApps) {
+            val otherAuthority = "$otherApp.noctuaaccountprovider"
+            val uri = Uri.parse("content://$otherAuthority/noctua_accounts")
             val accounts = mutableListOf<Account>()
 
             withContext(Dispatchers.IO) {
@@ -70,10 +70,10 @@ class AccountRepository(private val context: Context, private val publishedApps:
                 }
             }
 
-            Log.d(TAG, "found ${accounts.size} accounts in $authority")
+            Log.d(TAG, "found ${accounts.size} accounts in $otherAuthority")
 
             if (accounts.isNotEmpty()) {
-                otherAccounts[authority] = accounts
+                otherAccounts[otherAuthority] = accounts
             }
         }
 
@@ -159,4 +159,13 @@ private fun toAccount(cursor: Cursor): Account {
         rawData = cursor.getString(cursor.getColumnIndexOrThrow("raw_data")),
         lastUpdated = cursor.getLong(cursor.getColumnIndexOrThrow("last_updated"))
     )
+}
+
+private fun getOtherApps(context: Context): List<String> {
+    return context.packageManager.getInstalledPackages(PackageManager.GET_PROVIDERS)
+        .filter { pkg ->
+            pkg.providers?.any { it.authority == "${it.packageName}.noctuaaccountprovider" } == true &&
+                pkg.packageName != context.packageName
+        }
+        .map { it.packageName }
 }

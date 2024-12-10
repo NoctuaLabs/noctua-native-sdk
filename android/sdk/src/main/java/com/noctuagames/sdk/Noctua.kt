@@ -1,8 +1,6 @@
 package com.noctuagames.sdk
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.util.Log
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -110,9 +108,9 @@ class Noctua(context: Context, publishedApps: List<String>) {
         } else if (config.facebook == null) {
             Log.w(TAG, "Facebook configuration is not found.")
             facebook = null
-	} else if (config.facebook.android == null) {
-	    Log.w(TAG, "Facebook configuration for Android platform is not found.")
-	    facebook = null
+        } else if (config.facebook.android == null) {
+            Log.w(TAG, "Facebook configuration for Android platform is not found.")
+            facebook = null
         } else {
             facebook = try {
                 FacebookService(config.facebook.android, context)
@@ -126,7 +124,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             Log.w(TAG, "Facebook tracking is disabled.")
         }
 
-        accounts = AccountRepository(context, publishedApps)
+        accounts = AccountRepository(context)
 
         coroutineScope.launch {
             accounts.syncOtherAccounts()

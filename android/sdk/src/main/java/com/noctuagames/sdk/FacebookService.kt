@@ -20,7 +20,7 @@ References:
 * */
 
 data class FacebookServiceConfig(
-    val android: FacebookServiceAndroidConfig
+    val android: FacebookServiceAndroidConfig?
 )
 
 data class FacebookServiceAndroidConfig(
