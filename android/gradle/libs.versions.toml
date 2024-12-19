@@ -2,9 +2,13 @@
 adjustAndroid = "4.38.5"
 agp = "8.7.0"
 facebookCore = "17.0.1"
+# Firebase services versions refers to firebase-bom "33.6", but we use individual versions
+# due to issue with publishing to maven
 firebaseAnalytics = "22.1.2"
 firebaseCrashlytics = "19.2.1"
 firebaseCrashlyticsNdk = "19.2.1"
+firebaseMessaging = "24.1.0"
+
 gson = "2.10.1"
 installreferrer = "2.2"
 kotlin = "2.0.0"
@@ -38,6 +42,7 @@ facebook-core = { module = "com.facebook.android:facebook-core", version.ref = "
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk", version.ref = "firebaseCrashlyticsNdk" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 installreferrer = { module = "com.android.installreferrer:installreferrer", version.ref = "installreferrer" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

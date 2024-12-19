@@ -1,7 +1,13 @@
 package com.noctuagames.sdk
 
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import android.Manifest
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -129,6 +135,8 @@ class Noctua(context: Context, publishedApps: List<String>) {
         coroutineScope.launch {
             accounts.syncOtherAccounts()
         }
+
+        askNotificationPermission(context)
 
         Log.i(TAG, "Noctua initialized")
     }
@@ -288,6 +296,24 @@ class Noctua(context: Context, publishedApps: List<String>) {
             return instance.accounts.delete(account.userId, account.gameId)
         }
     }
+
+    private fun askNotificationPermission(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Log.d(TAG, "Directly grant notification permission for Android versions below Tiramisu")
+            return
+        }
+
+        val activity = context as Activity
+        val permission = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            // FCM SDK (and your app) can post notifications.
+            Log.d(TAG, "Notifications permission granted")
+            return
+        }
+
+        ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
+    }
 }
 
 fun loadAppConfig(context: Context): NoctuaConfig {
@@ -306,3 +332,4 @@ fun loadAppConfig(context: Context): NoctuaConfig {
         throw IllegalArgumentException("Failed to load noctuagg.json", e)
     }
 }
+
