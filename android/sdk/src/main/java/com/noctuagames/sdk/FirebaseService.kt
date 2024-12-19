@@ -22,7 +22,7 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
     init {
         if (FirebaseApp.getApps(context).isEmpty()) {
             if (FirebaseApp.initializeApp(context) == null) {
-                throw Exception("Failed to initialize Firebase Analytics")
+                throw Exception("Failed to initialize Firebase")
             }
         }
 
