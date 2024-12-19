@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.9.0] - 2024-12-19
+
+### 🚀 Features
+
+- Add support for FIrebase Cloud Messaging
+
 ## [android-sdk-v0.8.1] - 2024-12-10
 
 ### 🐛 Bug Fixes
