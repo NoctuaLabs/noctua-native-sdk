@@ -31,7 +31,8 @@ class Noctua(context: Context, publishedApps: List<String>) {
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     init {
-        val config = loadAppConfig(context)
+        val appContext = context.applicationContext
+        val config = loadAppConfig(appContext)
 
         if (config.clientId.isNullOrEmpty()) {
             throw IllegalArgumentException("clientId is not set")
@@ -58,7 +59,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             adjust = null
         } else {
             adjust = try {
-                AdjustService(config.adjust.android, context)
+                AdjustService(config.adjust.android, appContext)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Adjust SDK: ${e.message}")
                 null
@@ -88,7 +89,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             firebase = null
         } else {
             firebase = try {
-                FirebaseService(config.firebase.android, context)
+                FirebaseService(config.firebase.android, appContext)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Firebase SDK: ${e.message}")
                 null
@@ -119,7 +120,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             facebook = null
         } else {
             facebook = try {
-                FacebookService(config.facebook.android, context)
+                FacebookService(config.facebook.android, appContext)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Facebook SDK: ${e.message}")
                 null
@@ -130,13 +131,13 @@ class Noctua(context: Context, publishedApps: List<String>) {
             Log.w(TAG, "Facebook tracking is disabled.")
         }
 
-        accounts = AccountRepository(context)
+        accounts = AccountRepository(appContext)
 
         coroutineScope.launch {
             accounts.syncOtherAccounts()
         }
 
-        askNotificationPermission(context)
+        askNotificationPermission(context as Activity)
 
         Log.i(TAG, "Noctua initialized")
     }
@@ -297,14 +298,14 @@ class Noctua(context: Context, publishedApps: List<String>) {
         }
     }
 
-    private fun askNotificationPermission(context: Context) {
+    private fun askNotificationPermission(activity: Activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             Log.d(TAG, "Directly grant notification permission for Android versions below Tiramisu")
+
             return
         }
 
-        val activity = context as Activity
-        val permission = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+        val permission = ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS)
 
         if (permission == PackageManager.PERMISSION_GRANTED) {
             // FCM SDK (and your app) can post notifications.
