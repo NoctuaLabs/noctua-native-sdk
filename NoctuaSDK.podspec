@@ -24,11 +24,16 @@ Pod::Spec.new do |spec|
   end
   
   spec.subspec "FirebaseAnalytics" do |firebase|
-    firebase.dependency "FirebaseAnalytics", "~> 11.0.0"
+    firebase.dependency "FirebaseAnalytics", "~> 11.3.0"
   end
 
   spec.subspec "FirebaseCrashlytics" do |firebase|
     firebase.dependency "FirebaseCrashlytics", "~> 11.3.0"
+  end
+  
+  spec.subspec "FirebaseMessaging" do |firmessaging|
+    firmessaging.dependency "FirebaseMessaging", "~> 11.3.0"
+    firmessaging.frameworks = "UserNotifications"
   end
   
   spec.subspec "FacebookSDK" do |facebook|

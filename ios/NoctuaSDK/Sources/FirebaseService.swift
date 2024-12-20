@@ -33,7 +33,11 @@ class FirebaseService {
         logger.info("Firebase module detected")
         self.config = config
         
-        FirebaseApp.configure()
+        if (FirebaseApp.app() == nil)
+        {
+            FirebaseApp.configure()
+        }
+
         Analytics.setAnalyticsCollectionEnabled(true)
         
 #else

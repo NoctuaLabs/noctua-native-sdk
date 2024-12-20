@@ -1,6 +1,14 @@
 {
     "productCode": "noctuaggdev",
     "clientId": "1-e724f5a9e6f1",
+    "firebase": {
+        "android": {
+            "disableCustomEvent": false
+        },
+        "ios": {
+            "disableCustomEvent": false
+        }
+    },
     "noctua": {
         "trackerUrl": "",
         "baseUrl": "https://sdk-api-v2.noctuaprojects.com/api/v1",
