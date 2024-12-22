@@ -53,4 +53,29 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             os_log("FCM Token updated in Noctua SDK.")
         }
     }
+
+    // MARK: - UNUserNotificationCenterDelegate Methods
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        let userInfo = notification.request.content.userInfo
+        os_log("Received notification: %{public}@", userInfo)
+        
+        // Handle the notification
+        completionHandler([.alert, .badge, .sound])
+    }
+    
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let userInfo = response.notification.request.content.userInfo
+        os_log("Received notification response: %{public}@", userInfo)
+        
+        // Handle the notification response
+        completionHandler()
+    }
 }
