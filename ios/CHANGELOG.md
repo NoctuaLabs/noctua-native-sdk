@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.7.0] - 2024-12-22
+
+### 🚀 Features
+
+- Enable FCM from sample app
+- Add handler push notification message
+
 ## [ios-sdk-v0.6.0] - 2024-12-20
 
 ### 🚀 Features
