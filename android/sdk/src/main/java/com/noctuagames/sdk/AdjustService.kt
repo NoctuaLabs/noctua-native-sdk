@@ -53,6 +53,14 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
         Adjust.onPause()
     }
 
+    fun onOnline() {
+        Adjust.setOfflineMode(false)
+    }
+
+    fun onOffline() {
+        Adjust.setOfflineMode(true)
+    }
+
     fun trackAdRevenue(
         source: String,
         revenue: Double,
