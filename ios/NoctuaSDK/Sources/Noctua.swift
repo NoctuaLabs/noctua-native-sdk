@@ -42,6 +42,10 @@ import Foundation
     @objc public static func deleteAccount(gameId: Int64, playerId: Int64) {
         plugin?.deleteAccount(gameId: gameId, playerId: playerId)
     }
+
+    @objc public static func onOnline() {
+        plugin?.onOnline()
+    }
     
     static var plugin: NoctuaPlugin?
 }
