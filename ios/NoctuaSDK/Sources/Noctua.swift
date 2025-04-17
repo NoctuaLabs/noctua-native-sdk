@@ -46,6 +46,10 @@ import Foundation
     @objc public static func onOnline() {
         plugin?.onOnline()
     }
+
+    @objc public static func onOffline() {
+        plugin?.onOffline()
+    }
     
     static var plugin: NoctuaPlugin?
 }
