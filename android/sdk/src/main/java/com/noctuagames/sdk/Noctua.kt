@@ -151,7 +151,17 @@ class Noctua(context: Context, publishedApps: List<String>) {
     }
 
     fun onPause() {
+        // Disable Adjust offline mode
         adjust?.onPause()
+    }
+
+    fun onOnline() {
+        // Enable Adjust offline mode
+        adjust?.onOnline()
+    }
+
+    fun onOffline() {
+        adjust?.onOffline()
     }
 
     fun trackAdRevenue(
@@ -238,6 +248,14 @@ class Noctua(context: Context, publishedApps: List<String>) {
             }
 
             instance.onPause()
+        }
+
+        fun onOnline() {
+            instance.onOnline()
+        }
+
+        fun onOffline() {
+            instance.onOffline()
         }
 
         fun trackAdRevenue(
