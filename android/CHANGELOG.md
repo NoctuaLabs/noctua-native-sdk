@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.10.1] - 2025-04-18
+
+### 🐛 Bug Fixes
+
+- Do not pull after checkout as it is already the latest since the fetch.
+
 ## [android-sdk-v0.10.0] - 2025-04-18
 
 ### 🚀 Features
