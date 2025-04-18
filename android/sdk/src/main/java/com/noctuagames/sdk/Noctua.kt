@@ -151,10 +151,12 @@ class Noctua(context: Context, publishedApps: List<String>) {
     }
 
     fun onPause() {
+        // Disable Adjust offline mode
         adjust?.onPause()
     }
 
     fun onOnline() {
+        // Enable Adjust offline mode
         adjust?.onOnline()
     }
 
