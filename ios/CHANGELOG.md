@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.8.0] - 2025-04-18
+
+### 🚀 Features
+
+- Add onOnline and onOffline to support Adjust offline mode.
+- Add onOnline and onOffline method to control Adjust offline mode.
+
+### 🐛 Bug Fixes
+
+- Add missing onOffline wrapper.
+
 ## [ios-sdk-v0.7.1] - 2025-01-14
 
 ### 🐛 Bug Fixes
