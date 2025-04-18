@@ -231,10 +231,12 @@ class NoctuaPlugin {
     }
 
     func onOnline() {
+        // To control Adjust offline mode
         self.adjust?.onOnline()
     }
 
     func onOffline() {
+        // To control Adjust offline mode
         self.adjust?.onOffline()
     }
     

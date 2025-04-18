@@ -44,10 +44,12 @@ import Foundation
     }
 
     @objc public static func onOnline() {
+        // To control Adjust offline mode
         plugin?.onOnline()
     }
 
     @objc public static func onOffline() {
+        // To control Adjust offline mode
         plugin?.onOffline()
     }
     
