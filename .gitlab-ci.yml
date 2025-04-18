@@ -195,7 +195,7 @@ publish-ios-sdk:
   script:
     - cd ios
     - git fetch --tags
-    - git checkout main/$CI_COMMIT_BRANCH
+    - git checkout origin/$CI_COMMIT_BRANCH
     - git clean -dxf
     - curl -L "https://github.com/orhun/git-cliff/releases/download/v2.4.0/git-cliff-2.4.0-aarch64-apple-darwin.tar.gz" -o git-cliff-2.4.0-aarch64-apple-darwin.tar.gz
     - tar -xvf git-cliff-2.4.0-aarch64-apple-darwin.tar.gz
