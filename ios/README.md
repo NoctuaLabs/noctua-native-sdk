@@ -1,5 +1,10 @@
 # Noctua iOS SDK
 
+## Development
+
+- Your work email should be tied with the provisioning profile for development. Please login with your work email in XCode -> Settings -> Accounts
+- Run `pod install --repo-update` before opening the project with XCode. Adjust if necessary.
+
 ## Manual Release Guide
 
 ### Release

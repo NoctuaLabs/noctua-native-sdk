@@ -229,6 +229,14 @@ class NoctuaPlugin {
     func deleteAccount(gameId: Int64, playerId: Int64) {
         accountRepo.delete(gameId: gameId, playerId: playerId)
     }
+
+    func onOnline() {
+        self.adjust?.onOnline()
+    }
+
+    func onOffline() {
+        self.adjust?.onOffline()
+    }
     
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

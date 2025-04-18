@@ -111,6 +111,18 @@ class AdjustService {
 #endif
     }
 
+    func onOnline() {
+#if canImport(Adjust)
+        Adjust.setOfflineMode(false)
+#endif
+    }
+
+    func onOffline() {
+#if canImport(Adjust)
+        Adjust.setOfflineMode(true)
+#endif
+    }   
+
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: AdjustService.self)
