@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.10.0] - 2025-04-18
+
+### 🚀 Features
+
+- Add onOnline and onOffline API to control Adjust offline mode.
+
+### 📚 Documentation
+
+- Add comments.
+
 ## [android-sdk-v0.9.1] - 2024-12-20
 
 ### 🐛 Bug Fixes
