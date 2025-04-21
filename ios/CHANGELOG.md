@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.12.1] - 2025-04-21
+
+### 🐛 Bug Fixes
+
+- Update version 0.12.1
+
 ## [ios-sdk-v0.12.0] - 2025-04-18
 
 ### 🚀 Features
