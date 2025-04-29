@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.13.1] - 2025-04-29
+
+### 🐛 Bug Fixes
+
+- Unwrap before check for empty.
+
 ## [ios-sdk-v0.13.0] - 2025-04-29
 
 ### 🚀 Features
