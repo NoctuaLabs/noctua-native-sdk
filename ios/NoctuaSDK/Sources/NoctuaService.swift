@@ -18,11 +18,11 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     // One StoreKit operation at a time
     private var completionHandler: CompletionCallback? = nil
 
-    private let noctuaConfig: NoctuaServiceConfig
+    private var noctuaConfig: NoctuaServiceConfig
     
     init(config: NoctuaServiceConfig) throws {
-        super.init()
         self.noctuaConfig = config
+        super.init()
 
         if (!noctuaConfig.noctua.disableIAP) {
             SKPaymentQueue.default().add(self)
@@ -45,7 +45,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
 
         completionHandler = completion
         storeKitOperation = "purchaseItem"
-        self.logger.info("Noctua SDK Native: NoctuaService.purchaseItem called with productId: \(productId)")
+        self.logger.info("Noctua SDK Native: NoctuaService.purchaseItem called with productId: \(productId)")	
         initiatePayment(productId: productId, completion: { (success, message) in
             self.logger.info("purchaseItem: \(success), \(message)")
             completion(success, message)
