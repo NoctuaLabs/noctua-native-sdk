@@ -98,7 +98,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
             return
         }
 
-        guard !storeKitOperation.isEmpty else {
+        guard let operation = storeKitOperation, !operation.isEmpty else {
             self.logger.warning("storeKitOperation is empty")
             return
         }
