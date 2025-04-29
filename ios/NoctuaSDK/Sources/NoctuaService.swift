@@ -5,6 +5,11 @@ import StoreKit
 public typealias CompletionCallback = (Bool, String) -> Void
 
 struct NoctuaServiceConfig : Decodable {
+    let noctua: NoctuaServiceConfigNoctua
+    
+    struct NoctuaServiceConfigNoctua : Decodable {
+        let disableIAP: Bool
+    }
 }
 
 class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
@@ -13,9 +18,14 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     // One StoreKit operation at a time
     private var completionHandler: CompletionCallback? = nil
 
+    private var noctuaConfig: NoctuaServiceConfig
+
     init(config: NoctuaServiceConfig) throws {
         super.init()
-        SKPaymentQueue.default().add(self)
+        noctuaConfig = config
+        if (!noctuaConfig.noctua.disableIAP) {
+            SKPaymentQueue.default().add(self)
+        }
     }
     
     func getActiveCurrency(productId: String, completion: @escaping CompletionCallback) {
@@ -27,6 +37,11 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     }
 
     func purchaseItem(productId: String, completion: @escaping CompletionCallback) {
+        if (noctuaConfig.noctua.disableIAP) {
+            completion(false, "IAP is disabled by config")
+            return
+        }
+
         completionHandler = completion
         storeKitOperation = "purchaseItem"
         self.logger.info("Noctua SDK Native: NoctuaService.purchaseItem called with productId: \(productId)")
@@ -74,7 +89,20 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     }
 
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        let completion = completionHandler!
+        if (noctuaConfig.noctua.disableIAP) {
+            return
+        }
+
+        guard let completion = completionHandler else {
+            self.logger.warning("completion handler is null")
+            return
+        }
+
+        guard !storeKitOperation.isEmpty else {
+            self.logger.warning("storeKitOperation is empty")
+            return
+        }
+
         for transaction in transactions {
             if let error = transaction.error as? SKError {
                 switch error.code {
