@@ -18,11 +18,12 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     // One StoreKit operation at a time
     private var completionHandler: CompletionCallback? = nil
 
-    private var noctuaConfig: NoctuaServiceConfig
-
+    private let noctuaConfig: NoctuaServiceConfig
+    
     init(config: NoctuaServiceConfig) throws {
         super.init()
-        noctuaConfig = config
+        self.noctuaConfig = config
+
         if (!noctuaConfig.noctua.disableIAP) {
             SKPaymentQueue.default().add(self)
         }
