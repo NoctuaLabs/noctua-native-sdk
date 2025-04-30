@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.13.3] - 2025-04-30
+
+### 🐛 Bug Fixes
+
+- Handle modularization iap
+
 ## [ios-sdk-v0.13.2] - 2025-04-29
 
 ### 🐛 Bug Fixes
