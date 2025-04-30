@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.14.0] - 2025-04-30
+
+### 🚀 Features
+
+- Add log IAP is disabled by config
+
 ## [ios-sdk-v0.13.3] - 2025-04-30
 
 ### 🐛 Bug Fixes
