@@ -13,6 +13,7 @@
         "trackerUrl": "",
         "baseUrl": "https://sdk-api-v2.noctuaprojects.com/api/v1",
         "disableCustomEvent": false,
-        "disableTracker": true
+        "disableTracker": true,
+        "disableIAP": false
     }
 }
