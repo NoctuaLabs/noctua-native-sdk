@@ -30,6 +30,8 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
 
         if !disableIAP {
             SKPaymentQueue.default().add(self)
+        } else {
+            logger.info("Noctua SDK Native: IAP is disabled by config")
         }
     }
 
