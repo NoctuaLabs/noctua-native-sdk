@@ -11,7 +11,7 @@ data class FirebaseServiceConfig(
 )
 
 data class FirebaseServiceAndroidConfig(
-    val disableCustomEvent: Boolean = false
+    val customEventDisabled: Boolean = false
 )
 
 
@@ -82,7 +82,7 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        if (config.disableCustomEvent) {
+        if (config.customEventDisabled) {
             return
         }
 

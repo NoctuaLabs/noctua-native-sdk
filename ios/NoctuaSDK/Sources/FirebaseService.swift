@@ -22,7 +22,7 @@ struct FirebaseServiceConfig : Codable {
 }
 
 struct FirebaseServiceIosConfig : Codable {
-    let disableCustomEvent: Bool?
+    let customEventDisabled: Bool?
 }
 
 class FirebaseService {
@@ -83,7 +83,7 @@ class FirebaseService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
-        if (config.disableCustomEvent ?? false) {
+        if (config.customEventDisabled ?? false) {
             return
         }
         

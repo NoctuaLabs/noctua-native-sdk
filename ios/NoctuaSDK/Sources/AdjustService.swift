@@ -16,7 +16,7 @@ struct AdjustServiceConfig : Codable {
 struct AdjustServiceIosConfig : Codable {
     let appToken: String
     let environment: String?
-    let disableCustomEvent: Bool?
+    let customEventDisabled: Bool?
     let eventMap: [String:String]
 }
 
@@ -84,7 +84,7 @@ class AdjustService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(Adjust)
-        if (config.disableCustomEvent ?? false) {
+        if (config.customEventDisabled ?? false) {
             logger.warning("custom event is disabled")
             return
         }
