@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.10.2] - 2025-05-07
+
+### 🐛 Bug Fixes
+
+- Refactor configuration convention.
+
 ## [android-sdk-v0.10.1] - 2025-04-18
 
 ### 🐛 Bug Fixes
