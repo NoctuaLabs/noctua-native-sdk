@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.14.1] - 2025-05-07
+
+### 🐛 Bug Fixes
+
+- Refactor configuration convention.
+
 ## [ios-sdk-v0.14.0] - 2025-04-30
 
 ### 🚀 Features
