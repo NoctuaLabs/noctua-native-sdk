@@ -27,7 +27,7 @@ data class FacebookServiceAndroidConfig(
     val enableDebug: Boolean = false,
     val advertiserIdCollectionEnabled: Boolean = true,
     val autoLogAppEventsEnabled: Boolean = true,
-    val disableCustomEvent: Boolean = false
+    val customEventDisabled: Boolean = false
 )
 
 class FacebookService(private val config: FacebookServiceAndroidConfig, context: Context) {
@@ -104,7 +104,7 @@ class FacebookService(private val config: FacebookServiceAndroidConfig, context:
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        if (config.disableCustomEvent) {
+        if (config.customEventDisabled) {
             return
         }
 

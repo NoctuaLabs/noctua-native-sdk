@@ -5,7 +5,7 @@ import StoreKit
 public typealias CompletionCallback = (Bool, String) -> Void
 
 struct NoctuaServiceConfig: Decodable {
-    let disableIAP: Bool?
+    let iapDisabled: Bool?
 }
 
 class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
@@ -18,17 +18,17 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         category: String(describing: NoctuaService.self)
     )
 
-    var disableIAP: Bool {
-        noctuaConfig?.disableIAP ?? false
+    var iapDisabled: Bool {
+        noctuaConfig?.iapDisabled ?? false
     }
 
     init(config: NoctuaServiceConfig) {
         super.init()
         noctuaConfig = config
         
-        logger.debug("Disable IAP is : \(self.disableIAP)")
+        logger.debug("Disable IAP is : \(self.iapDisabled)")
 
-        if !disableIAP {
+        if !iapDisabled {
             SKPaymentQueue.default().add(self)
         } else {
             logger.info("Noctua SDK Native: IAP is disabled by config")
@@ -43,7 +43,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     }
 
     func purchaseItem(productId: String, completion: @escaping CompletionCallback) {
-        guard !disableIAP else {
+        guard !iapDisabled else {
             completion(false, "IAP is disabled by config")
             return
         }
@@ -94,7 +94,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
 
     // MARK: - SKPaymentTransactionObserver
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        guard !disableIAP else {
+        guard !iapDisabled else {
             logger.info("paymentQueue(_:updatedTransactions:) was called, but Noctua SDK IAP is disabled via config. Skipping transaction handling.")
             return
         }

@@ -27,7 +27,7 @@ struct FacebookServiceIosConfig : Codable {
     let appId: String
     let clientToken: String
     let displayName: String
-    let disableCustomEvent: Bool?
+    let customEventDisabled: Bool?
 }
 
 class FacebookService {
@@ -90,7 +90,7 @@ class FacebookService {
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
 #if canImport(FBSDKCoreKit)
-        if (config.disableCustomEvent ?? false) {
+        if (config.customEventDisabled ?? false) {
             return
         }
         

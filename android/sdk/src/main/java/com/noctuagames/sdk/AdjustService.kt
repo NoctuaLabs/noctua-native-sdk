@@ -14,7 +14,7 @@ data class AdjustServiceConfig(
 data class AdjustServiceAndroidConfig(
     val appToken: String,
     val environment: String?,
-    val disableCustomEvent: Boolean = false,
+    val customEventDisabled: Boolean = false,
     val eventMap: Map<String, String>,
 )
 
@@ -95,7 +95,7 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
     }
 
     fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
-        if (config.disableCustomEvent) {
+        if (config.customEventDisabled) {
             return
         }
 

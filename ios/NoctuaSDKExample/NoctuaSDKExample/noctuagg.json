@@ -3,17 +3,14 @@
     "clientId": "1-e724f5a9e6f1",
     "firebase": {
         "android": {
-            "disableCustomEvent": false
+            "customEventDisabled": false
         },
         "ios": {
-            "disableCustomEvent": false
+            "customEventDisabled": false
         }
     },
     "noctua": {
-        "trackerUrl": "",
         "baseUrl": "https://sdk-api-v2.noctuaprojects.com/api/v1",
-        "disableCustomEvent": false,
-        "disableTracker": true,
-        "disableIAP": false
+        "iapDisabled": false
     }
 }
