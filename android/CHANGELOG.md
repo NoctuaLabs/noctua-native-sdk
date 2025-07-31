@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.11.0] - 2025-07-31
+
+### 🚀 Features
+
+- Custom event with ad revenue
+
 ## [android-sdk-v0.10.2] - 2025-05-07
 
 ### 🐛 Bug Fixes
