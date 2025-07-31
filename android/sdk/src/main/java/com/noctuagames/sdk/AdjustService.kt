@@ -112,4 +112,24 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
 
         Adjust.trackEvent(adjustEvent)
     }
+
+    fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: Map<String, Any> = emptyMap()) {
+        if (config.customEventDisabled) {
+            return
+        }
+
+        if (!config.eventMap.containsKey(eventName)) {
+            Log.e(TAG, "$eventName event token is not available in the event map")
+            return
+        }
+
+        val adjustEvent = AdjustEvent(config.eventMap[eventName])
+        adjustEvent.setRevenue(revenue, currency)
+
+        for ((key, value) in payload) {
+            adjustEvent.addCallbackParameter(key, value.toString())
+        }
+
+        Adjust.trackEvent(adjustEvent)
+    }
 }

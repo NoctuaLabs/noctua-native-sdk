@@ -93,4 +93,20 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
 
         Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
     }
+
+    fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: Map<String, Any> = emptyMap()) {
+        if (config.customEventDisabled) {
+            return
+        }
+
+        val bundle = Bundle().apply {
+            putDouble("revenue", revenue)
+            putString("currency", currency)
+            putExtras(payload)
+        }
+
+        analytics.logEvent("gf_$eventName", bundle)
+
+        Log.d(TAG, "'$eventName' (custom) tracked: payload: $bundle")
+    }
 }

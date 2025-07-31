@@ -222,6 +222,12 @@ class Noctua(context: Context, publishedApps: List<String>) {
         facebook?.trackCustomEvent(eventName, payload)
     }
 
+    fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: MutableMap<String, Any> = mutableMapOf()) {
+        adjust?.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
+        firebase?.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
+        facebook?.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
+    }
+
     companion object {
         private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
@@ -293,6 +299,15 @@ class Noctua(context: Context, publishedApps: List<String>) {
             }
 
             instance.trackCustomEvent(eventName, payload)
+        }
+
+        fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: MutableMap<String, Any> = mutableMapOf()) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
+            instance.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
         }
 
         fun getAccounts(): List<Account> {
