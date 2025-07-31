@@ -115,4 +115,19 @@ class FacebookService(private val config: FacebookServiceAndroidConfig, context:
 
         Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
     }
+
+    fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: Map<String, Any> = emptyMap()) {
+        if (config.customEventDisabled) {
+            return
+        }
+
+        val bundle = Bundle().apply {
+            putString("currency", currency)
+            putExtras(payload)
+        }
+
+        eventsLogger.logEvent("fb_$eventName", valueToSum = revenue, bundle)
+
+        Log.d(TAG, "'$eventName' (custom) tracked: payload: $bundle")
+    }
 }
