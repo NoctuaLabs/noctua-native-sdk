@@ -95,6 +95,27 @@ class FirebaseService {
         logger.debug("'gf_\(eventName)\(suffix)' (custom) tracked: payload: \(payload)")
 #endif
     }
+
+    func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
+#if canImport(FirebaseAnalytics)
+        if (config.customEventDisabled ?? false) {
+            return
+        }
+        
+        var parameters: [String: Any] = [
+            AnalyticsParameterValue: revenue,
+            AnalyticsParameterCurrency: currency
+        ]
+        
+        for (key, value) in extraPayload {
+            parameters[key] = value
+        }
+        
+        Analytics.logEvent("gf_\(eventName)", parameters: extraPayload)
+
+        logger.debug("'gf_\(eventName)' (custom) tracked: payload: \(extraPayload)")
+#endif
+    }
     
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

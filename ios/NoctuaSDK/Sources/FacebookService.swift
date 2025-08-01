@@ -110,6 +110,32 @@ class FacebookService {
         logger.debug("'fb_\(eventName)\(suffix)' (custom) tracked: \(parameters)")
 #endif
     }
+
+    func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, payload: [String:Any]) {
+#if canImport(FBSDKCoreKit)
+        if (config.customEventDisabled ?? false) {
+            return
+        }
+        
+        let suffix = (payload["suffix"] as? CustomStringConvertible).flatMap { "\($0)".isEmpty ? nil : "_\($0)" } ?? ""
+
+        var parameters:[AppEvents.ParameterName: Any] = [
+            AppEvents.ParameterName("currency"): currency,
+        ]
+        
+        for (key, value) in payload {
+            if (key == "suffix") {
+                continue
+            }
+            
+            parameters[AppEvents.ParameterName(key)] = value
+        }
+
+        AppEvents.shared.logEvent(AppEvents.Name("fb_\(eventName)\(suffix)"), valueToSum: revenue, parameters: parameters)
+        
+        logger.debug("'fb_\(eventName)\(suffix)' (custom) tracked with revenue: \(parameters)")
+#endif
+    }
     
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

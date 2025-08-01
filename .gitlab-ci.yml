@@ -131,14 +131,13 @@ bump-version-ios-sdk:
       changes:
         - ios/**/*
         - NoctuaSDK.podspec
-        - Package.swift
       when: always
   variables:
     GIT_STRATEGY: fetch # reuse workspace
     GIT_DEPTH: 0 # avoid shallow clone to give cliff all the info it needs
   script:
     - cd ios
-    - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --include-path "Package.swift" --tag-pattern "ios-sdk-v.*" --bumped-version)
+    - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
     - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/")
     - sed -r "s/(spec.version *= *)\".*\"/\1\"$(echo $NEW_VERSION)\"/" ../NoctuaSDK.podspec > ../NoctuaSDK.podspec.tmp && mv ../NoctuaSDK.podspec.tmp ../NoctuaSDK.podspec
     - if [ -n "$(git diff --name-only HEAD -- ./NoctuaSDK.podspec)" ]; then
@@ -158,7 +157,6 @@ release-ios-sdk:
       changes:
         - ios/**/*
         - NoctuaSDK.podspec
-        - Package.swift
       when: manual
       needs:
         - bump-version-ios-sdk
@@ -169,7 +167,7 @@ release-ios-sdk:
     - cd ios
     - git fetch --tags
     - git checkout origin/$CI_COMMIT_BRANCH
-    - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --include-path "Package.swift" --tag-pattern "ios-sdk-v.*" --bumped-version)
+    - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
     - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/")
     - sed -r "s/(spec.version *= *)\".*\"/\1\"$(echo $NEW_VERSION)\"/" ../NoctuaSDK.podspec > ../NoctuaSDK.podspec.tmp && mv ../NoctuaSDK.podspec.tmp ../NoctuaSDK.podspec
     - git add ../NoctuaSDK.podspec
@@ -188,7 +186,6 @@ publish-ios-sdk:
       changes:
         - ios/**/*
         - NoctuaSDK.podspec
-        - Package.swift
       when: on_success
       needs:
         - release-ios-sdk
@@ -203,7 +200,7 @@ publish-ios-sdk:
     - curl -L "https://github.com/orhun/git-cliff/releases/download/v2.4.0/git-cliff-2.4.0-aarch64-apple-darwin.tar.gz" -o git-cliff-2.4.0-aarch64-apple-darwin.tar.gz
     - tar -xvf git-cliff-2.4.0-aarch64-apple-darwin.tar.gz
     - chmod +x ./git-cliff-2.4.0/git-cliff
-    - NEW_VERSION_TAG=$(./git-cliff-2.4.0/git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --include-path "Package.swift" --tag-pattern "ios-sdk-v.*" --bumped-version)
+    - NEW_VERSION_TAG=$(./git-cliff-2.4.0/git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
     - ./git-cliff-2.4.0/git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --latest > GithubRelease.md
     - curl -sS https://webi.sh/gh | sh
     - source ~/.config/envman/PATH.env

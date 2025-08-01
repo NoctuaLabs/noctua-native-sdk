@@ -179,6 +179,12 @@ class NoctuaPlugin {
         self.facebook?.trackCustomEvent(eventName, payload: payload)
     }
 
+    func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, payload: [String:Any]) {
+        self.adjust?.trackCustomEventWithRevenue(eventName, revenue: revenue, currency: currency, payload: payload)
+        self.firebase?.trackCustomEventWithRevenue(eventName, revenue: revenue, currency: currency, extraPayload: payload)
+        self.facebook?.trackCustomEventWithRevenue(eventName, revenue: revenue, currency: currency, payload: payload)
+    }
+
     func purchaseItem(productId: String, completion: @escaping CompletionCallback) {
         logger.debug("productId: \(productId)")
         
