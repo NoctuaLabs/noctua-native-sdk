@@ -9,21 +9,29 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.Manifest
 import com.google.gson.GsonBuilder
+import com.noctuagames.labs.sdk.NoctuaInternal
+import com.noctuagames.labs.sdk.utils.AppContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.IOException
 
+data class NoctuaServiceConfig(
+    val internalTrackerEnabled: Boolean?
+)
 data class NoctuaConfig(
     val clientId: String?,
     val adjust: AdjustServiceConfig?,
     val firebase: FirebaseServiceConfig?,
     val facebook: FacebookServiceConfig?,
+    val noctua: NoctuaServiceConfig?
 )
 
 class Noctua(context: Context, publishedApps: List<String>) {
     private val clientId: String
+    private var internalTrackerEnabled: Boolean
+    private val noctuaInternal = NoctuaInternal
     private val adjust: AdjustService?
     private val firebase: FirebaseService?
     private val facebook: FacebookService?
@@ -39,6 +47,9 @@ class Noctua(context: Context, publishedApps: List<String>) {
         }
 
         this.clientId = config.clientId
+        this.internalTrackerEnabled = config.noctua?.internalTrackerEnabled ?: false
+
+        AppContext.set(appContext)
 
         val adjustAvailable =
             try {
@@ -220,6 +231,10 @@ class Noctua(context: Context, publishedApps: List<String>) {
         adjust?.trackCustomEvent(eventName, payload)
         firebase?.trackCustomEvent(eventName, payload)
         facebook?.trackCustomEvent(eventName, payload)
+
+        if (internalTrackerEnabled) {
+            noctuaInternal.trackCustomEvent(eventName, payload)
+        }
     }
 
     fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: MutableMap<String, Any> = mutableMapOf()) {
