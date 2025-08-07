@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.12.0] - 2025-08-07
+
+### 🚀 Features
+
+- Noctua internal tracker
+
 ## [android-sdk-v0.11.0] - 2025-07-31
 
 ### 🚀 Features
