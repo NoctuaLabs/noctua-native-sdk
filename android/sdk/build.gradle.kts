@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.noctuagames.sdk"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         aarMetadata {
@@ -108,6 +108,7 @@ publishing {
 }
 
 dependencies {
+    implementation(libs.noctua.internal.native)
     implementation(libs.play.services.appset)
     implementation(libs.play.services.ads.identifier)
     implementation(libs.androidx.core.ktx)

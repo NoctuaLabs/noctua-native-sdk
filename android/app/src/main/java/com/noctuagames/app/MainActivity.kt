@@ -83,7 +83,7 @@ fun MainScreen(offset: Int, packageName: String) {
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 Noctua.trackCustomEvent(
-                    "TestSendEvent",
+                    "login",
                     mutableMapOf(
                         "k1" to 0.123f,
                         "k2" to 0.123,
@@ -91,8 +91,6 @@ fun MainScreen(offset: Int, packageName: String) {
                         "k4" to 123L,
                         "k5" to true,
                         "k6" to "string",
-                        "k7" to Date.from(Instant.now()),
-                        "k8" to DayOfWeek.SATURDAY,
                         "suffix" to 123,
                     )
                 )
