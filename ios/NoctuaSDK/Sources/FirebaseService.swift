@@ -45,9 +45,23 @@ class FirebaseService {
 #endif
     }
     
+    private func getAdplatform(from source: String) -> String {
+        switch source {
+        case "applovin_max_sdk":
+            return "appLovin"
+        case "admob_sdk":
+            return "admob"
+        case "unity_ads_sdk":
+            return "unity"
+        default:
+            return "unknown"
+        }
+    }
+    
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(FirebaseAnalytics)
         var parameters: [String:Any] = [
+            AnalyticsParameterAdPlatform: getAdplatform(from: source),
             AnalyticsParameterAdSource: source,
             AnalyticsParameterValue: revenue,
             AnalyticsParameterCurrency: currency
@@ -58,6 +72,7 @@ class FirebaseService {
         }
 
         Analytics.logEvent("ad_revenue", parameters: parameters)
+        Analytics.logEvent(AnalyticsEventAdImpression, parameters: parameters)
 
         logger.debug("'ad_revenue' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
 #endif
