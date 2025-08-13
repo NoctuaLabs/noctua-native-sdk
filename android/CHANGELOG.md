@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.12.3] - 2025-08-13
+
+### 🐛 Bug Fixes
+
+- Downgrade compile sdk and kotlin version
+
 ## [android-sdk-v0.12.2] - 2025-08-13
 
 ### 🐛 Bug Fixes
