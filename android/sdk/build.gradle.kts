@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.noctuagames.sdk"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         aarMetadata {
