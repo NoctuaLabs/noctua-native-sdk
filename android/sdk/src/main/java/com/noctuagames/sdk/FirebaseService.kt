@@ -31,13 +31,23 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
         Log.i(TAG, "Firebase Analytics initialized successfully")
     }
 
+    private fun getAdPlatform(source: String) = when (source) {
+        "applovin_max_sdk" -> "applovin"
+        "unity_ads_sdk" -> "unity"
+        "admob_sdk" -> "admob"
+        else -> "unknown"
+    }
+
     fun trackAdRevenue(
         source: String,
         revenue: Double,
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
+        val adPlatform = getAdPlatform(source)
+
         val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.AD_PLATFORM, adPlatform)
             putString(FirebaseAnalytics.Param.AD_SOURCE, source)
             putDouble(FirebaseAnalytics.Param.VALUE, revenue)
             putString(FirebaseAnalytics.Param.CURRENCY, currency)
@@ -45,6 +55,7 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
         }
 
         analytics.logEvent("ad_revenue", bundle)
+        analytics.logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, bundle)
 
         Log.d(
             TAG,
