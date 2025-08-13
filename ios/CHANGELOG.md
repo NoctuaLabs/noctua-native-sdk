@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.16.1] - 2025-08-13
+
+### 🐛 Bug Fixes
+
+- Firebase ad impression - ios
+- Remove built in event ad_revenue for firebase
+
 ## [ios-sdk-v0.16.0] - 2025-08-01
 
 ### 🚀 Features
