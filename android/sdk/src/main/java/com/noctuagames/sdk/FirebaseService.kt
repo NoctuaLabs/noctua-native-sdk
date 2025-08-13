@@ -54,7 +54,6 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
             putExtras(extraPayload)
         }
 
-        analytics.logEvent("ad_revenue", bundle)
         analytics.logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, bundle)
 
         Log.d(

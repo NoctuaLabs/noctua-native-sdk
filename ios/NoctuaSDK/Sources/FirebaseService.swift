@@ -71,7 +71,6 @@ class FirebaseService {
             parameters[key] = value
         }
 
-        Analytics.logEvent("ad_revenue", parameters: parameters)
         Analytics.logEvent(AnalyticsEventAdImpression, parameters: parameters)
 
         logger.debug("'ad_revenue' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
