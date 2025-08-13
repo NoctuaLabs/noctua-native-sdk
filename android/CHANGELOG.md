@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.12.1] - 2025-08-13
+
+### 🐛 Bug Fixes
+
+- Firebase ad impression
+- Remove built in event ad_revenue for firebase
+
 ## [android-sdk-v0.12.0] - 2025-08-07
 
 ### 🚀 Features
