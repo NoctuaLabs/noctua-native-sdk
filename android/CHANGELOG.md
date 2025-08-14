@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.12.4] - 2025-08-14
+
+### 🐛 Bug Fixes
+
+- Downgrade minsdk
+
 ## [android-sdk-v0.12.3] - 2025-08-13
 
 ### 🐛 Bug Fixes
