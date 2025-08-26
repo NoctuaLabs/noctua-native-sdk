@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.17.0] - 2025-08-26
+
+### 🚀 Features
+
+- Remove adjust revenue parameter
+- Add check product purchased ios
+
 ## [ios-sdk-v0.16.1] - 2025-08-13
 
 ### 🐛 Bug Fixes
