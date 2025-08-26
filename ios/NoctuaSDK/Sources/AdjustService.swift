@@ -131,10 +131,13 @@ class AdjustService {
         }
         
         let event = ADJEvent(eventToken: eventToken)!
-        event.setRevenue(revenue, currency: currency)
+        
+        var extraPayload = payload
+        extraPayload["revenue"] = revenue
+        extraPayload["currency"] = currency
 
         // Add parameters to the event`
-        for (key, value) in payload {
+        for (key, value) in extraPayload {
             event.addCallbackParameter(key, value: "\(value)")
         }
         
