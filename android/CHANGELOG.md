@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.13.0] - 2025-08-26
+
+### 🚀 Features
+
+- Remove adjust revenue parameters
+
 ## [android-sdk-v0.12.4] - 2025-08-14
 
 ### 🐛 Bug Fixes
