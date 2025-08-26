@@ -1,16 +1,56 @@
 {
-    "productCode": "noctuaggdev",
-    "clientId": "1-e724f5a9e6f1",
-    "firebase": {
-        "android": {
-            "customEventDisabled": false
-        },
-        "ios": {
-            "customEventDisabled": false
-        }
+  "productCode": "noctuaggdev",
+  "clientId": "1-e724f5a9e6f1",
+  "adjust": {
+    "android": {
+      "appToken": "kg7l0jhuem80",
+      "eventMap": {
+        "purchase": "qye2vk",
+        "login": "xoizir"
+      }
     },
-    "noctua": {
-        "baseUrl": "https://sdk-api-v2.noctuaprojects.com/api/v1",
-        "iapDisabled": false
+    "ios": {
+      "appToken": "kg7l0jhuem80",
+      "eventMap": {
+        "purchase": "qye2vk",
+        "login": "xoizir"
+      }
     }
+  },
+  "facebook": {
+    "android": {
+      "appId": "807936677546640",
+      "clientToken": "5eb9cb06333460b31c60e484676110a0",
+      "displayName": "SDK Test Noctua",
+      "enableDebug": true
+    },
+    "ios": {
+      "appId": "807936677546640",
+      "clientToken": "5eb9cb06333460b31c60e484676110a0",
+      "displayName": "SDK Test Noctua",
+      "enableDebug": true
+    }
+  },
+  "firebase": {
+    "android": {
+      "customEventDisabled": false
+    },
+    "ios": {
+      "customEventDisabled": false
+    }
+  },
+  "noctua": {
+    "sentryDsnUrl": "https://4809b03b8d2d48e1865b61c4f7e2dc8c@app.glitchtip.com/9229",
+    "sandboxEnabled": false,
+    "offlineFirstEnabled": false,
+    "welcomeToastDisabled ": false,
+    "iaaEnabled": false,
+    "iapDisabled": false,
+    "remoteFeatureFlags": {
+      "ssoDisabled": false,
+      "vnLegalPurposeEnabled": false,
+      "vnLegalPurposeFullKycEnabled": false,
+      "vnLegalPurposePhoneNumberVerificationEnabled": false
+    }
+  }
 }
