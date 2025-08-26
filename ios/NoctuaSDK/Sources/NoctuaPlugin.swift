@@ -190,6 +190,14 @@ class NoctuaPlugin {
         
         self.noctua?.purchaseItem(productId: productId, completion: completion)
     }
+    
+    func getProductPurchasedById(id productId: String, completion: @escaping (Bool) -> Void) async {
+        await self.noctua?.getProductPurchasedById(id: productId, completion: completion)
+    }
+    
+    func getReceiptProductPurchasedStoreKit1(id productId: String, completion: @escaping (String) -> Void) {
+        self.noctua?.getReceiptProductPurchasedStoreKit1(id: productId, completion: completion)
+    }
 
     func getActiveCurrency(productId: String, completion: @escaping CompletionCallback) {
         logger.debug("productId: \(productId)")

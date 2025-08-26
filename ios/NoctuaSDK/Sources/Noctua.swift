@@ -26,6 +26,14 @@ import Foundation
     @objc public static func purchaseItem(_ productId: String, completion: @escaping (Bool, String) -> Void) {
         plugin?.purchaseItem(productId: productId, completion: completion)
     }
+    
+    @objc public static func getProductPurchasedById(id productId: String, completion: @escaping (Bool) -> Void) async {
+        await plugin?.getProductPurchasedById(id: productId, completion: completion)
+    }
+    
+    @objc public static func getReceiptProductPurchasedStoreKit1(id productId: String, completion: @escaping (String) -> Void) {
+        plugin?.getReceiptProductPurchasedStoreKit1(id: productId, completion: completion)
+    }
 
     @objc public static func getActiveCurrency(_ productId: String, completion: @escaping (Bool, String) -> Void) {
         plugin?.getActiveCurrency(productId: productId, completion: completion)
