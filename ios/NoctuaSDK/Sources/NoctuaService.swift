@@ -155,4 +155,44 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
             callback(false, "Transaction succeeded, but no receipt data available")
         }
     }
+    
+    func getProductPurchasedById(id productId: String, completion: @escaping (Bool) -> Void) async {
+        if #available(iOS 15.0, *) {
+            let purchased = await self.getProductPurchasedStoreKit2(id: productId)
+            completion(purchased)
+        } else {
+            // StoreKit 1 does not provide a reliable way to check purchase status on-device.
+            // For older iOS versions, verify the receipt with your server-side backend instead.
+            // to get the receipt use getReceiptProductPurchasedStoreKit1(id: productId)
+            
+            completion(false)
+            logger.warning("Unable to verify product purchase on iOS versions below 15.0")
+        }
+    }
+    
+    @available(iOS 15.0, *)
+    private func getProductPurchasedStoreKit2(id productId: String) async -> Bool {
+        for await result in Transaction.currentEntitlements {
+            if case .verified(let transaction) = result {
+                if transaction.productID == productId {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    
+    func getReceiptProductPurchasedStoreKit1(id productId: String, completion: @escaping (String) -> Void) {
+        guard let appStoreReceiptUrl = Bundle.main.appStoreReceiptURL,
+              let receiptData = try? Data(contentsOf: appStoreReceiptUrl) else {
+            return completion("")
+        }
+        
+        let receiptString = receiptData.base64EncodedString(options: [])
+        
+        logger.info("Product receipt: \(receiptString.prefix(50))...")
+        
+        completion(receiptString)
+    }
 }

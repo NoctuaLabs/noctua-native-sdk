@@ -124,7 +124,8 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
         }
 
         val adjustEvent = AdjustEvent(config.eventMap[eventName])
-        adjustEvent.setRevenue(revenue, currency)
+        payload + ("revenue" to revenue)
+        payload + ("currency" to currency)
 
         for ((key, value) in payload) {
             adjustEvent.addCallbackParameter(key, value.toString())

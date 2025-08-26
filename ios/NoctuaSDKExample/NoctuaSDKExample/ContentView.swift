@@ -94,7 +94,8 @@ struct ContentView: View {
             }
             
             Button(action: {
-                Noctua.trackCustomEvent("TestSendEvent", payload: ["k1": "v1", "k2" : "v2", "suffix": 123])
+                Noctua.trackCustomEvent("login", payload: ["k1": "v1", "k2" : "v2", "suffix": 123])
+                Noctua.trackCustomEventWithRevenue("login", revenue: 0.9, currency: "USD")
                 logger.debug("Track Custom Event tapped")
             }) {
                 Text("Track Custom Event")
@@ -105,9 +106,26 @@ struct ContentView: View {
             }
             
             Button(action: {
-                Noctua.purchaseItem("noctua.sdktest.ios.pack1", completion: { (success, message) in
-                    logger.debug("Purchase Item tapped: \(success), \(message)")
-                });
+                Task {
+                    
+                    let productId = "noctua.unitysdktest.noads.banner"
+                    var isPurchased = false
+                    
+                    await Noctua.getProductPurchasedById(id: productId, completion: { purchased in
+                        logger.debug("Product is \(purchased)")
+                        isPurchased = purchased
+                    })
+                    
+                    if isPurchased {
+                        logger.debug("Product \(productId) already purchased!")
+                        return
+                    }
+                    
+                    Noctua.purchaseItem(productId, completion: { (success, message) in
+                        logger.debug("Purchase Item tapped: \(success), \(message)")
+                    });
+                    
+                }
             }) {
                 Text("Purchase Item")
                     .frame(maxWidth: .infinity)
