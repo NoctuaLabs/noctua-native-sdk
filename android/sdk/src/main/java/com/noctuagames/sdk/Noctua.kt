@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 data class NoctuaServiceConfig(
-    val internalTrackerEnabled: Boolean?
+    val nativeInternalTrackerEnabled: Boolean?
 )
 data class NoctuaConfig(
     val clientId: String?,
@@ -30,7 +30,7 @@ data class NoctuaConfig(
 
 class Noctua(context: Context, publishedApps: List<String>) {
     private val clientId: String
-    private var internalTrackerEnabled: Boolean
+    private var nativeInternalTrackerEnabled: Boolean
     private val noctuaInternal = NoctuaInternal
     private val adjust: AdjustService?
     private val firebase: FirebaseService?
@@ -47,7 +47,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
         }
 
         this.clientId = config.clientId
-        this.internalTrackerEnabled = config.noctua?.internalTrackerEnabled ?: false
+        this.nativeInternalTrackerEnabled = config.noctua?.nativeInternalTrackerEnabled ?: false
 
         AppContext.set(appContext)
 
@@ -232,7 +232,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
         firebase?.trackCustomEvent(eventName, payload)
         facebook?.trackCustomEvent(eventName, payload)
 
-        if (internalTrackerEnabled) {
+        if (nativeInternalTrackerEnabled) {
             noctuaInternal.trackCustomEvent(eventName, payload)
         }
     }
