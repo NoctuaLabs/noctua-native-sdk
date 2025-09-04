@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.13.1] - 2025-09-04
+
+### 🚜 Refactor
+
+- Change internalTrackerEnabled into nativeInternalTrackerEnabled
+
 ## [android-sdk-v0.13.0] - 2025-08-26
 
 ### 🚀 Features
