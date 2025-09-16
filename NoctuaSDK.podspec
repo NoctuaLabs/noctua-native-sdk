@@ -7,7 +7,7 @@ Pod::Spec.new do |spec|
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author       = { "Noctua Labs" => "tech@noctua.gg" }
 
-  spec.platform     = :ios, "14.0"
+  spec.platform     = :ios, "15.0"
   spec.swift_version = "5.0"
   spec.static_framework = true
   
@@ -24,19 +24,19 @@ Pod::Spec.new do |spec|
   end
 
   spec.subspec "Adjust" do |adjust|
-    adjust.dependency "Adjust", "~> 4.38.4"
+    adjust.dependency "Adjust", "~> 5.4.4"
   end
   
   spec.subspec "FirebaseAnalytics" do |firebase|
-    firebase.dependency "FirebaseAnalytics", "~> 11.14.0"
+    firebase.dependency "FirebaseAnalytics", "~> 12.2.0"
   end
 
   spec.subspec "FirebaseCrashlytics" do |firebase|
-    firebase.dependency "FirebaseCrashlytics", "~> 11.14.0"
+    firebase.dependency "FirebaseCrashlytics", "~> 12.2.0"
   end
   
   spec.subspec "FirebaseMessaging" do |firmessaging|
-    firmessaging.dependency "FirebaseMessaging", "~> 11.14.0"
+    firmessaging.dependency "FirebaseMessaging", "~> 12.2.0"
     firmessaging.frameworks = "UserNotifications"
   end
 
@@ -88,7 +88,7 @@ Pod::Spec.new do |spec|
     rm "${ZIPFILE}"
 
     echo "Downloading FacebookSDK-Static_XCFramework"
-    VERSION="17.0.2"
+    VERSION="18.0.1"
     ZIPFILE="FacebookSDK-Static_XCFramework.zip"
     URL="https://github.com/facebook/facebook-ios-sdk/releases/download/v${VERSION}/${ZIPFILE}"
 
