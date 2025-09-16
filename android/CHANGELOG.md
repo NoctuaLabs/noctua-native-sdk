@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.14.0] - 2025-09-16
+
+### 🚀 Features
+
+- Add get firebase installation id and session id - android
+
 ## [android-sdk-v0.13.1] - 2025-09-04
 
 ### 🚜 Refactor
