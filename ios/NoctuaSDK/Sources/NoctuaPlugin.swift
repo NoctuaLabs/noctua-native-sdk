@@ -252,6 +252,14 @@ class NoctuaPlugin {
         self.adjust?.onOffline()
     }
     
+    func getFirebaseInstallationID(completion: @escaping (String) -> Void) {
+        self.firebase?.getFirebaseInstallationID(completion: completion)
+    }
+    
+    func getFirebaseSessionID(completion: @escaping (String) -> Void) {
+        self.firebase?.getFirebaseSessionID(completion: completion)
+    }
+    
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: NoctuaPlugin.self)

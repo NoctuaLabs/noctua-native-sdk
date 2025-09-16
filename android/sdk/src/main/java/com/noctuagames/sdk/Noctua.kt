@@ -243,6 +243,18 @@ class Noctua(context: Context, publishedApps: List<String>) {
         facebook?.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
     }
 
+    fun getFirebaseInstallationID(onResult: (String) -> Unit) {
+        firebase?.getFirebaseInstallationID { id ->
+            onResult(id)
+        }
+    }
+
+    fun getFirebaseAnalyticsSessionID(onResult: (String) -> Unit) {
+        firebase?.getFirebaseAnalyticsSessionID { id ->
+            onResult(id)
+        }
+    }
+
     companion object {
         private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
@@ -343,6 +355,14 @@ class Noctua(context: Context, publishedApps: List<String>) {
 
         fun deleteAccount(account: Account): Int {
             return instance.accounts.delete(account.userId, account.gameId)
+        }
+
+        fun getFirebaseInstallationID(onResult: (String) -> Unit) {
+            instance.getFirebaseInstallationID(onResult)
+        }
+
+        fun getFirebaseAnalyticsSessionID(onResult: (String) -> Unit) {
+            instance.getFirebaseAnalyticsSessionID(onResult)
         }
     }
 

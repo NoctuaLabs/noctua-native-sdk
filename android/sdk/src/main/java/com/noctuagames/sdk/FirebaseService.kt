@@ -5,6 +5,7 @@ import android.util.Log
 import android.os.Bundle
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.installations.FirebaseInstallations
 
 data class FirebaseServiceConfig(
     val android: FirebaseServiceAndroidConfig?
@@ -29,6 +30,29 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
         analytics = FirebaseAnalytics.getInstance(context)
 
         Log.i(TAG, "Firebase Analytics initialized successfully")
+    }
+
+    fun getFirebaseInstallationID(onResult: (String) -> Unit) {
+        FirebaseInstallations.getInstance().id
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "Firebase Installation ID: ${task.result}")
+                    onResult(task.result)
+                } else {
+                    Log.d(TAG, "Failed to get Firebase Installation ID")
+                    onResult("")
+                }
+            }
+    }
+
+    fun getFirebaseAnalyticsSessionID(onResult: (String) -> Unit) {
+        analytics.appInstanceId.addOnSuccessListener { appInstanceId  ->
+            Log.d(TAG, "Firebase Analytics Session ID: $appInstanceId")
+            onResult(appInstanceId ?: "")
+        }.addOnFailureListener {
+            Log.d(TAG, "Failed to get Firebase Analytics Session ID")
+            onResult("")
+        }
     }
 
     private fun getAdPlatform(source: String) = when (source) {
