@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.18.0] - 2025-09-16
+
+### 🚀 Features
+
+- Add get firebase installation id and session id
+
 ## [ios-sdk-v0.17.0] - 2025-08-26
 
 ### 🚀 Features
