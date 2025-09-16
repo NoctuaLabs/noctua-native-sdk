@@ -63,6 +63,14 @@ import Foundation
         plugin?.onOffline()
     }
     
+    @objc public static func getFirebaseInstallationID(completion: @escaping (String) -> Void) {
+        plugin?.getFirebaseInstallationID(completion: completion)
+    }
+    
+    @objc public static func getFirebaseSessionID(completion: @escaping (String) -> Void) {
+        plugin?.getFirebaseSessionID(completion: completion)
+    }
+    
     static var plugin: NoctuaPlugin?
 }
 

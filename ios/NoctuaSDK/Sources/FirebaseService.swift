@@ -9,6 +9,7 @@ import Foundation
 #if canImport(FirebaseAnalytics)
 import FirebaseCore
 import FirebaseAnalytics
+import FirebaseInstallations
 #endif
 import os
 
@@ -129,6 +130,34 @@ class FirebaseService {
 
         logger.debug("'gf_\(eventName)' (custom) tracked: payload: \(extraPayload)")
 #endif
+    }
+    
+    func getFirebaseInstallationID(completion: @escaping (String) -> Void) {
+        Installations.installations().installationID { id, error in
+            if let error = error {
+                self.logger.debug("Error fetching installation ID: \(error)")
+                completion("")
+                return
+            }
+            if let id = id {
+                self.logger.debug("Firebase Installation ID: \(id)")
+                completion(id)
+            } else {
+                completion("")
+            }
+        }
+    }
+    
+    func getFirebaseSessionID(completion: @escaping (String) -> Void) {
+        Analytics.sessionID { sessionID, error in
+            if let error = error {
+                self.logger.debug("Error fetching session ID: \(error)")
+                completion("")
+                return
+            }
+            self.logger.debug("Firebase Analytics Session ID: \(sessionID)")
+            completion(String(sessionID))
+        }
     }
     
     private let logger = Logger(
