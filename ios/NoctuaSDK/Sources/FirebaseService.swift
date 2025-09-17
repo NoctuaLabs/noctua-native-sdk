@@ -133,6 +133,7 @@ class FirebaseService {
     }
     
     func getFirebaseInstallationID(completion: @escaping (String) -> Void) {
+#if canImport(FirebaseInstallations)
         Installations.installations().installationID { id, error in
             if let error = error {
                 self.logger.debug("Error fetching installation ID: \(error)")
@@ -146,9 +147,11 @@ class FirebaseService {
                 completion("")
             }
         }
+#endif
     }
     
     func getFirebaseSessionID(completion: @escaping (String) -> Void) {
+#if canImport(FirebaseAnalytics)
         Analytics.sessionID { sessionID, error in
             if let error = error {
                 self.logger.debug("Error fetching session ID: \(error)")
@@ -158,6 +161,7 @@ class FirebaseService {
             self.logger.debug("Firebase Analytics Session ID: \(sessionID)")
             completion(String(sessionID))
         }
+#endif
     }
     
     private let logger = Logger(
