@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.19.0] - 2025-09-17
+
+### 🚀 Features
+
+- Add guard for get firebase session id and installation id
+
 ## [ios-sdk-v0.18.0] - 2025-09-16
 
 ### 🚀 Features
