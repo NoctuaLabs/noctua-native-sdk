@@ -1,6 +1,6 @@
 import Foundation
-#if canImport(Adjust)
-import Adjust
+#if canImport(AdjustSdk)
+import AdjustSdk
 #endif
 import os
 
@@ -24,7 +24,7 @@ class AdjustService {
     let config: AdjustServiceIosConfig
     
     init(config: AdjustServiceIosConfig) throws {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         self.config = config
         
         guard !config.eventMap.isEmpty else {
@@ -42,16 +42,16 @@ class AdjustService {
             throw AdjustServiceError.invalidConfig("appToken is empty")
         }
         let adjustConfig = ADJConfig(appToken: appToken, environment: environment)
-        adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevelWarn } else { ADJLogLevelDebug }
+        adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevel.warn } else { ADJLogLevel.debug }
         
-        Adjust.appDidLaunch(adjustConfig)
+        Adjust.initSdk(adjustConfig)
 #else
         throw AdjustServiceError.adjustNotFound
 #endif
     }
     
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         let adRevenue = ADJAdRevenue(source: source)!
         adRevenue.setRevenue(revenue, currency: currency)
         
@@ -64,7 +64,7 @@ class AdjustService {
     }
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         let eventToken = config.eventMap["purchase"]!
         guard !eventToken.isEmpty else {
             logger.warning("no eventToken for purchase")
@@ -83,7 +83,7 @@ class AdjustService {
     }
     
     func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         if (config.customEventDisabled ?? false) {
             logger.warning("custom event is disabled")
             return
@@ -112,7 +112,7 @@ class AdjustService {
     }
 
     func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, payload: [String:Any]) {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         if (config.customEventDisabled ?? false) {
             logger.warning("custom event is disabled")
             return
@@ -147,14 +147,15 @@ class AdjustService {
     }
 
     func onOnline() {
-#if canImport(Adjust)
-        Adjust.setOfflineMode(false)
+#if canImport(AdjustSdk)
+        Adjust.switchBackToOnlineMode()
 #endif
     }
 
     func onOffline() {
-#if canImport(Adjust)
-        Adjust.setOfflineMode(true)
+#if canImport(AdjustSdk)
+        Adjust.switchToOfflineMode()
+        
 #endif
     }   
 
