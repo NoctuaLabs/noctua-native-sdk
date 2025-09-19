@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.20.0] - 2025-09-19
+
+### 🚀 Features
+
+- Update firebase to 12.2.0, adjust to 5.4.4, facebook to 18.0.1
+- Enhance facebook ad revenue event name
+
 ## [ios-sdk-v0.19.0] - 2025-09-17
 
 ### 🚀 Features
