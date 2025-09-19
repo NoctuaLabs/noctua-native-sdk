@@ -137,7 +137,7 @@ bump-version-ios-sdk:
   extends: .bump-version
   stage: bump-version
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "main-icm"
       changes:
         - ios/**/*
         - NoctuaSDK.podspec
@@ -164,7 +164,7 @@ release-ios-sdk:
   extends: .bump-version
   stage: release
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "main-icm"
       changes:
         - ios/**/*
         - NoctuaSDK.podspec
@@ -194,7 +194,7 @@ publish-ios-sdk:
   tags:
     - macmini
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "main-icm"
       changes:
         - ios/**/*
         - NoctuaSDK.podspec
