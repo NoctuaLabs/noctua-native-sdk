@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.20.0] - 2025-10-27
+
+### 🚀 Features
+
+- Update firebase ios sdk to version 11.14.0
+- Bump version manually to 0.21.2
+- Bump version
+
 ## [ios-sdk-v0.19.0] - 2025-09-17
 
 ### 🚀 Features
