@@ -1,13 +1,14 @@
 [versions]
-adjustAndroid = "4.38.5"
+adjustAndroid = "5.4.5"
+adjustAndroidHuaweiReferrer = "5.0.0"
 agp = "8.7.0"
-facebookCore = "17.0.1"
+facebookCore = "18.1.3"
 # Firebase services versions refers to firebase-bom "33.6", but we use individual versions
 # due to issue with publishing to maven
-firebaseAnalytics = "22.1.2"
-firebaseCrashlytics = "19.2.1"
-firebaseCrashlyticsNdk = "19.2.1"
-firebaseMessaging = "24.1.0"
+firebaseAnalytics = "22.4.0"
+firebaseCrashlytics = "19.4.2"
+firebaseCrashlyticsNdk = "19.4.2"
+firebaseMessaging = "24.1.1"
 
 gson = "2.10.1"
 installreferrer = "2.2"
@@ -26,6 +27,7 @@ activityCompose = "1.9.2"
 composeBom = "2024.09.03"
 
 [libraries]
+adjust-android-huawei-referrer = { module = "com.adjust.sdk:adjust-android-huawei-referrer", version.ref = "adjustAndroidHuaweiReferrer" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
