@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.15.0] - 2025-10-27
+
+### 🚀 Features
+
+- Update version adjust v4 to v5, facebook v17 to v18, firebase crashlytic to v19.4.2, analytics to v22.4.0, messaging to v24.1.1
+- Enhance android compileSdk to 35
+- Migration adjust v4 to v5
+
 ## [android-sdk-v0.14.0] - 2025-09-16
 
 ### 🚀 Features
