@@ -10,14 +10,14 @@ plugins {
 
 android {
     namespace = "com.noctuagames.sdk"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         aarMetadata {
             minCompileSdk = 32
         }
         minSdk = 22
-        compileSdk = 34
+        compileSdk = 35
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -114,6 +114,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.installreferrer)
     implementation(libs.adjust.android)
+    implementation(libs.adjust.android.huawei.referrer)
     implementation(libs.gson)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.coroutines.core)

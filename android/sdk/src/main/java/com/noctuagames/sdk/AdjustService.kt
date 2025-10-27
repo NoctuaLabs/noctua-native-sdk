@@ -41,7 +41,7 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
         }
 
         val adjustConfig = AdjustConfig(context, config.appToken, environment)
-        Adjust.onCreate(adjustConfig)
+        Adjust.initSdk(adjustConfig)
         Log.i(TAG, "Adjust SDK initialized successfully")
     }
 
@@ -54,11 +54,11 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
     }
 
     fun onOnline() {
-        Adjust.setOfflineMode(false)
+        Adjust.switchBackToOnlineMode()
     }
 
     fun onOffline() {
-        Adjust.setOfflineMode(true)
+        Adjust.switchToOfflineMode()
     }
 
     fun trackAdRevenue(
