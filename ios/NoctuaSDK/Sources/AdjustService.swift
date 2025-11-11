@@ -17,7 +17,7 @@ struct AdjustServiceIosConfig : Codable {
     let appToken: String
     let environment: String?
     let customEventDisabled: Bool?
-    let eventMap: [String:String]
+    let eventMap: [String:String]?
 }
 
 class AdjustService {
@@ -27,11 +27,11 @@ class AdjustService {
 #if canImport(Adjust)
         self.config = config
         
-        guard !config.eventMap.isEmpty else {
+        guard let eventMap = config.eventMap, !eventMap.isEmpty else {
             throw AdjustServiceError.invalidConfig("eventMap is empty")
         }
-        
-        guard config.eventMap.keys.contains("purchase") else {
+
+        guard eventMap.keys.contains("purchase") else {
             throw AdjustServiceError.invalidConfig("no eventToken for purchase")
         }
         
@@ -65,7 +65,7 @@ class AdjustService {
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Adjust)
-        let eventToken = config.eventMap["purchase"]!
+        let eventToken = config.eventMap?["purchase"] ?? ""
         guard !eventToken.isEmpty else {
             logger.warning("no eventToken for purchase")
             return
@@ -90,7 +90,7 @@ class AdjustService {
         }
 
         // Check for null
-        guard let eventToken = config.eventMap[eventName] else {
+        guard let eventToken = config.eventMap?[eventName] else {
             logger.warning("no eventToken for \(eventName)")
             return
         }
@@ -119,7 +119,7 @@ class AdjustService {
         }
         
         // Check for null
-        guard let eventToken = config.eventMap[eventName] else {
+        guard let eventToken = config.eventMap?[eventName] else {
             logger.warning("no eventToken for \(eventName)")
             return
         }
