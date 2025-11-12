@@ -22,6 +22,7 @@ data class NoctuaServiceConfig(
 )
 data class NoctuaConfig(
     val clientId: String?,
+    val gameId: Long?,
     val adjust: AdjustServiceConfig?,
     val firebase: FirebaseServiceConfig?,
     val facebook: FacebookServiceConfig?,
