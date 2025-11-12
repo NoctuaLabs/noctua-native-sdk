@@ -15,7 +15,7 @@ data class AdjustServiceAndroidConfig(
     val appToken: String,
     val environment: String?,
     val customEventDisabled: Boolean = false,
-    val eventMap: Map<String, String>,
+    val eventMap: Map<String, String>?,
 )
 
 internal class AdjustService(private val config: AdjustServiceAndroidConfig, context: Context) {
@@ -26,7 +26,7 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
             throw IllegalArgumentException("App token is not set")
         }
 
-        if (config.eventMap.isEmpty()) {
+        if (config.eventMap.isNullOrEmpty()) {
             throw IllegalArgumentException("Event map is not set")
         }
 
@@ -83,7 +83,7 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
         currency: String,
         extraPayload: MutableMap<String, Any> = mutableMapOf()
     ) {
-        val event = AdjustEvent(config.eventMap["purchase"])
+        val event = AdjustEvent(config.eventMap?.get("purchase") ?: "")
         event.setRevenue(amount, currency)
         event.orderId = orderId
 
@@ -99,12 +99,17 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
             return
         }
 
+        if (config.eventMap.isNullOrEmpty()) {
+            Log.e(TAG, "Event map is not set")
+            return
+        }
+
         if (!config.eventMap.containsKey(eventName)) {
             Log.e(TAG, "$eventName event token is not available in the event map")
             return
         }
 
-        val adjustEvent = AdjustEvent(config.eventMap[eventName])
+        val adjustEvent = AdjustEvent(config.eventMap?.get(eventName) ?: "")
 
         for ((key, value) in payload) {
             adjustEvent.addCallbackParameter(key, value.toString())
@@ -118,12 +123,17 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
             return
         }
 
+        if (config.eventMap.isNullOrEmpty()) {
+            Log.e(TAG, "Event map is not set")
+            return
+        }
+
         if (!config.eventMap.containsKey(eventName)) {
             Log.e(TAG, "$eventName event token is not available in the event map")
             return
         }
 
-        val adjustEvent = AdjustEvent(config.eventMap[eventName])
+        val adjustEvent = AdjustEvent(config.eventMap?.get(eventName) ?: "")
         payload + ("revenue" to revenue)
         payload + ("currency" to currency)
 
