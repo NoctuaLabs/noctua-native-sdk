@@ -19,6 +19,8 @@ dependencyResolutionManagement {
         google()
         maven(url="https://gitlab.com/api/v4/projects/59492250/packages/maven")
         mavenCentral()
+//        Uncomment for development
+//        mavenLocal()
     }
 }
 
