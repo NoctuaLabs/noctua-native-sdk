@@ -18,7 +18,9 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 kotlinxCoroutinesCore = "1.7.3"
-noctua-internal-native = "0.5.0"
+#Uncomment for development
+#nativeLocal = "0.6.0"
+noctua-internal-native = "0.6.0"
 okhttp = "4.12.0"
 playServicesAdsIdentifier = "18.1.0"
 playServicesAppset = "16.1.0"
@@ -52,6 +54,8 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+#Uncomment fo development
+#native-local = { module = "com.noctuagames.labs.sdk:native-local", version.ref = "nativeLocal" }
 noctua-internal-native = { module = "com.noctuagames.labs.sdk:native", version.ref = "noctua-internal-native" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-ads-identifier = { module = "com.google.android.gms:play-services-ads-identifier", version.ref = "playServicesAdsIdentifier" }

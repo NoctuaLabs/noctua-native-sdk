@@ -108,6 +108,8 @@ publishing {
 }
 
 dependencies {
+//    Uncomment for development
+//    implementation(libs.native.local)
     implementation(libs.noctua.internal.native)
     implementation(libs.play.services.appset)
     implementation(libs.play.services.ads.identifier)
