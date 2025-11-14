@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.16.0] - 2025-11-14
+
+### 🚀 Features
+
+- Prevent crash while event map is null android
+- Add game id property
+- Add session tag for TSPU tracking
+- Update sample app
+
+### ⚙️ Miscellaneous Tasks
+
+- Update required dependencies
+
 ## [android-sdk-v0.15.0] - 2025-10-27
 
 ### 🚀 Features
