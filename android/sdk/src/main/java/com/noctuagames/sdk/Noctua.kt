@@ -1,5 +1,6 @@
 package com.noctuagames.sdk
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -7,10 +8,8 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import android.Manifest
 import com.google.gson.GsonBuilder
 import com.noctuagames.labs.sdk.NoctuaInternal
-import com.noctuagames.labs.sdk.utils.AppContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -49,8 +48,6 @@ class Noctua(context: Context, publishedApps: List<String>) {
 
         this.clientId = config.clientId
         this.nativeInternalTrackerEnabled = config.noctua?.nativeInternalTrackerEnabled ?: false
-
-        AppContext.set(appContext)
 
         val adjustAvailable =
             try {
@@ -156,6 +153,9 @@ class Noctua(context: Context, publishedApps: List<String>) {
 
     fun onResume() {
         adjust?.onResume()
+        if (nativeInternalTrackerEnabled) {
+            noctuaInternal.onInternalNoctuaApplicationPause(false)
+        }
 
         coroutineScope.launch {
             accounts.syncOtherAccounts()
@@ -165,6 +165,15 @@ class Noctua(context: Context, publishedApps: List<String>) {
     fun onPause() {
         // Disable Adjust offline mode
         adjust?.onPause()
+        if (nativeInternalTrackerEnabled) {
+            noctuaInternal.onInternalNoctuaApplicationPause(true)
+        }
+    }
+
+    fun onDestroy() {
+        if(nativeInternalTrackerEnabled) {
+            noctuaInternal.onInternalNoctuaDispose()
+        }
     }
 
     fun onOnline() {
@@ -256,6 +265,45 @@ class Noctua(context: Context, publishedApps: List<String>) {
         }
     }
 
+    fun setSessionTag(tag: String) {
+        if (nativeInternalTrackerEnabled) {
+            noctuaInternal.setSessionTag(tag)
+        }
+    }
+
+    fun getSessionTag() : String {
+        if (nativeInternalTrackerEnabled) {
+            return noctuaInternal.getSessionTag()
+        }
+        return ""
+    }
+
+    fun setExperiment(experiment: String) {
+        if (nativeInternalTrackerEnabled) {
+            noctuaInternal.setExperiment(experiment)
+        }
+    }
+
+    fun getExperiment() : String {
+        if (nativeInternalTrackerEnabled) {
+            return noctuaInternal.getExperiment()
+        }
+        return ""
+    }
+
+    fun setGeneralExperiment(experiment: String) {
+        if (nativeInternalTrackerEnabled) {
+            noctuaInternal.setGeneralExperiment(experiment)
+        }
+    }
+
+    fun getGeneralExperiment(experimentKey: String) : String{
+        if (nativeInternalTrackerEnabled) {
+            return noctuaInternal.getGeneralExperiment(experimentKey)
+        }
+        return ""
+    }
+
     companion object {
         private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
@@ -282,6 +330,15 @@ class Noctua(context: Context, publishedApps: List<String>) {
             }
 
             instance.onPause()
+        }
+
+        fun onDestroy() {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
+            instance.onDestroy()
         }
 
         fun onOnline() {
@@ -364,6 +421,30 @@ class Noctua(context: Context, publishedApps: List<String>) {
 
         fun getFirebaseAnalyticsSessionID(onResult: (String) -> Unit) {
             instance.getFirebaseAnalyticsSessionID(onResult)
+        }
+
+        fun setSessionTag(tag: String) {
+            instance.setSessionTag(tag)
+        }
+
+        fun getSessionTag() : String {
+            return instance.getSessionTag()
+        }
+
+        fun setExperiment(experiment: String) {
+            instance.setExperiment(experiment)
+        }
+
+        fun getExperiment() : String {
+            return instance.getExperiment()
+        }
+
+        fun setGeneralExperiment(experiment: String) {
+            instance.setGeneralExperiment(experiment)
+        }
+
+        fun getGeneralExperiment(experimentKey: String) : String {
+            return instance.getGeneralExperiment(experimentKey)
         }
     }
 
