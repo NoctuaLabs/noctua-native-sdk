@@ -34,6 +34,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             MainScreen(offset, this.packageName)
         }
+
+        Noctua.setSessionTag("homepage")
+
+        val tags = Noctua.getSessionTag()
+        Log.d("MainActivity", "Session tags: $tags")
     }
 
     override fun onResume() {
@@ -44,6 +49,11 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         Noctua.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Noctua.onDestroy()
     }
 }
 
