@@ -2,13 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [ios-sdk-v0.21.1] - 2025-09-19
+## [ios-sdk-v0.23.0] - 2025-11-17
+
+### 🚀 Features
+
+- Prevent crash while adjust eventMap is null iOS
+- Update firebase to 12.2.0, adjust to 5.4.4, facebook to 18.0.1
+- Enhance facebook ad revenue event name
+- Migrate adjust sdk code v4 to v5
+- Add game id config
 
 ### 🐛 Bug Fixes
 
 - Adjust signature framework not found
+- Prevent requiring manual addition of Adjust signature to the framework
 
-## [ios-sdk-v0.21.0] - 2025-09-19
+## [ios-sdk-v0.22.0] - 2025-10-27
 
 ### 🚀 Features
 
