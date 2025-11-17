@@ -25,10 +25,8 @@ Pod::Spec.new do |spec|
 
   spec.subspec "Adjust" do |adjust|
     adjust.dependency "Adjust", "~> 5.4.4"
-  end
-
-  spec.subspec "AdjustSignature" do |adjust|
-    adjust.dependency "AdjustSignature", "~> 3.47.0"
+    adjust.dependency "AdjustSignature", "~> 3.61.0"
+    adjust.dependency "Adjust/AdjustGoogleOdm"
   end
   
   spec.subspec "FirebaseAnalytics" do |firebase|

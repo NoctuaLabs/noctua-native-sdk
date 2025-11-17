@@ -7,7 +7,6 @@ target "NoctuaSDKExample" do
   pod "NoctuaSDK", :path => ".."
   pod "NoctuaSDK/NoctuaInternalSDK", :path => ".."
   pod "NoctuaSDK/Adjust", :path => ".."
-  pod "NoctuaSDK/AdjustSignature", :path => ".."
   pod "NoctuaSDK/FirebaseAnalytics", :path => ".."
   pod "NoctuaSDK/FirebaseCrashlytics", :path => ".."
   pod "NoctuaSDK/FirebaseMessaging", :path => ".."
