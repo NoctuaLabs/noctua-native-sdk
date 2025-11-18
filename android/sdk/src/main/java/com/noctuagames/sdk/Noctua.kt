@@ -10,6 +10,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.GsonBuilder
 import com.noctuagames.labs.sdk.NoctuaInternal
+import com.noctuagames.labs.sdk.di.initKoin
+import com.noctuagames.labs.sdk.utils.AppContext
+import com.noctuagames.labs.sdk.utils.initKoinManually
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -31,7 +34,8 @@ data class NoctuaConfig(
 class Noctua(context: Context, publishedApps: List<String>) {
     private val clientId: String
     private var nativeInternalTrackerEnabled: Boolean
-    private val noctuaInternal = NoctuaInternal
+    private val noctuaInternal
+        get() = NoctuaInternal
     private val adjust: AdjustService?
     private val firebase: FirebaseService?
     private val facebook: FacebookService?
@@ -40,6 +44,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
 
     init {
         val appContext = context.applicationContext
+        AppContext.set(appContext)
         val config = loadAppConfig(appContext)
 
         if (config.clientId.isNullOrEmpty()) {
@@ -146,9 +151,11 @@ class Noctua(context: Context, publishedApps: List<String>) {
             accounts.syncOtherAccounts()
         }
 
-        askNotificationPermission(context as Activity)
-
         Log.i(TAG, "Noctua initialized")
+    }
+
+    fun initNoctuaApp(appContext: Context) {
+        initKoinManually(appContext)
     }
 
     fun onResume() {
@@ -308,10 +315,15 @@ class Noctua(context: Context, publishedApps: List<String>) {
         private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
 
+        fun initNoctuaApp(context: Context, publishedApps: List<String> = emptyList()) {
+            instance = Noctua(context, publishedApps)
+            instance.initNoctuaApp(context)
+        }
+
         fun init(context: Context, publishedApps: List<String>) {
             Log.w(TAG, "init")
-
             instance = Noctua(context, publishedApps)
+            instance.askNotificationPermission(context as Activity)
         }
 
         fun onResume() {
@@ -448,7 +460,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
         }
     }
 
-    private fun askNotificationPermission(activity: Activity) {
+    fun askNotificationPermission(activity: Activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             Log.d(TAG, "Directly grant notification permission for Android versions below Tiramisu")
 
