@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [ios-sdk-v0.23.1] - 2025-11-19
+
+### 🐛 Bug Fixes
+
+- Adjust signature is not loaded
+
 ## [ios-sdk-v0.23.0] - 2025-11-17
 
 ### 🚀 Features
