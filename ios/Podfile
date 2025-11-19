@@ -5,7 +5,7 @@ use_frameworks!
 target "NoctuaSDKExample" do
   project "NoctuaSDKExample/NoctuaSDKExample.xcodeproj"
   pod "NoctuaSDK", :path => ".."
-  pod "NoctuaSDK/Adjust", :path => ".."
+  pod "NoctuaSDK/AdjustSDK", :path => ".."
   pod "NoctuaSDK/FirebaseAnalytics", :path => ".."
   pod "NoctuaSDK/FirebaseCrashlytics", :path => ".."
   pod "NoctuaSDK/FirebaseMessaging", :path => ".."
