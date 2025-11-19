@@ -65,7 +65,7 @@ class AdjustService {
     
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(AdjustSdk)
-        let eventToken = config.eventMap["purchase"]!
+        let eventToken = config.eventMap?["purchase"] ?? ""
         guard !eventToken.isEmpty else {
             logger.warning("no eventToken for purchase")
             return
