@@ -162,6 +162,16 @@ fun MainScreen(offset: Int, packageName: String) {
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+                var welcomeMessage = Noctua.getFirebaseRemoteConfigString("welcome_message")
+                Log.d("MainActivity", "Firebase Remote Config value: $welcomeMessage")
+
+            }) {
+            Text("Get Firebase Remote Config")
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
                 throw RuntimeException("Test Crash")
             }) {
             Text("Crash Me")

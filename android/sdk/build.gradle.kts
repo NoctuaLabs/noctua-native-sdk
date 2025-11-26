@@ -127,4 +127,10 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.facebook.core)
     testImplementation(libs.junit)
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+
+    // Add the dependencies for the Remote Config and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-config")
+    implementation("com.google.firebase:firebase-analytics")
 }

@@ -3,9 +3,14 @@ package com.noctuagames.sdk
 import android.content.Context
 import android.util.Log
 import android.os.Bundle
+import com.adjust.sdk.Adjust
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 
 data class FirebaseServiceConfig(
     val android: FirebaseServiceAndroidConfig?
@@ -19,6 +24,7 @@ data class FirebaseServiceAndroidConfig(
 class FirebaseService(private val config: FirebaseServiceAndroidConfig, context: Context) {
     private val TAG = this::class.simpleName
     private val analytics: FirebaseAnalytics
+    private val remoteConfig: FirebaseRemoteConfig
 
     init {
         if (FirebaseApp.getApps(context).isEmpty()) {
@@ -29,7 +35,25 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
 
         analytics = FirebaseAnalytics.getInstance(context)
 
+        remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        fetchRemoteConfig()
         Log.i(TAG, "Firebase Analytics initialized successfully")
+    }
+
+    fun fetchRemoteConfig() {
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val updated = task.result
+                    Log.d(TAG, "Firebase Remote Config params updated: $updated")
+                } else {
+                    Log.e(TAG, "Failed to fetch and activate Firebase RemoteConfig", task.exception)
+                }
+            }
     }
 
     fun getFirebaseInstallationID(onResult: (String) -> Unit) {
@@ -142,5 +166,21 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
         analytics.logEvent("gf_$eventName", bundle)
 
         Log.d(TAG, "'$eventName' (custom) tracked: payload: $bundle")
+    }
+
+    fun getFirebaseRemoteConfigString(key: String): String {
+        return remoteConfig.getString(key)
+    }
+
+    fun getFirebaseRemoteConfigBoolean(key: String): Boolean {
+        return remoteConfig.getBoolean(key)
+    }
+
+    fun getFirebaseRemoteConfigDouble(key: String): Double {
+        return remoteConfig.getDouble(key)
+    }
+
+    fun getFirebaseRemoteConfigLong(key: String): Long {
+        return remoteConfig.getLong(key)
     }
 }
