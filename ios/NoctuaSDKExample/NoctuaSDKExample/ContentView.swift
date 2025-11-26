@@ -175,7 +175,18 @@ struct ContentView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
-            
+
+            Button(action: {
+                let welcomeMessage = Noctua.getFirebaseRemoteConfigString(key: "welcome_message")
+                logger.debug("Firebase Remote Config value: \(welcomeMessage ?? "")")
+            }) {
+                Text("Get Firebase Remote Config")
+                    .frame(maxWidth: .infinity)
+                    .background(Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+
             List(viewModel.accounts) { account in
                 Text("\(account.lastUpdated)-\(account.playerId)-\(account.rawData)")
                     .font(.system(size: 10))

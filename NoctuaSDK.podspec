@@ -35,7 +35,11 @@ Pod::Spec.new do |spec|
     firmessaging.dependency "FirebaseMessaging", "~> 11.14.0"
     firmessaging.frameworks = "UserNotifications"
   end
-  
+
+  spec.subspec "FirebaseRemoteConfig" do |remoteconfig|
+    remoteconfig.dependency "FirebaseRemoteConfig", "~> 11.14.0"
+  end
+
   spec.subspec "FacebookSDK" do |facebook|
     facebook.platform     = :ios, "14.0"
 
