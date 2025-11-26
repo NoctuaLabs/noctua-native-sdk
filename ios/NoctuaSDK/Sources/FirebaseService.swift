@@ -10,6 +10,7 @@ import Foundation
 import FirebaseCore
 import FirebaseAnalytics
 import FirebaseInstallations
+import FirebaseRemoteConfig
 #endif
 import os
 
@@ -28,19 +29,27 @@ struct FirebaseServiceIosConfig : Codable {
 
 class FirebaseService {
     let config: FirebaseServiceIosConfig
-    
+    private var remoteConfig: RemoteConfig?
+
     init(config: FirebaseServiceIosConfig) throws {
 #if canImport(FirebaseAnalytics)
         logger.info("Firebase module detected")
         self.config = config
-        
+
         if (FirebaseApp.app() == nil)
         {
             FirebaseApp.configure()
         }
 
         Analytics.setAnalyticsCollectionEnabled(true)
-        
+
+        // Initialize Remote Config
+        remoteConfig = RemoteConfig.remoteConfig()
+        let settings = RemoteConfigSettings()
+        settings.minimumFetchInterval = 3600
+        remoteConfig?.configSettings = settings
+        fetchRemoteConfig()
+
 #else
         throw FirebaseServiceError.firebaseNotFound
 #endif
@@ -163,7 +172,61 @@ class FirebaseService {
         }
 #endif
     }
-    
+
+    func fetchRemoteConfig() {
+#if canImport(FirebaseRemoteConfig)
+        remoteConfig?.fetchAndActivate { status, error in
+            if let error = error {
+                self.logger.error("Failed to fetch and activate Firebase RemoteConfig: \(error.localizedDescription)")
+                return
+            }
+
+            switch status {
+            case .successFetchedFromRemote:
+                self.logger.debug("Firebase Remote Config params updated: fetched from remote")
+            case .successUsingPreFetchedData:
+                self.logger.debug("Firebase Remote Config params updated: using pre-fetched data")
+            case .error:
+                self.logger.error("Firebase Remote Config fetch error")
+            @unknown default:
+                self.logger.debug("Firebase Remote Config unknown status")
+            }
+        }
+#endif
+    }
+
+    func getFirebaseRemoteConfigString(key: String) -> String {
+#if canImport(FirebaseRemoteConfig)
+        return remoteConfig?.configValue(forKey: key).stringValue ?? ""
+#else
+        return ""
+#endif
+    }
+
+    func getFirebaseRemoteConfigBoolean(key: String) -> Bool {
+#if canImport(FirebaseRemoteConfig)
+        return remoteConfig?.configValue(forKey: key).boolValue ?? false
+#else
+        return false
+#endif
+    }
+
+    func getFirebaseRemoteConfigDouble(key: String) -> Double {
+#if canImport(FirebaseRemoteConfig)
+        return remoteConfig?.configValue(forKey: key).numberValue.doubleValue ?? 0.0
+#else
+        return 0.0
+#endif
+    }
+
+    func getFirebaseRemoteConfigLong(key: String) -> Int64 {
+#if canImport(FirebaseRemoteConfig)
+        return remoteConfig?.configValue(forKey: key).numberValue.int64Value ?? 0
+#else
+        return 0
+#endif
+    }
+
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: FirebaseService.self)

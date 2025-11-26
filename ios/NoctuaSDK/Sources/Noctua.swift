@@ -70,7 +70,23 @@ import Foundation
     @objc public static func getFirebaseSessionID(completion: @escaping (String) -> Void) {
         plugin?.getFirebaseSessionID(completion: completion)
     }
-    
+
+    @objc public static func getFirebaseRemoteConfigString(key: String) -> String? {
+        return plugin?.getFirebaseRemoteConfigString(key: key)
+    }
+
+    @objc public static func getFirebaseRemoteConfigBoolean(key: String) -> Bool {
+        return plugin?.getFirebaseRemoteConfigBoolean(key: key) ?? false
+    }
+
+    @objc public static func getFirebaseRemoteConfigDouble(key: String) -> Double {
+        return plugin?.getFirebaseRemoteConfigDouble(key: key) ?? 0.0
+    }
+
+    @objc public static func getFirebaseRemoteConfigLong(key: String) -> Int64 {
+        return plugin?.getFirebaseRemoteConfigLong(key: key) ?? 0
+    }
+
     static var plugin: NoctuaPlugin?
 }
 

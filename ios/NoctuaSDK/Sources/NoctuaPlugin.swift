@@ -259,7 +259,23 @@ class NoctuaPlugin {
     func getFirebaseSessionID(completion: @escaping (String) -> Void) {
         self.firebase?.getFirebaseSessionID(completion: completion)
     }
-    
+
+    func getFirebaseRemoteConfigString(key: String) -> String? {
+        return self.firebase?.getFirebaseRemoteConfigString(key: key)
+    }
+
+    func getFirebaseRemoteConfigBoolean(key: String) -> Bool? {
+        return self.firebase?.getFirebaseRemoteConfigBoolean(key: key)
+    }
+
+    func getFirebaseRemoteConfigDouble(key: String) -> Double? {
+        return self.firebase?.getFirebaseRemoteConfigDouble(key: key)
+    }
+
+    func getFirebaseRemoteConfigLong(key: String) -> Int64? {
+        return self.firebase?.getFirebaseRemoteConfigLong(key: key)
+    }
+
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: NoctuaPlugin.self)
