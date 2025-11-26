@@ -157,6 +157,10 @@ class Noctua(context: Context, publishedApps: List<String>) {
     fun initNoctuaApp(appContext: Context) {
         initKoinManually(appContext)
     }
+    fun onCreate() {
+        Log.e(TAG, "onCreate triggered")
+        firebase?.fetchRemoteConfig()
+    }
 
     fun onResume() {
         adjust?.onResume()
@@ -311,6 +315,19 @@ class Noctua(context: Context, publishedApps: List<String>) {
         return ""
     }
 
+    fun getFirebaseRemoteConfigString(key: String): String? {
+        return firebase?.getFirebaseRemoteConfigString(key)
+    }
+    fun getFirebaseRemoteConfigBoolean(key: String): Boolean? {
+        return firebase?.getFirebaseRemoteConfigBoolean(key)
+    }
+    fun getFirebaseRemoteConfigDouble(key: String): Double? {
+        return firebase?.getFirebaseRemoteConfigDouble(key)
+    }
+    fun getFirebaseRemoteConfigLong(key: String): Long? {
+        return firebase?.getFirebaseRemoteConfigLong(key)
+    }
+
     companion object {
         private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
@@ -457,6 +474,42 @@ class Noctua(context: Context, publishedApps: List<String>) {
 
         fun getGeneralExperiment(experimentKey: String) : String {
             return instance.getGeneralExperiment(experimentKey)
+        }
+
+        fun getFirebaseRemoteConfigString(key: String) : String? {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return ""
+            }
+
+            return instance.getFirebaseRemoteConfigString(key)
+        }
+
+        fun getFirebaseRemoteConfigBoolean(key: String) : Boolean? {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return false
+            }
+
+            return instance.getFirebaseRemoteConfigBoolean(key)
+        }
+
+        fun getFirebaseRemoteConfigDouble(key: String) : Double? {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return 0.0
+            }
+
+            return instance.getFirebaseRemoteConfigDouble(key)
+        }
+
+        fun getFirebaseRemoteConfigLong(key: String) : Long? {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return 0
+            }
+
+            return instance.getFirebaseRemoteConfigLong(key)
         }
     }
 
