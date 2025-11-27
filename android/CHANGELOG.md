@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.18.0] - 2025-11-27
+
+### 🚀 Features
+
+- Implement Firebase Remote Config.
+
 ## [android-sdk-v0.17.0] - 2025-11-18
 
 ### 🚀 Features
