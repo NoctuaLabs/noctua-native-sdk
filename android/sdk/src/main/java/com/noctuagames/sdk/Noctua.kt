@@ -157,6 +157,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
     fun initNoctuaApp(appContext: Context) {
         initKoinManually(appContext)
     }
+
     fun onCreate() {
         Log.e(TAG, "onCreate triggered")
         firebase?.fetchRemoteConfig()
@@ -318,14 +319,23 @@ class Noctua(context: Context, publishedApps: List<String>) {
     fun getFirebaseRemoteConfigString(key: String): String? {
         return firebase?.getFirebaseRemoteConfigString(key)
     }
+
     fun getFirebaseRemoteConfigBoolean(key: String): Boolean? {
         return firebase?.getFirebaseRemoteConfigBoolean(key)
     }
+
     fun getFirebaseRemoteConfigDouble(key: String): Double? {
         return firebase?.getFirebaseRemoteConfigDouble(key)
     }
+
     fun getFirebaseRemoteConfigLong(key: String): Long? {
         return firebase?.getFirebaseRemoteConfigLong(key)
+    }
+
+    fun setSessionExtraParams(extraParams: Map<String, Any>) {
+        if (nativeInternalTrackerEnabled) {
+            noctuaInternal.setSessionExtraParams(extraParams)
+        }
     }
 
     companion object {
@@ -510,6 +520,15 @@ class Noctua(context: Context, publishedApps: List<String>) {
             }
 
             return instance.getFirebaseRemoteConfigLong(key)
+        }
+
+        fun setSessionExtraParams(extraParams: Map<String, Any>) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
+            instance.setSessionExtraParams(extraParams)
         }
     }
 

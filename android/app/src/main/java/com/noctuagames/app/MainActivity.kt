@@ -39,6 +39,10 @@ class MainActivity : ComponentActivity() {
 
         val tags = Noctua.getSessionTag()
         Log.d("MainActivity", "Session tags: $tags")
+
+        Noctua.setSessionExtraParams(mutableMapOf(
+            "noctua" to "test",
+        ))
     }
 
     override fun onResume() {
