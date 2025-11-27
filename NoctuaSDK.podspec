@@ -90,7 +90,7 @@ Pod::Spec.new do |spec|
     rm "${ZIPFILE}"
 
     echo "Downloading FacebookSDK-Static_XCFramework"
-    VERSION="18.0.1"
+    VERSION="18.0.0"
     ZIPFILE="FacebookSDK-Static_XCFramework.zip"
     URL="https://github.com/facebook/facebook-ios-sdk/releases/download/v${VERSION}/${ZIPFILE}"
 
