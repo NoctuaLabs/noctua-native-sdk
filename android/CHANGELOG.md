@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.19.0] - 2025-11-27
+
+### 🚀 Features
+
+- Add function set session extra params
+
+### 💼 Other
+
+- Update noctua internal sdk to 0.9.0
+
 ## [android-sdk-v0.18.0] - 2025-11-27
 
 ### 🚀 Features
