@@ -147,7 +147,7 @@ bump-version-ios-sdk:
     GIT_DEPTH: 0 # avoid shallow clone to give cliff all the info it needs
   script:
     - cd ios
-    - NEW_VERSION_TAG=ios-sdk-v0.24.0
+    - NEW_VERSION_TAG=ios-sdk-v0.24.1
     # - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
     - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/")
     - sed -r "s/(spec.version *= *)\".*\"/\1\"$(echo $NEW_VERSION)\"/" ../NoctuaSDK.podspec > ../NoctuaSDK.podspec.tmp && mv ../NoctuaSDK.podspec.tmp ../NoctuaSDK.podspec
@@ -178,7 +178,7 @@ release-ios-sdk:
     - cd ios
     - git fetch --tags
     - git checkout origin/$CI_COMMIT_BRANCH
-    - NEW_VERSION_TAG=ios-sdk-v0.24.0
+    - NEW_VERSION_TAG=ios-sdk-v0.24.1
     # - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
     - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/")
     - sed -r "s/(spec.version *= *)\".*\"/\1\"$(echo $NEW_VERSION)\"/" ../NoctuaSDK.podspec > ../NoctuaSDK.podspec.tmp && mv ../NoctuaSDK.podspec.tmp ../NoctuaSDK.podspec
