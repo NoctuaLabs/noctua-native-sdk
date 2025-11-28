@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 - Prevent crash while adjust eventMap is null iOS
 - Implement Firebase Remote Config on iOS.
 
+### 🐛 Bug Fixes
+
+- Error cannot find remoteConfig on pipeline
+
 ### 💼 Other
 
 - Bump podspec version to 0.24.0.
