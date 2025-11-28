@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.19.1] - 2025-11-28
+
+### 🐛 Bug Fixes
+
+- Return result via callback function to make it compatible with C# bridging.
+
 ## [android-sdk-v0.19.0] - 2025-11-27
 
 ### 🚀 Features
