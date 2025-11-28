@@ -43,7 +43,7 @@ Pod::Spec.new do |spec|
   end
 
   spec.subspec "FirebaseRemoteConfig" do |remoteconfig|
-    remoteconfig.dependency "FirebaseRemoteConfig", "~> 11.14.0"
+    remoteconfig.dependency "FirebaseRemoteConfig", "~> 12.2.0"
   end
 
   spec.subspec "FacebookSDK" do |facebook|
