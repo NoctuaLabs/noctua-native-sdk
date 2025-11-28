@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [ios-sdk-v0.20.0] - 2025-10-27
+## [ios-sdk-v0.23.0] - 2025-11-28
+
+### 🚀 Features
+
+- Prevent crash while adjust eventMap is null iOS
+- Implement Firebase Remote Config on iOS.
+
+### 💼 Other
+
+- Bump podspec version to 0.24.0.
+
+## [ios-sdk-v0.22.0] - 2025-10-27
 
 ### 🚀 Features
 
