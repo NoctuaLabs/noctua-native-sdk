@@ -29,7 +29,9 @@ struct FirebaseServiceIosConfig : Codable {
 
 class FirebaseService {
     let config: FirebaseServiceIosConfig
+#if canImport(FirebaseRemoteConfig)
     private var remoteConfig: RemoteConfig?
+#endif
 
     init(config: FirebaseServiceIosConfig) throws {
 #if canImport(FirebaseAnalytics)
