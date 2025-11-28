@@ -486,7 +486,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             return instance.getGeneralExperiment(experimentKey)
         }
 
-        fun getFirebaseRemoteConfigString(onResult: (String) -> Unit, key: String){
+        fun getFirebaseRemoteConfigString(key: String, onResult: (String) -> Unit){
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
                 onResult("")
@@ -497,7 +497,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             onResult(result ?: "")
         }
 
-        fun getFirebaseRemoteConfigBoolean(onResult: (Boolean) -> Unit, key: String) {
+        fun getFirebaseRemoteConfigBoolean(key: String, onResult: (Boolean) -> Unit) {
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
                 onResult(false)
@@ -508,7 +508,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             onResult(result ?: false)
         }
 
-        fun getFirebaseRemoteConfigDouble(onResult: (Double) -> Unit, key: String) {
+        fun getFirebaseRemoteConfigDouble(key: String, onResult: (Double) -> Unit) {
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
                 onResult(0.0)
@@ -519,7 +519,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
             onResult(result ?: 0.0)
         }
 
-        fun getFirebaseRemoteConfigLong(onResult: (Long) -> Unit, key: String) {
+        fun getFirebaseRemoteConfigLong(key: String, onResult: (Long) -> Unit) {
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
                 onResult(0)
