@@ -169,7 +169,7 @@ fun MainScreen(offset: Int, packageName: String) {
                 val onResult: (String) -> Unit = { result ->
                     Log.d("MainActivity", "Firebase Remote Config String: $result")
                 }
-                var welcomeMessage = Noctua.getFirebaseRemoteConfigString(onResult,"welcome_message")
+                var welcomeMessage = Noctua.getFirebaseRemoteConfigString("welcome_message", onResult)
 
             }) {
             Text("Get Firebase Remote Config")
