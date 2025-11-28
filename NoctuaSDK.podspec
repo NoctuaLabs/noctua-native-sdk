@@ -19,17 +19,9 @@ Pod::Spec.new do |spec|
     core.ios.source_files  = "ios/NoctuaSDK/Sources/**/*.{h,m,swift}"
   end
   
-  spec.subspec "AdjustSDK" do |adjustsdk|
-
-    adjustsdk.subspec "Adjust" do |adjust|
-      adjust.dependency "Adjust", "~> 5.4.4"
-      adjust.dependency "Adjust/AdjustGoogleOdm"
-    end
-    
-    adjustsdk.subspec "AdjustSignature" do |adjustsignature|
-      adjustsignature.dependency "AdjustSignature", "~> 3.61.0"
-      adjustsignature.vendored_frameworks = "Pods/AdjustSignature/Frameworks/AdjustSigSdk.framework"
-    end
+  spec.subspec "Adjust" do |adjust|
+    adjust.dependency "Adjust", "~> 5.4.4"
+    adjust.dependency "Adjust/AdjustGoogleOdm"
   end
   
   spec.subspec "FirebaseAnalytics" do |firebase|
