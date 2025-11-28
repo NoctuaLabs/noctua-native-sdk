@@ -166,8 +166,10 @@ fun MainScreen(offset: Int, packageName: String) {
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                var welcomeMessage = Noctua.getFirebaseRemoteConfigString("welcome_message")
-                Log.d("MainActivity", "Firebase Remote Config value: $welcomeMessage")
+                val onResult: (String) -> Unit = { result ->
+                    Log.d("MainActivity", "Firebase Remote Config String: $result")
+                }
+                var welcomeMessage = Noctua.getFirebaseRemoteConfigString(onResult,"welcome_message")
 
             }) {
             Text("Get Firebase Remote Config")
