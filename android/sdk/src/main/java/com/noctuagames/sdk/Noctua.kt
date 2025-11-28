@@ -486,40 +486,48 @@ class Noctua(context: Context, publishedApps: List<String>) {
             return instance.getGeneralExperiment(experimentKey)
         }
 
-        fun getFirebaseRemoteConfigString(key: String) : String? {
+        fun getFirebaseRemoteConfigString(onResult: (String) -> Unit, key: String){
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
-                return ""
+                onResult("")
+                return
             }
 
-            return instance.getFirebaseRemoteConfigString(key)
+            var result = instance.getFirebaseRemoteConfigString(key)
+            onResult(result ?: "")
         }
 
-        fun getFirebaseRemoteConfigBoolean(key: String) : Boolean? {
+        fun getFirebaseRemoteConfigBoolean(onResult: (Boolean) -> Unit, key: String) {
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
-                return false
+                onResult(false)
+                return
             }
 
-            return instance.getFirebaseRemoteConfigBoolean(key)
+            var result = instance.getFirebaseRemoteConfigBoolean(key)
+            onResult(result ?: false)
         }
 
-        fun getFirebaseRemoteConfigDouble(key: String) : Double? {
+        fun getFirebaseRemoteConfigDouble(onResult: (Double) -> Unit, key: String) {
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
-                return 0.0
+                onResult(0.0)
+                return
             }
 
-            return instance.getFirebaseRemoteConfigDouble(key)
+            var result = instance.getFirebaseRemoteConfigDouble(key)
+            onResult(result ?: 0.0)
         }
 
-        fun getFirebaseRemoteConfigLong(key: String) : Long? {
+        fun getFirebaseRemoteConfigLong(onResult: (Long) -> Unit, key: String) {
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
-                return 0
+                onResult(0)
+                return
             }
 
-            return instance.getFirebaseRemoteConfigLong(key)
+            var result = instance.getFirebaseRemoteConfigLong(key)
+            onResult(result ?: 0)
         }
 
         fun setSessionExtraParams(extraParams: Map<String, Any>) {
