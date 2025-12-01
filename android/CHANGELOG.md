@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.20.0] - 2025-12-01
+
+### 🚀 Features
+
+- Update noctua internal native sdk to 0.10.0
+
+### 🐛 Bug Fixes
+
+- Use best practice, put callback as last param.
+- Add instance guard
+
 ## [android-sdk-v0.19.1] - 2025-11-28
 
 ### 🐛 Bug Fixes
