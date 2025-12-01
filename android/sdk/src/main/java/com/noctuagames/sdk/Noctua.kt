@@ -455,34 +455,68 @@ class Noctua(context: Context, publishedApps: List<String>) {
         }
 
         fun getFirebaseInstallationID(onResult: (String) -> Unit) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                onResult("")
+                return
+            }
             instance.getFirebaseInstallationID(onResult)
         }
 
         fun getFirebaseAnalyticsSessionID(onResult: (String) -> Unit) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                onResult("")
+                return
+            }
             instance.getFirebaseAnalyticsSessionID(onResult)
         }
 
         fun setSessionTag(tag: String) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
             instance.setSessionTag(tag)
         }
 
         fun getSessionTag() : String {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return ""
+            }
             return instance.getSessionTag()
         }
 
         fun setExperiment(experiment: String) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
             instance.setExperiment(experiment)
         }
 
         fun getExperiment() : String {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return ""
+            }
             return instance.getExperiment()
         }
 
         fun setGeneralExperiment(experiment: String) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
             instance.setGeneralExperiment(experiment)
         }
 
         fun getGeneralExperiment(experimentKey: String) : String {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return ""
+            }
             return instance.getGeneralExperiment(experimentKey)
         }
 
@@ -493,7 +527,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
                 return
             }
 
-            var result = instance.getFirebaseRemoteConfigString(key)
+            val result = instance.getFirebaseRemoteConfigString(key)
             onResult(result ?: "")
         }
 
@@ -504,7 +538,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
                 return
             }
 
-            var result = instance.getFirebaseRemoteConfigBoolean(key)
+            val result = instance.getFirebaseRemoteConfigBoolean(key)
             onResult(result ?: false)
         }
 
@@ -515,7 +549,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
                 return
             }
 
-            var result = instance.getFirebaseRemoteConfigDouble(key)
+            val result = instance.getFirebaseRemoteConfigDouble(key)
             onResult(result ?: 0.0)
         }
 
@@ -526,7 +560,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
                 return
             }
 
-            var result = instance.getFirebaseRemoteConfigLong(key)
+            val result = instance.getFirebaseRemoteConfigLong(key)
             onResult(result ?: 0)
         }
 
