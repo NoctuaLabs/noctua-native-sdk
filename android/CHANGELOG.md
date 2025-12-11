@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [android-sdk-v0.21.0] - 2025-12-11
+
+### 🚀 Features
+
+- Implement Room-based event persistence (save/get/delete)
+
+### 💼 Other
+
+- Update noctua internal native sdk to 0.11.0
+
 ## [android-sdk-v0.20.0] - 2025-12-01
 
 ### 🚀 Features
