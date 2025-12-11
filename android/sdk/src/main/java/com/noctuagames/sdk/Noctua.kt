@@ -13,6 +13,7 @@ import com.noctuagames.labs.sdk.NoctuaInternal
 import com.noctuagames.labs.sdk.di.initKoin
 import com.noctuagames.labs.sdk.utils.AppContext
 import com.noctuagames.labs.sdk.utils.initKoinManually
+import com.noctuagames.labs.sdk.utils.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -338,6 +339,20 @@ class Noctua(context: Context, publishedApps: List<String>) {
         }
     }
 
+    fun saveEvents(jsonString: String) {
+        noctuaInternal.saveExternalEvents(jsonString)
+    }
+
+    fun getEvents(onResult: (List<String>) -> Unit)  {
+        noctuaInternal.getExternalEvents { events ->
+            onResult(events)
+        }
+    }
+
+    fun deleteEvents() {
+        noctuaInternal.deleteExternalEvents()
+    }
+
     companion object {
         private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
@@ -571,6 +586,36 @@ class Noctua(context: Context, publishedApps: List<String>) {
             }
 
             instance.setSessionExtraParams(extraParams)
+        }
+
+        fun saveEvents(jsonString: String) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
+            instance.saveEvents(jsonString)
+        }
+
+        fun getEvents(onResult: (List<String>) -> Unit) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                onResult(emptyList())
+                return
+            }
+
+            instance.getEvents { event ->
+                onResult(event)
+            }
+        }
+
+        fun deleteEvents() {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                return
+            }
+
+            instance.deleteEvents()
         }
     }
 
