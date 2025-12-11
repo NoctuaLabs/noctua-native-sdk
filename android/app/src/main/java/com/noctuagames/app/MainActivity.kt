@@ -185,6 +185,37 @@ fun MainScreen(offset: Int, packageName: String) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                val events = "session_test"
+                Noctua.saveEvents(events)
+            }) {
+            Text("Test Save")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                Noctua.getEvents {
+                    Log.d("MainActivity", "Data events local : $it")
+                }
+            }) {
+            Text("Test get data local")
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                Noctua.deleteEvents()
+            }) {
+            Text("Test delete data local")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         LazyColumn {
             items(data) { account ->
                 Text(text = account.toString())
