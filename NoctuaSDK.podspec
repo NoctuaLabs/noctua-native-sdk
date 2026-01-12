@@ -18,7 +18,11 @@ Pod::Spec.new do |spec|
   spec.subspec "Core" do |core|
     core.ios.source_files  = "ios/NoctuaSDK/Sources/**/*.{h,m,swift}"
   end
-  
+
+  spec.subspec "NoctuaInternalSDK" do |noctuainternalsdk|
+    noctuainternalsdk.dependency "NoctuaInternalSDK", "~> 0.14.0"
+  end
+
   spec.subspec "Adjust" do |adjust|
     adjust.dependency "Adjust", "~> 4.38.4"
   end

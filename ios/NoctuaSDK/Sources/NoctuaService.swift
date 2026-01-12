@@ -6,6 +6,7 @@ public typealias CompletionCallback = (Bool, String) -> Void
 
 struct NoctuaServiceConfig: Decodable {
     let iapDisabled: Bool?
+    let nativeInternalTrackerEnabled: Bool?
 }
 
 class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {

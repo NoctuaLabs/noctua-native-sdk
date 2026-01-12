@@ -1,34 +1,43 @@
 {
-  "productCode": "noctuaggdev",
   "clientId": "1-e724f5a9e6f1",
-  "adjust": {
-    "android": {
-      "appToken": "kg7l0jhuem80",
-      "eventMap": {
-        "purchase": "qye2vk",
-        "login": "xoizir"
-      }
-    },
-    "ios": {
-      "appToken": "kg7l0jhuem80",
-      "eventMap": {
-        "purchase": "qye2vk",
-        "login": "xoizir"
-      }
+  "gameId": 1,
+  "noctua": {
+    "sentryDsnUrl": "https://4809b03b8d2d48e1865b61c4f7e2dc8c@app.glitchtip.com/9229",
+    "sandboxEnabled": true,
+    "offlineFirstEnabled": true,
+    "welcomeToastDisabled": false,
+    "iaaEnabled": true,
+    "iapDisabled": false,
+    "nativeInternalTrackerEnabled": false,
+    "remoteFeatureFlags": {
+      "vnLegalPurposeEnabled": false,
+      "vnLegalPurposeFullKycEnabled": false,
+      "vnLegalPurposePhoneNumberVerificationEnabled": false,
+      "ssoDisabled": false
     }
   },
-  "facebook": {
+  "adjust": {
     "android": {
-      "appId": "807936677546640",
-      "clientToken": "5eb9cb06333460b31c60e484676110a0",
-      "displayName": "SDK Test Noctua",
-      "enableDebug": true
+      "environment": "sandbox",
+      "appToken": "kg7l0jhuem80",
+      "customEventDisabled": false
     },
     "ios": {
-      "appId": "807936677546640",
-      "clientToken": "5eb9cb06333460b31c60e484676110a0",
-      "displayName": "SDK Test Noctua",
-      "enableDebug": true
+      "environment": "sandbox",
+      "appToken": "kg7l0jhuem80",
+      "customEventDisabled": false,
+      "eventMap": {
+        "Download_Game": "3uglyi",
+        "login": "1qhqus",
+        "logout": "3gnca4",
+        "Open_User_Center": "khcgjc",
+        "play_Game": "arw9x0",
+        "purchase": "qye2vk",
+        "registration": "u0kfja",
+        "SDK Init": "3bipcl",
+        "Testiiinnnn": "vgr2dv",
+        "TestSendEvent": "xoizir"
+      }
     }
   },
   "firebase": {
@@ -39,18 +48,49 @@
       "customEventDisabled": false
     }
   },
-  "noctua": {
-    "sentryDsnUrl": "https://4809b03b8d2d48e1865b61c4f7e2dc8c@app.glitchtip.com/9229",
-    "sandboxEnabled": false,
-    "offlineFirstEnabled": false,
-    "welcomeToastDisabled ": false,
-    "iaaEnabled": false,
-    "iapDisabled": false,
-    "remoteFeatureFlags": {
-      "ssoDisabled": false,
-      "vnLegalPurposeEnabled": false,
-      "vnLegalPurposeFullKycEnabled": false,
-      "vnLegalPurposePhoneNumberVerificationEnabled": false
+  "facebook": {
+    "android": {
+      "appId": "807936677546640",
+      "clientToken": "5eb9cb06333460b31c60e484676110a0",
+      "displayName": "Noctua Sample App",
+      "enableDebug": true,
+      "customEventDisabled": false
+    },
+    "ios": {
+      "appId": "807936677546640",
+      "clientToken": "5eb9cb06333460b31c60e484676110a0",
+      "displayName": "Noctua Sample App",
+      "enableDebug": true,
+      "customEventDisabled": false
+    }
+  },
+  "iaa": {
+    "mediation": "applovin",
+    "ad_formats": {
+      "banner": {
+        "ios": {
+          "ad_unit_id": "9c2cb410833f8f94"
+        },
+        "android": {
+          "ad_unit_id": "dd07f2b60b146cbc"
+        }
+      },
+      "rewarded": {
+        "ios": {
+          "ad_unit_id": "63435093f214e3b8"
+        },
+        "android": {
+          "ad_unit_id": "d918fe9bc51f04b3"
+        }
+      },
+      "interstitial": {
+        "ios": {
+          "ad_unit_id": "38f513201d28730a"
+        },
+        "android": {
+          "ad_unit_id": "e2f2af86ef5edfe9"
+        }
+      }
     }
   }
 }
