@@ -1,5 +1,6 @@
 import Foundation
 import os
+import NoctuaInternalSDK
 
 struct NoctuaConfig : Decodable {
     let clientId: String
@@ -18,6 +19,9 @@ class NoctuaPlugin {
     private let facebook: FacebookService?
 
     init(config: NoctuaConfig) {
+        
+        Utils_iosKt.doInitKoinManually();
+        
         self.config = config
         
         self.accountRepo = AccountRepository()
@@ -177,6 +181,10 @@ class NoctuaPlugin {
         self.adjust?.trackCustomEvent(eventName, payload: payload)
         self.firebase?.trackCustomEvent(eventName, payload: payload)
         self.facebook?.trackCustomEvent(eventName, payload: payload)
+        
+        if(self.config.noctua?.nativeInternalTrackerEnabled ?? false) {
+            NoctuaInternal.shared.trackCustomEvent(eventName: eventName, properties: payload)
+        }
     }
 
     func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, payload: [String:Any]) {
@@ -274,6 +282,81 @@ class NoctuaPlugin {
 
     func getFirebaseRemoteConfigLong(key: String) -> Int64? {
         return self.firebase?.getFirebaseRemoteConfigLong(key: key)
+    }
+    
+    func setSessionTag(tag: String) {
+        guard self.config.noctua?.nativeInternalTrackerEnabled == true else {
+            logger.debug("nativeInternalTrackerEnabled is not enabled")
+            return
+        }
+        
+        NoctuaInternal.shared.setSessionTag(tag: tag)
+    }
+    
+    func getSessionTag() -> String? {
+        guard self.config.noctua?.nativeInternalTrackerEnabled == true else {
+            logger.debug("nativeInternalTrackerEnabled is not enabled")
+            return ""
+        }
+        
+        return NoctuaInternal.shared.getSessionTag()
+    }
+    
+    func setExperiment(experiment: String) {
+        guard self.config.noctua?.nativeInternalTrackerEnabled == true else {
+            logger.debug("nativeInternalTrackerEnabled is not enabled")
+            return
+        }
+        
+        NoctuaInternal.shared.setExperiment(experiment: experiment)
+    }
+    
+    func getExperiment() -> String? {
+        guard self.config.noctua?.nativeInternalTrackerEnabled == true else {
+            logger.debug("nativeInternalTrackerEnabled is not enabled")
+            return ""
+        }
+        
+        return NoctuaInternal.shared.getExperiment()
+    }
+    
+    func setGeneralExperiment(experiment: String) {
+        guard self.config.noctua?.nativeInternalTrackerEnabled == true else {
+            logger.debug("nativeInternalTrackerEnabled is not enabled")
+            return
+        }
+        
+        NoctuaInternal.shared.setGeneralExperiment(experiment: experiment)
+    }
+    
+    func getGeneralExperiment(experimentKey: String) -> String? {
+        guard self.config.noctua?.nativeInternalTrackerEnabled == true else {
+            logger.debug("nativeInternalTrackerEnabled is not enabled")
+            return ""
+        }
+        
+        return NoctuaInternal.shared.getGeneralExperiment(experimentKey: experimentKey)
+    }
+    
+    func setSessionExtraParams(payload: [String: Any]) {
+        guard self.config.noctua?.nativeInternalTrackerEnabled == true else {
+            logger.debug("nativeInternalTrackerEnabled is not enabled")
+            return
+        }
+
+        NoctuaInternal.shared.setSessionExtraParams(params: payload)
+    }
+    
+    func saveEvents(jsonString: String) {
+        NoctuaInternal.shared.saveExternalEvents(jsonString: jsonString)
+    }
+    
+    func getEvents(onResult: @escaping ([String]) -> Void) {
+        NoctuaInternal.shared.getExternalEvents(onResult: onResult)
+    }
+    
+    func deleteEvents() {
+        NoctuaInternal.shared.deleteExternalEvents()
     }
 
     private let logger = Logger(

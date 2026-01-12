@@ -87,6 +87,46 @@ import Foundation
         return plugin?.getFirebaseRemoteConfigLong(key: key) ?? 0
     }
 
+    @objc public static func setSessionTag(tag: String) {
+        plugin?.setSessionTag(tag: tag)
+    }
+
+    @objc public static func getSessionTags() -> String? {
+        return plugin?.getSessionTag()
+    }
+
+    @objc public static func setExperiment(experiment: String) {
+        plugin?.setExperiment(experiment: experiment)
+    }
+
+    @objc public static func getExperiment() -> String? {
+        return plugin?.getExperiment()
+    }
+
+    @objc public static func setGeneralExperiment(experiment: String) {
+        plugin?.setGeneralExperiment(experiment: experiment)
+    }
+
+    @objc public static func getGeneralExperiment(experimentKey: String) -> String? {
+        return plugin?.getGeneralExperiment(experimentKey: experimentKey)
+    }
+
+    @objc public static func setSessionExtraParams(payload: [String:Any]) {
+        plugin?.setSessionExtraParams(payload: payload)
+    }
+
+    @objc public static func saveEvents(jsonString: String) {
+        plugin?.saveEvents(jsonString: jsonString)
+    }
+
+    @objc public static func getEvents(onResult: @escaping ([String]) -> Void) {
+        plugin?.getEvents(onResult: onResult)
+    }
+
+    @objc public static func deleteEvents() {
+        plugin?.deleteEvents()
+    }
+
     static var plugin: NoctuaPlugin?
 }
 

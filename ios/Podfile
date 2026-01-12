@@ -1,10 +1,15 @@
 platform :ios, "14.0"
+
+source 'https://github.com/NoctuaLabs/Specs.git'
+source 'https://cdn.cocoapods.org/'
+
 workspace "NoctuaSDKExample.xcworkspace"
 use_frameworks!
 
 target "NoctuaSDKExample" do
   project "NoctuaSDKExample/NoctuaSDKExample.xcodeproj"
   pod "NoctuaSDK", :path => ".."
+  pod "NoctuaSDK/NoctuaInternalSDK", :path => ".."
   pod "NoctuaSDK/Adjust", :path => ".."
   pod "NoctuaSDK/FirebaseAnalytics", :path => ".."
   pod "NoctuaSDK/FirebaseCrashlytics", :path => ".."
