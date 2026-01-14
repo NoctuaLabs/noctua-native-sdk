@@ -1,6 +1,8 @@
 import Foundation
 import os
+#if canImport(NoctuaInternalSDK)
 import NoctuaInternalSDK
+#endif
 
 struct NoctuaConfig : Decodable {
     let clientId: String
@@ -20,7 +22,9 @@ class NoctuaPlugin {
 
     init(config: NoctuaConfig) {
         
+        #if canImport(NoctuaInternalSDK)
         Utils_iosKt.doInitKoinManually();
+        #endif
         
         self.config = config
         
@@ -183,7 +187,9 @@ class NoctuaPlugin {
         self.facebook?.trackCustomEvent(eventName, payload: payload)
         
         if(self.config.noctua?.nativeInternalTrackerEnabled ?? false) {
+            #if canImport(NoctuaInternalSDK)
             NoctuaInternal.shared.trackCustomEvent(eventName: eventName, properties: payload)
+            #endif
         }
     }
 
@@ -290,7 +296,9 @@ class NoctuaPlugin {
             return
         }
         
+        #if canImport(NoctuaInternalSDK)
         NoctuaInternal.shared.setSessionTag(tag: tag)
+        #endif
     }
     
     func getSessionTag() -> String? {
@@ -299,7 +307,11 @@ class NoctuaPlugin {
             return ""
         }
         
+        #if canImport(NoctuaInternalSDK)
         return NoctuaInternal.shared.getSessionTag()
+        #else
+        return ""
+        #endif
     }
     
     func setExperiment(experiment: String) {
@@ -308,7 +320,9 @@ class NoctuaPlugin {
             return
         }
         
+        #if canImport(NoctuaInternalSDK)
         NoctuaInternal.shared.setExperiment(experiment: experiment)
+        #endif
     }
     
     func getExperiment() -> String? {
@@ -317,7 +331,11 @@ class NoctuaPlugin {
             return ""
         }
         
+        #if canImport(NoctuaInternalSDK)
         return NoctuaInternal.shared.getExperiment()
+        #else
+        return ""
+        #endif
     }
     
     func setGeneralExperiment(experiment: String) {
@@ -326,7 +344,9 @@ class NoctuaPlugin {
             return
         }
         
+        #if canImport(NoctuaInternalSDK)
         NoctuaInternal.shared.setGeneralExperiment(experiment: experiment)
+        #endif
     }
     
     func getGeneralExperiment(experimentKey: String) -> String? {
@@ -335,7 +355,11 @@ class NoctuaPlugin {
             return ""
         }
         
+        #if canImport(NoctuaInternalSDK)
         return NoctuaInternal.shared.getGeneralExperiment(experimentKey: experimentKey)
+        #else
+        return ""
+        #endif
     }
     
     func setSessionExtraParams(payload: [String: Any]) {
@@ -343,20 +367,28 @@ class NoctuaPlugin {
             logger.debug("nativeInternalTrackerEnabled is not enabled")
             return
         }
-
+        
+        #if canImport(NoctuaInternalSDK)
         NoctuaInternal.shared.setSessionExtraParams(params: payload)
+        #endif
     }
     
     func saveEvents(jsonString: String) {
+        #if canImport(NoctuaInternalSDK)
         NoctuaInternal.shared.saveExternalEvents(jsonString: jsonString)
+        #endif
     }
     
     func getEvents(onResult: @escaping ([String]) -> Void) {
+        #if canImport(NoctuaInternalSDK)
         NoctuaInternal.shared.getExternalEvents(onResult: onResult)
+        #endif
     }
     
     func deleteEvents() {
+        #if canImport(NoctuaInternalSDK)
         NoctuaInternal.shared.deleteExternalEvents()
+        #endif
     }
 
     private let logger = Logger(
