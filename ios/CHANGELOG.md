@@ -1,9 +1,14 @@
-## [ios-sdk-v0.25.0] - 2026-01-14
+## [ios-sdk-v0.25.0] - 2026-01-15
 
 ### 🚀 Features
 
 - Implement all function noctua native internal sdk
 - Add guard if the sdk is not installed
+- Update sample app
+
+### 🐛 Bug Fixes
+
+- Error pipeline
 ## [ios-sdk-v0.24.0] - 2025-11-28
 
 ### 🚀 Features
