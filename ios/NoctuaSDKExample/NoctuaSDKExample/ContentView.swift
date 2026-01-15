@@ -158,6 +158,11 @@ struct ContentView: View {
             
             Button(action: {
                 viewModel.saveRandomAccount(gameId: gameId)
+//                Noctua.saveEvents(jsonString: "{\"event\":\"test_event\",\"value\":123}")
+//
+//                Noctua.getEvents(onResult: { events in
+//                    logger.debug("[NoctuaInternal] Events retrieved: \(events) event counts: \(events.count)")
+//                })
             }) {
                 Text("Save Random Account")
                     .frame(maxWidth: .infinity)
@@ -167,7 +172,8 @@ struct ContentView: View {
             }
             
             Button(action: {
-                viewModel.deleteRandomAccount(gameId: gameId)
+                 viewModel.deleteRandomAccount(gameId: gameId)
+//                Noctua.deleteEvents()
             }) {
                 Text("Delete Random Account")
                     .frame(maxWidth: .infinity)

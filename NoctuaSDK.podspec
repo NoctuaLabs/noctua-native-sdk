@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   end
 
   spec.subspec "NoctuaInternalSDK" do |noctuainternalsdk|
-    noctuainternalsdk.dependency "NoctuaInternalSDK", "~> 0.14.0"
+    noctuainternalsdk.vendored_frameworks = "ios/NoctuaSDK/XCFrameworks/NoctuaInternalSDK.xcframework"
   end
 
   spec.subspec "Adjust" do |adjust|
@@ -64,26 +64,40 @@ Pod::Spec.new do |spec|
     end
   end
   
-  # Download Facebook-Static XCFramwework from Facebook iOS SDK Github releases
+  # Download NoctuaInternal + Facebook Static XCFrameworks
   spec.prepare_command = <<-CMD
+    echo "Downloading NoctuaInternalSDK.xcframework"
+    VERSION="0.14.0"
+    ZIPFILE="NoctuaInternalSDK.xcframework.zip"
+    URL="https://github.com/NoctuaLabs/noctua-internal-native-sdk/releases/download/ios-sdk-v${VERSION}/${ZIPFILE}"
+    DESTINATION="ios/NoctuaSDK"
+
+    echo "Remove ${DESTINATION}/XCFrameworks"
+    rm -rf "${DESTINATION}/XCFrameworks"
+
+    echo "Create the ${DESTINATION}/XCFrameworks directory"
+    mkdir -p "${DESTINATION}/XCFrameworks"
+
+    echo "Download ${ZIPFILE} FROM ${URL}"
+    curl -L "${URL}" -o "${ZIPFILE}"
+
+    echo "Unzip ${ZIPFILE} to ${DESTINATION}/XCFrameworks"
+    unzip -q "${ZIPFILE}" -d "${DESTINATION}/XCFrameworks"
+
+    echo "Remove ${ZIPFILE} after extraction"
+    rm "${ZIPFILE}"
+
     echo "Downloading FacebookSDK-Static_XCFramework"
     VERSION="17.0.2"
     ZIPFILE="FacebookSDK-Static_XCFramework.zip"
     URL="https://github.com/facebook/facebook-ios-sdk/releases/download/v${VERSION}/${ZIPFILE}"
-    DESTINATION="ios/NoctuaSDK"
-    
-    echo "Remove ${DESTINATION}/XCFrameworks"
-    rm -rf "${DESTINATION}/XCFrameworks"
-    
-    echo "Create the ${DESTINATION}/XCFrameworks directory"
-    mkdir -p "${DESTINATION}/XCFrameworks"
-    
+
     echo "Download ${ZIPFILE} FROM ${URL}"
     curl -L "${URL}" -o "${ZIPFILE}"
-    
+
     echo "Unzip ${ZIPFILE} to ${DESTINATION}"
     unzip -q "${ZIPFILE}" -d "${DESTINATION}"
-    
+
     echo "Remove ${ZIPFILE} after extraction"
     rm "${ZIPFILE}"
   CMD
