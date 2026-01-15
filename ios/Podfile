@@ -1,6 +1,5 @@
 platform :ios, "14.0"
 
-source 'https://github.com/NoctuaLabs/Specs.git'
 source 'https://cdn.cocoapods.org/'
 
 workspace "NoctuaSDKExample.xcworkspace"
