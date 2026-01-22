@@ -42,6 +42,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
     private val facebook: FacebookService?
     private val accounts: AccountRepository
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var noctuaAdjustAttribution: NoctuaAdjustAttribution? = null
 
     init {
         val appContext = context.applicationContext
@@ -74,7 +75,9 @@ class Noctua(context: Context, publishedApps: List<String>) {
             adjust = null
         } else {
             adjust = try {
-                AdjustService(config.adjust.android, appContext)
+                AdjustService(config.adjust.android, appContext, {
+                    noctuaAdjustAttribution = it
+                })
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Adjust SDK: ${e.message}")
                 null
@@ -353,6 +356,15 @@ class Noctua(context: Context, publishedApps: List<String>) {
         noctuaInternal.deleteExternalEvents()
     }
 
+    fun getAdjustAttribution(onResult: (NoctuaAdjustAttribution) -> Unit) {
+        if (noctuaAdjustAttribution != null) {
+            onResult(noctuaAdjustAttribution ?: NoctuaAdjustAttribution())
+            return
+        }
+
+        adjust?.getAdjustCurrentAttribution(onResult)
+    }
+
     companion object {
         private val TAG = this::class.simpleName
         private lateinit var instance: Noctua
@@ -616,6 +628,16 @@ class Noctua(context: Context, publishedApps: List<String>) {
             }
 
             instance.deleteEvents()
+        }
+
+        fun getAdjustAttribution(onResult: (NoctuaAdjustAttribution) -> Unit) {
+            if (!::instance.isInitialized) {
+                Log.e(TAG, "Noctua is not initialized. Call init() first.")
+                onResult(NoctuaAdjustAttribution())
+                return
+            }
+
+            instance.getAdjustAttribution(onResult)
         }
     }
 

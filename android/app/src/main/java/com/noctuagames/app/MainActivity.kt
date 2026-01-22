@@ -77,6 +77,18 @@ fun MainScreen(offset: Int, packageName: String) {
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+               Noctua.getAdjustAttribution { attribution ->
+                   Log.d("MainActivity", "Adjust attribution: $attribution")
+               }
+
+            }
+        ) {
+            Text("Get Adjust Attribution")
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
                 Noctua.trackAdRevenue("admob_sdk", 0.19, "USD")
                 Log.d("MainActivity", "Ad revenue tracked")
             }) {
