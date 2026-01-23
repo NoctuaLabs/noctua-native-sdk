@@ -126,6 +126,10 @@ import Foundation
     @objc public static func deleteEvents() {
         plugin?.deleteEvents()
     }
+    
+    @objc public static func getAdjustCurrentAttribution() -> [String:Any] {
+        return plugin?.getAdjustCurrentAttribution() ?? [:]
+    }
 
     static var plugin: NoctuaPlugin?
 }

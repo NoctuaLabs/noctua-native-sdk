@@ -8,6 +8,8 @@
 import SwiftUI
 import os
 import NoctuaSDK
+import AppTrackingTransparency
+import AdSupport
 
 struct AccountModel : Identifiable {
     let id: Int64
@@ -69,8 +71,63 @@ struct ContentView: View {
     let gameId: Int64
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
     
+    func requestPermission() {
+        if #available(iOS 14, *) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                switch status {
+                case .authorized:
+                    // Tracking authorization dialog was shown
+                    // and we are authorized
+                    print("Authorized")
+                    
+                    // Now that we are authorized we can get the IDFA
+                    print(ASIdentifierManager.shared().advertisingIdentifier)
+                case .denied:
+                    // Tracking authorization dialog was
+                    // shown and permission is denied
+                    print("Denied")
+                case .notDetermined:
+                    // Tracking authorization dialog has not been shown
+                    print("Not Determined")
+                case .restricted:
+                    print("Restricted")
+                @unknown default:
+                    print("Unknown")
+                }
+            }
+        }
+    }
+
+    
     var body: some View {
         VStack {
+            
+            Button(action: {
+                requestPermission()
+                
+                let attribution = Noctua.getAdjustCurrentAttribution()
+                logger.debug("""
+                Current Adjust Attribution:
+                - trackerToken: \(attribution["trackerToken"] as? String ?? "nil")
+                - trackerName: \(attribution["trackerName"] as? String ?? "nil")
+                - network: \(attribution["network"] as? String ?? "nil")
+                - campaign: \(attribution["campaign"] as? String ?? "nil")
+                - adgroup: \(attribution["adgroup"] as? String ?? "nil")
+                - creative: \(attribution["creative"] as? String ?? "nil")
+                - clickLabel: \(attribution["clickLabel"] as? String ?? "nil")
+                - adid: \(attribution["adid"] as? String ?? "nil")
+                - costType: \(attribution["costType"] as? String ?? "nil")
+                - costAmount: \(attribution["costAmount"] as? Double ?? 0)
+                - costCurrency: \(attribution["costCurrency"] as? String ?? "nil")
+                """)
+            }) {
+                Text("Get Adjust Attribution")
+                    .frame(maxWidth: .infinity)
+                    .background(Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            
             Button(action: {
                 Noctua.trackAdRevenue(source: "admob_sdk", revenue: 1.3, currency: "USD", extraPayload: [:])
                 logger.debug("Track Ad Revenue tapped")
