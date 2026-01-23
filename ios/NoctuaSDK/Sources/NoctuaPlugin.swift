@@ -390,6 +390,10 @@ class NoctuaPlugin {
         NoctuaInternal.shared.deleteExternalEvents()
         #endif
     }
+    
+    func getAdjustCurrentAttribution() -> [String:Any] {
+        return self.adjust?.getAdjustCurrentAttribution() ?? [:]
+    }
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

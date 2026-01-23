@@ -4,8 +4,12 @@ import android.content.Context
 import android.util.Log
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustAdRevenue
+import com.adjust.sdk.AdjustAttribution
 import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustEvent
+import com.adjust.sdk.OnAttributionChangedListener
+import org.json.JSONException
+import org.json.JSONObject
 
 data class AdjustServiceConfig(
     val android: AdjustServiceAndroidConfig?,
@@ -18,7 +22,41 @@ data class AdjustServiceAndroidConfig(
     val eventMap: Map<String, String>?,
 )
 
-internal class AdjustService(private val config: AdjustServiceAndroidConfig, context: Context) {
+data class NoctuaAdjustAttribution(
+    val trackerToken: String? = "",
+    val trackerName: String? = "",
+    val network: String? = "",
+    val campaign: String? = "",
+    val adGroup: String? = "",
+    val creative: String? = "",
+    val clickLabel: String? = "",
+    val costType: String? = "",
+    val costAmount: Double? = 0.0,
+    val costConcurrency: String? = "",
+    val fbInstallReferrer: String? = ""
+)
+
+fun AdjustAttribution.toNoctuaAdjustAttribution(): NoctuaAdjustAttribution {
+    return NoctuaAdjustAttribution(
+        trackerToken = this.trackerToken,
+        trackerName = this.trackerName,
+        network = this.network,
+        campaign = this.campaign,
+        adGroup = this.adgroup,
+        creative = this.creative,
+        clickLabel = this.clickLabel,
+        costType = this.costType,
+        costAmount = this.costAmount,
+        costConcurrency = this.costCurrency,
+        fbInstallReferrer = this.fbInstallReferrer
+    )
+}
+
+internal class AdjustService(
+    private val config: AdjustServiceAndroidConfig,
+    context: Context,
+    onAdjustAttributionChanged: (NoctuaAdjustAttribution) -> Unit
+) {
     private val TAG = this::class.simpleName
 
     init {
@@ -41,8 +79,20 @@ internal class AdjustService(private val config: AdjustServiceAndroidConfig, con
         }
 
         val adjustConfig = AdjustConfig(context, config.appToken, environment)
+        adjustConfig.enableCostDataInAttribution()
+
+        adjustConfig.onAttributionChangedListener = OnAttributionChangedListener { adjustAttribution ->
+            onAdjustAttributionChanged(adjustAttribution.toNoctuaAdjustAttribution())
+        }
+
         Adjust.initSdk(adjustConfig)
         Log.i(TAG, "Adjust SDK initialized successfully")
+    }
+
+    fun getAdjustCurrentAttribution(onResult: (NoctuaAdjustAttribution) -> Unit) {
+       Adjust.getAttribution { adjustAttribution ->
+           onResult(adjustAttribution.toNoctuaAdjustAttribution())
+       }
     }
 
     fun onResume() {

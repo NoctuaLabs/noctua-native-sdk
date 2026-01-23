@@ -43,6 +43,7 @@ class AdjustService {
         }
         let adjustConfig = ADJConfig(appToken: appToken, environment: environment)
         adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevelWarn } else { ADJLogLevelDebug }
+        adjustConfig?.needsCost = true
         
         Adjust.appDidLaunch(adjustConfig)
 #else
@@ -50,6 +51,29 @@ class AdjustService {
 #endif
     }
     
+    #if canImport(Adjust)
+    func getAdjustCurrentAttribution() -> [String: Any]? {
+        guard let adjAttribution = Adjust.attribution() else {
+            logger.warning("Adjust attribution is nil")
+            return [:]
+        }
+
+        return [
+            "trackerToken": adjAttribution.trackerToken ?? "",
+            "trackerName": adjAttribution.trackerName ?? "",
+            "network": adjAttribution.network ?? "",
+            "campaign": adjAttribution.campaign ?? "",
+            "adgroup": adjAttribution.adgroup ?? "",
+            "creative": adjAttribution.creative ?? "",
+            "clickLabel": adjAttribution.clickLabel ?? "",
+            "adid": adjAttribution.adid ?? "",
+            "costType": adjAttribution.costType ?? "",
+            "costAmount": adjAttribution.costAmount?.doubleValue ?? 0,
+            "costCurrency": adjAttribution.costCurrency ?? ""
+        ]
+    }
+    #endif
+
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Adjust)
         let adRevenue = ADJAdRevenue(source: source)!
