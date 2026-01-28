@@ -1,3 +1,8 @@
+## [ios-sdk-v0.26.0] - 2026-01-28
+
+### 🚀 Features
+
+- Add adjust attribution ios
 ## [ios-sdk-v0.25.0] - 2026-01-15
 
 ### 🚀 Features
