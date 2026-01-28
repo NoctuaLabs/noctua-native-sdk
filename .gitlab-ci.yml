@@ -136,6 +136,8 @@ publish-android-sdk:
 bump-version-ios-sdk:
   extends: .bump-version
   stage: bump-version
+  tags:
+    - macmini
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
@@ -163,6 +165,8 @@ bump-version-ios-sdk:
 release-ios-sdk:
   extends: .bump-version
   stage: release
+  tags:
+    - macmini
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
