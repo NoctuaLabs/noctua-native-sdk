@@ -10,7 +10,7 @@ stages:
     name: alpine/git
     entrypoint: [""]
   before_script:
-    - apk add git-cliff
+    #- apk add git-cliff We are using shell executor and expect the tools are already available
     - git config --global user.email "gitlab-ci@noctua.gg"
     - git config --global user.name "Noctua Gitlab CI"
 
