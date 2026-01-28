@@ -18,7 +18,7 @@ test-android-sdk:
   image: cimg/android:2024.07.1
   stage: test
   tags:
-    - local2
+    - android-local-2
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
       changes:
@@ -32,7 +32,7 @@ bump-version-android-sdk:
   extends: .bump-version
   stage: bump-version
   tags:
-    - local2
+    - android-local-2
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
@@ -58,7 +58,7 @@ deploy-android-sdk:
   image: cimg/android:2024.07.1
   stage: deploy
   tags:
-    - local2
+    - android-local-2
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
@@ -75,7 +75,7 @@ release-android-sdk:
   extends: .bump-version
   stage: release
   tags:
-    - local2
+    - android-local-2
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
@@ -103,7 +103,7 @@ publish-android-sdk:
   image: cimg/android:2024.07.1
   stage: publish
   tags:
-    - local2
+    - android-local-2
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
