@@ -1,7 +1,4 @@
-platform :ios, "14.0"
-
-source 'https://cdn.cocoapods.org/'
-
+platform :ios, "15.0"
 workspace "NoctuaSDKExample.xcworkspace"
 use_frameworks!
 
