@@ -1,3 +1,8 @@
+## [ios-sdk-v0.26.1] - 2026-02-02
+
+### 🐛 Bug Fixes
+
+- Add guard to fix the pipeline
 ## [ios-sdk-v0.26.0] - 2026-01-28
 
 ### 🚀 Features
