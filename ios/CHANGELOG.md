@@ -1,4 +1,28 @@
-## [ios-sdk-v0.26.1] - 2026-02-02
+## [ios-sdk-v0.28.0] - 2026-02-02
+
+### 🚀 Features
+
+- Update firebase to 12.2.0, adjust to 5.4.4, facebook to 18.0.1
+- Enhance facebook ad revenue event name
+- Add game id config
+- Update firebase remote config to 12.2.0
+
+### 🐛 Bug Fixes
+
+- Adjust signature framework not found
+- Prevent requiring manual addition of Adjust signature to the framework
+- Adjust signature is not loaded
+- Downgrade facebook sdk to 8.0.0
+
+### 💼 Other
+
+- Add get attribution in icm version
+- Bump version manually ios-icm
+
+### 🚜 Refactor
+
+- Adjust v5 attribution for icm - ios
+## [ios-sdk-v0.27.0] - 2026-02-02
 
 ### 🐛 Bug Fixes
 
