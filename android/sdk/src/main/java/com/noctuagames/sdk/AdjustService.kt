@@ -90,9 +90,10 @@ internal class AdjustService(
     }
 
     fun getAdjustCurrentAttribution(onResult: (NoctuaAdjustAttribution) -> Unit) {
-       Adjust.getAttribution { adjustAttribution ->
-           onResult(adjustAttribution.toNoctuaAdjustAttribution())
-       }
+        Log.i(TAG, "Fetching Adjust current attribution")
+        Adjust.getAttribution { adjustAttribution ->
+            onResult(adjustAttribution.toNoctuaAdjustAttribution())
+        }
     }
 
     fun onResume() {
