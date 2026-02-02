@@ -26,7 +26,7 @@ test-android-sdk:
       when: always
   script:
     - cd android
-    - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=/home/devnoctua/Android/Sdk./gradlew check
+    - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=/home/devnoctua/Android/Sdk ./gradlew check
 
 bump-version-android-sdk:
   extends: .bump-version
