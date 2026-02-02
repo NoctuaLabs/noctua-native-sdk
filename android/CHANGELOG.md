@@ -1,3 +1,8 @@
+## [android-sdk-v0.23.0] - 2026-02-02
+
+### 🚀 Features
+
+- Add log fetching adjust attribution - android
 ## [android-sdk-v0.22.0] - 2026-01-28
 
 ### 🚀 Features
