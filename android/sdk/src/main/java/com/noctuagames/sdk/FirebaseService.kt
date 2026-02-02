@@ -60,10 +60,8 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
         FirebaseInstallations.getInstance().id
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "Firebase Installation ID: ${task.result}")
                     onResult(task.result)
                 } else {
-                    Log.d(TAG, "Failed to get Firebase Installation ID")
                     onResult("")
                 }
             }
@@ -71,10 +69,8 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
 
     fun getFirebaseAnalyticsSessionID(onResult: (String) -> Unit) {
         analytics.appInstanceId.addOnSuccessListener { appInstanceId  ->
-            Log.d(TAG, "Firebase Analytics Session ID: $appInstanceId")
             onResult(appInstanceId ?: "")
         }.addOnFailureListener {
-            Log.d(TAG, "Failed to get Firebase Analytics Session ID")
             onResult("")
         }
     }
