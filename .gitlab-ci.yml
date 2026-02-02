@@ -118,7 +118,7 @@ publish-android-sdk:
     - cd android
     - git fetch --tags
     - git checkout origin/$CI_COMMIT_BRANCH
-    - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=/home/devnoctua/Android/Sdk./gradlew :sdk:publishAndReleaseToMavenCentral
+    - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=/home/devnoctua/Android/Sdk ./gradlew :sdk:publishAndReleaseToMavenCentral
     - wget "https://github.com/orhun/git-cliff/releases/download/v2.4.0/git-cliff-2.4.0-x86_64-unknown-linux-gnu.tar.gz"
     - tar -xvf git-cliff-2.4.0-x86_64-unknown-linux-gnu.tar.gz
     - cp ./git-cliff-2.4.0/git-cliff /usr/local/bin/
