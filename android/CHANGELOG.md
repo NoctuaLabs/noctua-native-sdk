@@ -1,3 +1,8 @@
+## [android-sdk-v0.25.1] - 2026-02-02
+
+### 🐛 Bug Fixes
+
+- Remove log
 ## [android-sdk-v0.25.0] - 2026-02-02
 
 ### 🚀 Features
