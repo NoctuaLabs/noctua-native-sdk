@@ -392,8 +392,8 @@ class NoctuaPlugin {
         #endif
     }
     
-    func getAdjustCurrentAttribution() -> [String:Any] {
-        return self.adjust?.getAdjustCurrentAttribution() ?? [:]
+    func getAdjustCurrentAttribution(completion: @escaping ([String: Any]) -> Void) {
+        self.adjust?.getAdjustCurrentAttribution(completion: completion) 
     }
 
     private let logger = Logger(

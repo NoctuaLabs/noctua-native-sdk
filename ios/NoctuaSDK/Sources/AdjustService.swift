@@ -43,38 +43,39 @@ class AdjustService {
         }
         let adjustConfig = ADJConfig(appToken: appToken, environment: environment)
         adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevel.warn } else { ADJLogLevel.debug }
-        adjustConfig?.needCost = true
-        
+        adjustConfig?.enableCostDataInAttribution()
         Adjust.initSdk(adjustConfig)
 #else
         throw AdjustServiceError.adjustNotFound
 #endif
     }
     
-    func getAdjustCurrentAttribution() -> [String: Any]? {
-    #if canImport(AdjustSdk)
-        guard let adjAttribution = Adjust.attribution() else {
-            logger.warning("Adjust attribution is nil")
-            return [:]
-        }
+    func getAdjustCurrentAttribution(completion: @escaping ([String: Any]) -> Void) {
+#if canImport(AdjustSdk)
+        Adjust.attribution { attribution in
+            guard let attribution = attribution else {
+                completion([:])
+                return
+            }
 
-        return [
-            "trackerToken": adjAttribution.trackerToken ?? "",
-            "trackerName": adjAttribution.trackerName ?? "",
-            "network": adjAttribution.network ?? "",
-            "campaign": adjAttribution.campaign ?? "",
-            "adgroup": adjAttribution.adgroup ?? "",
-            "creative": adjAttribution.creative ?? "",
-            "clickLabel": adjAttribution.clickLabel ?? "",
-            "adid": adjAttribution.adid ?? "",
-            "costType": adjAttribution.costType ?? "",
-            "costAmount": adjAttribution.costAmount?.doubleValue ?? 0,
-            "costCurrency": adjAttribution.costCurrency ?? ""
-        ]
+            completion([
+                "trackerToken": attribution.trackerToken ?? "",
+                "trackerName": attribution.trackerName ?? "",
+                "network": attribution.network ?? "",
+                "campaign": attribution.campaign ?? "",
+                "adgroup": attribution.adgroup ?? "",
+                "creative": attribution.creative ?? "",
+                "clickLabel": attribution.clickLabel ?? "",
+                "costType": attribution.costType ?? "",
+                "costAmount": attribution.costAmount?.doubleValue ?? 0,
+                "costCurrency": attribution.costCurrency ?? ""
+            ])
+        }
     #else
-        return [:]
+        completion([:])
     #endif
     }
+
         
 
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
