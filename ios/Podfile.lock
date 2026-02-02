@@ -1,9 +1,13 @@
 PODS:
-  - Adjust (5.4.4):
-    - Adjust/Adjust (= 5.4.4)
-  - Adjust/Adjust (5.4.4):
-    - AdjustSignature (= 3.47.0)
-  - AdjustSignature (3.47.0)
+  - Adjust (5.4.6):
+    - Adjust/Adjust (= 5.4.6)
+  - Adjust/Adjust (5.4.6):
+    - AdjustSignature (= 3.61.0)
+  - Adjust/AdjustGoogleOdm (5.4.6):
+    - Adjust/Adjust
+  - AdjustSignature (3.61.0)
+  - FirebaseABTesting (12.2.0):
+    - FirebaseCore (~> 12.2.0)
   - FirebaseAnalytics (12.2.0):
     - FirebaseAnalytics/Default (= 12.2.0)
     - FirebaseCore (~> 12.2.0)
@@ -53,6 +57,14 @@ PODS:
     - GoogleUtilities/Reachability (~> 8.1)
     - GoogleUtilities/UserDefaults (~> 8.1)
     - nanopb (~> 3.30910.0)
+  - FirebaseRemoteConfig (12.2.0):
+    - FirebaseABTesting (~> 12.2.0)
+    - FirebaseCore (~> 12.2.0)
+    - FirebaseInstallations (~> 12.2.0)
+    - FirebaseRemoteConfigInterop (~> 12.2.0)
+    - FirebaseSharedSwift (~> 12.2.0)
+    - GoogleUtilities/Environment (~> 8.1)
+    - "GoogleUtilities/NSData+zlib (~> 8.1)"
   - FirebaseRemoteConfigInterop (12.2.0)
   - FirebaseSessions (12.2.0):
     - FirebaseCore (~> 12.2.0)
@@ -63,6 +75,7 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 8.1)
     - nanopb (~> 3.30910.0)
     - PromisesSwift (~> 2.1)
+  - FirebaseSharedSwift (12.2.0)
   - GoogleAdsOnDeviceConversion (2.3.0):
     - GoogleUtilities/Logger (~> 8.1)
     - GoogleUtilities/Network (~> 8.1)
@@ -124,29 +137,31 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - NoctuaSDK (0.21.0):
-    - NoctuaSDK/Core (= 0.21.0)
-  - NoctuaSDK/Adjust (0.21.0):
+  - NoctuaSDK (0.27.0):
+    - NoctuaSDK/Core (= 0.27.0)
+  - NoctuaSDK/Adjust (0.27.0):
     - Adjust (~> 5.4.4)
-  - NoctuaSDK/AdjustSignature (0.21.0):
-    - AdjustSignature (~> 3.47.0)
-  - NoctuaSDK/Core (0.21.0)
-  - NoctuaSDK/FacebookSDK (0.21.0):
-    - NoctuaSDK/FacebookSDK/FBAEMKit (= 0.21.0)
-    - NoctuaSDK/FacebookSDK/FBSDKCoreKit (= 0.21.0)
-    - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (= 0.21.0)
-  - NoctuaSDK/FacebookSDK/FBAEMKit (0.21.0):
+    - Adjust/AdjustGoogleOdm
+  - NoctuaSDK/Core (0.27.0)
+  - NoctuaSDK/FacebookSDK (0.27.0):
+    - NoctuaSDK/FacebookSDK/FBAEMKit (= 0.27.0)
+    - NoctuaSDK/FacebookSDK/FBSDKCoreKit (= 0.27.0)
+    - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (= 0.27.0)
+  - NoctuaSDK/FacebookSDK/FBAEMKit (0.27.0):
     - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics
-  - NoctuaSDK/FacebookSDK/FBSDKCoreKit (0.21.0):
+  - NoctuaSDK/FacebookSDK/FBSDKCoreKit (0.27.0):
     - NoctuaSDK/FacebookSDK/FBAEMKit
     - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics
-  - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (0.21.0)
-  - NoctuaSDK/FirebaseAnalytics (0.21.0):
+  - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (0.27.0)
+  - NoctuaSDK/FirebaseAnalytics (0.27.0):
     - FirebaseAnalytics (~> 12.2.0)
-  - NoctuaSDK/FirebaseCrashlytics (0.21.0):
+  - NoctuaSDK/FirebaseCrashlytics (0.27.0):
     - FirebaseCrashlytics (~> 12.2.0)
-  - NoctuaSDK/FirebaseMessaging (0.21.0):
+  - NoctuaSDK/FirebaseMessaging (0.27.0):
     - FirebaseMessaging (~> 12.2.0)
+  - NoctuaSDK/FirebaseRemoteConfig (0.27.0):
+    - FirebaseRemoteConfig (~> 12.2.0)
+  - NoctuaSDK/NoctuaInternalSDK (0.27.0)
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
@@ -154,7 +169,6 @@ PODS:
 DEPENDENCIES:
   - NoctuaSDK (from `..`)
   - NoctuaSDK/Adjust (from `..`)
-  - NoctuaSDK/AdjustSignature (from `..`)
   - NoctuaSDK/FacebookSDK (from `..`)
   - NoctuaSDK/FirebaseAnalytics (from `..`)
   - NoctuaSDK/FirebaseCrashlytics (from `..`)
@@ -166,6 +180,7 @@ SPEC REPOS:
   trunk:
     - Adjust
     - AdjustSignature
+    - FirebaseABTesting
     - FirebaseAnalytics
     - FirebaseCore
     - FirebaseCoreExtension
@@ -176,6 +191,7 @@ SPEC REPOS:
     - FirebaseRemoteConfig
     - FirebaseRemoteConfigInterop
     - FirebaseSessions
+    - FirebaseSharedSwift
     - GoogleAdsOnDeviceConversion
     - GoogleAppMeasurement
     - GoogleDataTransport
@@ -189,8 +205,9 @@ EXTERNAL SOURCES:
     :path: ".."
 
 SPEC CHECKSUMS:
-  Adjust: 3d88c4b4999d13751b7c725099e1a5ba8fbcb8d4
-  AdjustSignature: d634fc6b66295c38807f3b4e50978c1f72355950
+  Adjust: 293c828a88a2c280471797edb3e895c80652a786
+  AdjustSignature: 94b6b7f7150edbbebc4320eeaddaac881f6e8e2d
+  FirebaseABTesting: 32f3fc079d72c9b93e000b60877c4e4f62ef7031
   FirebaseAnalytics: e04e23bc070e3014aa5cf4980f9df7ce5cd79ec8
   FirebaseCore: 311c48a147ad4a0ab7febbaed89e8025c67510cd
   FirebaseCoreExtension: 73af080c22a2f7b44cefa391dc08f7e4ee162cb5
@@ -198,14 +215,19 @@ SPEC CHECKSUMS:
   FirebaseCrashlytics: f83cbf176d5c637ade108c0aacf1ccbd5ec499bf
   FirebaseInstallations: 3e884b01feabdf67582a80f3250425a00979b4ed
   FirebaseMessaging: 43ec73bbfedd0c385a849bb91593ab4ad4b9e48e
+  FirebaseRemoteConfig: e3ae5500b92e813f3a0b12fa09701a26441dfc95
   FirebaseRemoteConfigInterop: 0896fd52ab72586a355c8f389ff85aaa9e5375e1
   FirebaseSessions: f4692789e770bec66ce17d772c0e9561c4f11737
+  FirebaseSharedSwift: 52d868d4c269fcb4e4e1310c548435a9c1f46e25
   GoogleAdsOnDeviceConversion: 9090c435cde08903e8dd1ba2c77fbec9e46d9afe
   GoogleAppMeasurement: 09f341dfa8527d1612a09cbfe809a242c0b737af
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  NoctuaSDK: 24d83ef8a2d595749d23b099cfb351251477fc47
+  NoctuaSDK: 93a3a029d434894afd76e23e89933ec10bfcf70d
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
+
+PODFILE CHECKSUM: 493bf376b1e82fa0d50a57e171129870c2bccf31
+
 COCOAPODS: 1.16.2
