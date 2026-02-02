@@ -127,8 +127,8 @@ import Foundation
         plugin?.deleteEvents()
     }
     
-    @objc public static func getAdjustCurrentAttribution() -> [String:Any] {
-        return plugin?.getAdjustCurrentAttribution() ?? [:]
+    @objc public static func getAdjustCurrentAttribution(completion: @escaping ([String: Any]) -> Void) {
+        plugin?.getAdjustCurrentAttribution(completion: completion)
     }
 
     static var plugin: NoctuaPlugin?

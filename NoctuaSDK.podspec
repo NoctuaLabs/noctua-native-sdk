@@ -25,7 +25,6 @@ Pod::Spec.new do |spec|
 
   spec.subspec "Adjust" do |adjust|
     adjust.dependency "Adjust", "~> 5.4.4"
-    adjust.dependency "AdjustSignature", "~> 3.61.0"
     adjust.dependency "Adjust/AdjustGoogleOdm"
   end
   
