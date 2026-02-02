@@ -51,8 +51,8 @@ class AdjustService {
 #endif
     }
     
-    #if canImport(Adjust)
     func getAdjustCurrentAttribution() -> [String: Any]? {
+    #if canImport(Adjust)
         guard let adjAttribution = Adjust.attribution() else {
             logger.warning("Adjust attribution is nil")
             return [:]
@@ -71,8 +71,11 @@ class AdjustService {
             "costAmount": adjAttribution.costAmount?.doubleValue ?? 0,
             "costCurrency": adjAttribution.costCurrency ?? ""
         ]
-    }
+    #else
+        return [:]
     #endif
+    }
+        
 
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
 #if canImport(Adjust)
