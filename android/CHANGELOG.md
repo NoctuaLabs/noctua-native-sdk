@@ -1,3 +1,8 @@
+## [android-sdk-v0.25.2] - 2026-02-05
+
+### 🚜 Refactor
+
+- Change return custom object adjust attribution to json string
 ## [android-sdk-v0.25.1] - 2026-02-02
 
 ### 🐛 Bug Fixes
