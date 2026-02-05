@@ -36,6 +36,32 @@ data class NoctuaAdjustAttribution(
     val fbInstallReferrer: String? = ""
 )
 
+fun NoctuaAdjustAttribution?.toJsonString(): String {
+    if (this == null) return "{}"
+
+    return JSONObject().apply {
+        put("trackerToken", trackerToken)
+        put("trackerName", trackerName)
+        put("network", network)
+        put("campaign", campaign)
+        put("adGroup", adGroup)
+        put("creative", creative)
+        put("clickLabel", clickLabel)
+        put("costType", costType)
+        put("costAmount", costAmount.toSafeJsonDouble())
+        put("costConcurrency", costConcurrency)
+        put("fbInstallReferrer", fbInstallReferrer)
+    }.toString()
+}
+
+private fun Double?.toSafeJsonDouble(): Double? {
+    return if (this == null || this.isNaN() || this.isInfinite()) {
+        null
+    } else {
+        this
+    }
+}
+
 fun AdjustAttribution.toNoctuaAdjustAttribution(): NoctuaAdjustAttribution {
     return NoctuaAdjustAttribution(
         trackerToken = this.trackerToken,
@@ -89,9 +115,15 @@ internal class AdjustService(
         Log.i(TAG, "Adjust SDK initialized successfully")
     }
 
-    fun getAdjustCurrentAttribution(onResult: (NoctuaAdjustAttribution) -> Unit) {
+    fun getAdjustCurrentAttributionJson(onResult: (String) -> Unit) {
         Adjust.getAttribution { adjustAttribution ->
-            onResult(adjustAttribution.toNoctuaAdjustAttribution())
+            if (adjustAttribution == null) {
+                onResult("")
+                return@getAttribution
+            }
+
+            val jsonString = adjustAttribution.toNoctuaAdjustAttribution().toJsonString()
+            onResult(jsonString)
         }
     }
 

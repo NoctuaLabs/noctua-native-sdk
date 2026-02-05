@@ -10,10 +10,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.GsonBuilder
 import com.noctuagames.labs.sdk.NoctuaInternal
-import com.noctuagames.labs.sdk.di.initKoin
 import com.noctuagames.labs.sdk.utils.AppContext
 import com.noctuagames.labs.sdk.utils.initKoinManually
-import com.noctuagames.labs.sdk.utils.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -356,13 +354,13 @@ class Noctua(context: Context, publishedApps: List<String>) {
         noctuaInternal.deleteExternalEvents()
     }
 
-    fun getAdjustAttribution(onResult: (NoctuaAdjustAttribution) -> Unit) {
+    fun getAdjustAttribution(onResult: (String) -> Unit) {
         if (noctuaAdjustAttribution != null) {
-            onResult(noctuaAdjustAttribution ?: NoctuaAdjustAttribution())
+            onResult(noctuaAdjustAttribution.toJsonString())
             return
         }
 
-        adjust?.getAdjustCurrentAttribution(onResult)
+        adjust?.getAdjustCurrentAttributionJson(onResult)
     }
 
     companion object {
@@ -630,10 +628,10 @@ class Noctua(context: Context, publishedApps: List<String>) {
             instance.deleteEvents()
         }
 
-        fun getAdjustAttribution(onResult: (NoctuaAdjustAttribution) -> Unit) {
+        fun getAdjustAttribution(onResult: (String) -> Unit) {
             if (!::instance.isInitialized) {
                 Log.e(TAG, "Noctua is not initialized. Call init() first.")
-                onResult(NoctuaAdjustAttribution())
+                onResult("")
                 return
             }
 
