@@ -635,7 +635,9 @@ class Noctua(context: Context, publishedApps: List<String>) {
                 return
             }
 
-            instance.getAdjustAttribution(onResult)
+            instance.getAdjustAttribution { attribution ->
+                onResult(attribution)
+            }
         }
     }
 
