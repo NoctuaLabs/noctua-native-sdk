@@ -1,3 +1,8 @@
+## [android-sdk-v0.25.4] - 2026-02-06
+
+### 💼 Other
+
+- Add adjust attribution logs
 ## [android-sdk-v0.25.3] - 2026-02-05
 
 ### 🐛 Bug Fixes
