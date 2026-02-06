@@ -635,8 +635,11 @@ class Noctua(context: Context, publishedApps: List<String>) {
                 return
             }
 
+            Log.d(TAG, "getAdjustAttribution")
+
             instance.getAdjustAttribution { attribution ->
                 onResult(attribution)
+                Log.d(TAG, "getAdjustAttribution: $attribution")
             }
         }
     }
