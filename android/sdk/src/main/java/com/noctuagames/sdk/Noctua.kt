@@ -356,11 +356,15 @@ class Noctua(context: Context, publishedApps: List<String>) {
 
     fun getAdjustAttribution(onResult: (String) -> Unit) {
         if (noctuaAdjustAttribution != null) {
+            Log.i(TAG, "Adjust attribution already fetched")
             onResult(noctuaAdjustAttribution.toJsonString())
             return
         }
 
-        adjust?.getAdjustCurrentAttributionJson(onResult)
+        adjust?.getAdjustCurrentAttributionJson { attribution ->
+            Log.i(TAG, "Adjust attribution fetched: $attribution")
+            onResult(attribution)
+        }
     }
 
     companion object {
