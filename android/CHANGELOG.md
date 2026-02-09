@@ -1,3 +1,8 @@
+## [android-sdk-v0.25.6] - 2026-02-09
+
+### 🐛 Bug Fixes
+
+- Adjust attribution is not working properly in unity
 ## [android-sdk-v0.25.5] - 2026-02-09
 
 ### 💼 Other
