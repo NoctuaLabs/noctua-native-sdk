@@ -41,6 +41,7 @@ class Noctua(context: Context, publishedApps: List<String>) {
     private val accounts: AccountRepository
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var noctuaAdjustAttribution: NoctuaAdjustAttribution? = null
+    var adjustAttribution: String = ""
 
     init {
         val appContext = context.applicationContext
@@ -79,6 +80,10 @@ class Noctua(context: Context, publishedApps: List<String>) {
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to initialize Adjust SDK: ${e.message}")
                 null
+            }
+
+            if (adjust != null) {
+                getAdjustAttribution()
             }
         }
 
@@ -354,16 +359,14 @@ class Noctua(context: Context, publishedApps: List<String>) {
         noctuaInternal.deleteExternalEvents()
     }
 
-    fun getAdjustAttribution(onResult: (String) -> Unit) {
+    private fun getAdjustAttribution() {
         if (noctuaAdjustAttribution != null) {
-            Log.i(TAG, "Adjust attribution already fetched")
-            onResult(noctuaAdjustAttribution.toJsonString())
+            adjustAttribution = noctuaAdjustAttribution.toJsonString()
             return
         }
 
         adjust?.getAdjustCurrentAttributionJson { attribution ->
-            Log.i(TAG, "Adjust attribution fetched: $attribution")
-            onResult(attribution)
+            adjustAttribution = attribution
         }
     }
 
@@ -639,12 +642,12 @@ class Noctua(context: Context, publishedApps: List<String>) {
                 return
             }
 
-            Log.d(TAG, "getAdjustAttribution")
-
-            instance.getAdjustAttribution { attribution ->
-                onResult(attribution)
-                Log.d(TAG, "getAdjustAttribution: $attribution")
+            if (instance.adjustAttribution.isEmpty()) {
+                onResult("")
+                return
             }
+            
+            onResult(instance.adjustAttribution)
         }
     }
 
