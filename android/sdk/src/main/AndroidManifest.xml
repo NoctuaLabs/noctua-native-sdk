@@ -9,13 +9,13 @@
 
     <application android:gwpAsanMode="always">
         <provider
-            android:name=".AccountContentProvider"
+            android:name=".platform.AccountContentProvider"
             android:authorities="${applicationId}.noctuaaccountprovider"
             android:exported="true"
             tools:ignore="ExportedContentProvider" />
 
         <service
-            android:name=".NoctuaFirebaseMessagingService"
+            android:name=".services.NoctuaFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

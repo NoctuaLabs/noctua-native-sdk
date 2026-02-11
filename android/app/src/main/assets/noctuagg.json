@@ -1,16 +1,6 @@
 {
   "clientId": "1-e724f5a9e6f1",
   "gameId": 1,
-  "copublisher": {
-    "companyName": "",
-    "companyWebsiteUrl": "",
-    "companyTermUrl": "",
-    "companyPrivacyUrl": ""
-  },
-  "meta": {
-    "name": "Noctua Sample App - 20251112",
-    "version": 7
-  },
   "noctua": {
     "sentryDsnUrl": "https://4809b03b8d2d48e1865b61c4f7e2dc8c@app.glitchtip.com/9229",
     "sandboxEnabled": true,
@@ -18,7 +8,7 @@
     "welcomeToastDisabled": false,
     "iaaEnabled": true,
     "iapDisabled": false,
-    "nativeInternalTrackerEnabled": true,
+    "nativeInternalTrackerEnabled": false,
     "remoteFeatureFlags": {
       "vnLegalPurposeEnabled": false,
       "vnLegalPurposeFullKycEnabled": false,
@@ -30,7 +20,19 @@
     "android": {
       "environment": "sandbox",
       "appToken": "kg7l0jhuem80",
-      "customEventDisabled": false
+      "customEventDisabled": false,
+      "eventMap": {
+        "Download_Game": "3uglyi",
+        "login": "1qhqus",
+        "logout": "3gnca4",
+        "Open_User_Center": "khcgjc",
+        "play_Game": "arw9x0",
+        "purchase": "qye2vk",
+        "registration": "u0kfja",
+        "SDK Init": "3bipcl",
+        "Testiiinnnn": "vgr2dv",
+        "TestSendEvent": "xoizir"
+      }
     },
     "ios": {
       "environment": "sandbox",

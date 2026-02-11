@@ -1,4 +1,4 @@
-package com.noctuagames.sdk;
+package com.noctuagames.sdk.platform;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;

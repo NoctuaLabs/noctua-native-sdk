@@ -1,31 +1,16 @@
-package com.noctuagames.sdk
+package com.noctuagames.sdk.repositories
 
-import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
+import com.noctuagames.sdk.models.Account
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
-
-data class Account(
-    val userId: Long,
-    val gameId: Long,
-    val rawData: String,
-    val lastUpdated: Long
-) {
-    constructor(userId: Long, gameId: Long, rawData: String) : this(
-        userId = userId,
-        gameId = gameId,
-        rawData = rawData,
-        lastUpdated = System.currentTimeMillis()
-    )
-}
 
 class AccountRepository(private val context: Context) {
     private val authority: String = "${context.packageName}.noctuaaccountprovider"

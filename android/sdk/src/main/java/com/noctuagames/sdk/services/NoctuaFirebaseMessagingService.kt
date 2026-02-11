@@ -1,4 +1,4 @@
-package com.noctuagames.sdk
+package com.noctuagames.sdk.services
 
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService

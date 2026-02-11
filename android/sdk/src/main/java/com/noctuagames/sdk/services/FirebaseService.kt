@@ -1,9 +1,8 @@
-package com.noctuagames.sdk
+package com.noctuagames.sdk.services
 
 import android.content.Context
 import android.util.Log
 import android.os.Bundle
-import com.adjust.sdk.Adjust
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
@@ -11,15 +10,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
-
-data class FirebaseServiceConfig(
-    val android: FirebaseServiceAndroidConfig?
-)
-
-data class FirebaseServiceAndroidConfig(
-    val customEventDisabled: Boolean = false
-)
-
+import com.noctuagames.sdk.models.FirebaseServiceAndroidConfig
+import com.noctuagames.sdk.utils.putExtras
 
 class FirebaseService(private val config: FirebaseServiceAndroidConfig, context: Context) {
     private val TAG = this::class.simpleName

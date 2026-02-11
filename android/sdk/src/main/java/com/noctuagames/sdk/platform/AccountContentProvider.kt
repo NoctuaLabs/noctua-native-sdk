@@ -1,4 +1,4 @@
-package com.noctuagames.sdk
+package com.noctuagames.sdk.platform
 
 import android.content.ContentProvider
 import android.content.ContentValues

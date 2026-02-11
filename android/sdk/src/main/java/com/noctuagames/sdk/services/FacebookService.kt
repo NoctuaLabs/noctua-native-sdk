@@ -1,34 +1,21 @@
-package com.noctuagames.sdk
+package com.noctuagames.sdk.services
 
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.facebook.FacebookSdk
+import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
-import java.io.Serializable
+import com.noctuagames.sdk.models.FacebookServiceAndroidConfig
+import com.noctuagames.sdk.utils.putExtras
 import java.util.Currency
-import java.util.Date
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.iterator
 
 /*
 References:
 - https://developers.facebook.com/docs/app-events/getting-started-app-events-android/
 - https://developers.facebook.com/docs/app-events/reference
 * */
-
-data class FacebookServiceConfig(
-    val android: FacebookServiceAndroidConfig?
-)
-
-data class FacebookServiceAndroidConfig(
-    val enableDebug: Boolean = false,
-    val advertiserIdCollectionEnabled: Boolean = true,
-    val autoLogAppEventsEnabled: Boolean = true,
-    val customEventDisabled: Boolean = false
-)
 
 class FacebookService(private val config: FacebookServiceAndroidConfig, context: Context) {
     private val TAG = this::class.simpleName
@@ -37,10 +24,10 @@ class FacebookService(private val config: FacebookServiceAndroidConfig, context:
     init {
         if (config.enableDebug) {
             FacebookSdk.setIsDebugEnabled(true)
-            FacebookSdk.addLoggingBehavior(com.facebook.LoggingBehavior.APP_EVENTS)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
         } else {
             FacebookSdk.setIsDebugEnabled(false)
-            FacebookSdk.removeLoggingBehavior(com.facebook.LoggingBehavior.APP_EVENTS)
+            FacebookSdk.removeLoggingBehavior(LoggingBehavior.APP_EVENTS)
         }
 
         FacebookSdk.setAutoLogAppEventsEnabled(config.autoLogAppEventsEnabled)
