@@ -47,6 +47,10 @@ android {
     buildFeatures {
         compose = false
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 mavenPublishing {
@@ -130,6 +134,10 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.koin.core)
 
     // Add the dependencies for the Remote Config and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies
