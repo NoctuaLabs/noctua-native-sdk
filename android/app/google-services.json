@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:297069337891:android:1fdf14df2446740db50096",
         "android_client_info": {
-          "package_name": "com.android.noctuagames.noctuaquicksdktest"
+          "package_name": "com.noctuagames.android.nativesdk"
         }
       },
       "oauth_client": [

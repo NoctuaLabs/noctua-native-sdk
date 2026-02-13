@@ -12,11 +12,20 @@ import com.noctuagames.labs.sdk.NoctuaInternal
 import com.noctuagames.labs.sdk.utils.AppContext
 import com.noctuagames.labs.sdk.utils.initKoinManually
 import com.noctuagames.sdk.models.Account
+import com.noctuagames.sdk.models.BillingErrorCode
+import com.noctuagames.sdk.models.ConsumableType
 import com.noctuagames.sdk.models.NoctuaAdjustAttribution
+import com.noctuagames.sdk.models.NoctuaBillingConfig
 import com.noctuagames.sdk.models.NoctuaConfig
+import com.noctuagames.sdk.models.NoctuaProductDetails
+import com.noctuagames.sdk.models.NoctuaProductPurchaseStatus
+import com.noctuagames.sdk.models.NoctuaPurchaseResult
+import com.noctuagames.sdk.models.ProductType
 import com.noctuagames.sdk.models.toJsonString
 import com.noctuagames.sdk.repositories.AccountRepository
 import com.noctuagames.sdk.services.AdjustService
+import com.noctuagames.sdk.services.BillingService
+import com.noctuagames.sdk.services.BillingEventListener
 import com.noctuagames.sdk.services.FacebookService
 import com.noctuagames.sdk.services.FirebaseService
 import com.noctuagames.sdk.utils.loadConfig
@@ -24,7 +33,8 @@ import kotlinx.coroutines.*
 
 class NoctuaPresenter(
     context: Context,
-    private val publishedApps: List<String>
+    private val publishedApps: List<String>,
+    private val billingConfig: NoctuaBillingConfig = NoctuaBillingConfig()
 ) {
 
     private val TAG = "NoctuaPresenter"
@@ -35,11 +45,20 @@ class NoctuaPresenter(
     private val adjust: AdjustService?
     private val firebase: FirebaseService?
     private val facebook: FacebookService?
+    private val billing: BillingService
     private val accounts: AccountRepository
 
     private var nativeInternalTrackerEnabled: Boolean = false
     private var noctuaAdjustAttribution: NoctuaAdjustAttribution? = null
     private var adjustAttribution: String = ""
+    
+    // Billing callbacks
+    private var billingPurchaseCallback: ((NoctuaPurchaseResult) -> Unit)? = null
+    private var billingProductDetailsCallback: ((List<NoctuaProductDetails>) -> Unit)? = null
+    private var billingQueryPurchasesCallback: ((List<NoctuaPurchaseResult>) -> Unit)? = null
+    private var billingRestorePurchasesCallback: ((List<NoctuaPurchaseResult>) -> Unit)? = null
+    private var billingProductPurchaseStatusCallback: ((NoctuaProductPurchaseStatus) -> Unit)? = null
+    private var billingServerVerificationCallback: ((NoctuaPurchaseResult, ConsumableType) -> Unit)? = null
 
     init {
         AppContext.set(appContext)
@@ -55,6 +74,7 @@ class NoctuaPresenter(
         adjust = createAdjust(config)
         firebase = createFirebase(config)
         facebook = createFacebook(config)
+        billing = createBilling()
 
         accounts = AccountRepository(appContext)
 
@@ -332,8 +352,120 @@ class NoctuaPresenter(
     }
 
     // ------------------------------------
+    // Billing / In-App Purchases
+    // ------------------------------------
+
+    fun initializeBilling(
+        onPurchaseCompleted: ((NoctuaPurchaseResult) -> Unit)? = null,
+        onPurchaseUpdated: ((NoctuaPurchaseResult) -> Unit)? = null,
+        onProductDetailsLoaded: ((List<NoctuaProductDetails>) -> Unit)? = null,
+        onQueryPurchasesCompleted: ((List<NoctuaPurchaseResult>) -> Unit)? = null,
+        onRestorePurchasesCompleted: ((List<NoctuaPurchaseResult>) -> Unit)? = null,
+        onProductPurchaseStatusResult: ((NoctuaProductPurchaseStatus) -> Unit)? = null,
+        onServerVerificationRequired: ((NoctuaPurchaseResult, ConsumableType) -> Unit)? = null,
+        onBillingError: ((BillingErrorCode, String) -> Unit)? = null
+    ) {
+        billingPurchaseCallback = onPurchaseCompleted
+        billingProductDetailsCallback = onProductDetailsLoaded
+        billingQueryPurchasesCallback = onQueryPurchasesCompleted
+        billingRestorePurchasesCallback = onRestorePurchasesCompleted
+        billingProductPurchaseStatusCallback = onProductPurchaseStatusResult
+        billingServerVerificationCallback = onServerVerificationRequired
+
+        billing.initialize(object : BillingEventListener {
+            override fun onPurchaseCompleted(result: NoctuaPurchaseResult) {
+                billingPurchaseCallback?.invoke(result)
+            }
+
+            override fun onPurchaseUpdated(result: NoctuaPurchaseResult) {
+                onPurchaseUpdated?.invoke(result)
+            }
+
+            override fun onProductDetailsLoaded(products: List<NoctuaProductDetails>) {
+                billingProductDetailsCallback?.invoke(products)
+            }
+
+            override fun onQueryPurchasesCompleted(purchases: List<NoctuaPurchaseResult>) {
+                billingQueryPurchasesCallback?.invoke(purchases)
+            }
+
+            override fun onRestorePurchasesCompleted(purchases: List<NoctuaPurchaseResult>) {
+                billingRestorePurchasesCallback?.invoke(purchases)
+            }
+
+            override fun onProductPurchaseStatusResult(status: NoctuaProductPurchaseStatus) {
+                billingProductPurchaseStatusCallback?.invoke(status)
+            }
+
+            override fun onServerVerificationRequired(result: NoctuaPurchaseResult, consumableType: ConsumableType) {
+                billingServerVerificationCallback?.invoke(result, consumableType)
+            }
+
+            override fun onBillingError(error: BillingErrorCode, message: String) {
+                Log.e(TAG, "Billing error: $error - $message")
+                onBillingError?.invoke(error, message)
+            }
+        })
+    }
+
+    fun registerProduct(productId: String, consumableType: ConsumableType) {
+        billing.registerProduct(productId, consumableType)
+    }
+
+    fun queryProductDetails(productIds: List<String>, productType: ProductType = ProductType.INAPP) {
+        billing.queryProductDetails(productIds, productType)
+    }
+
+    fun launchBillingFlow(activity: Activity, productDetails: NoctuaProductDetails) {
+        billing.launchBillingFlow(activity, productDetails)
+    }
+
+    fun queryPurchases(productType: ProductType = ProductType.INAPP) {
+        billing.queryPurchases(productType)
+    }
+
+    fun acknowledgePurchase(purchaseToken: String, callback: ((Boolean) -> Unit)? = null) {
+        billing.acknowledgePurchase(purchaseToken, callback)
+    }
+
+    fun consumePurchase(purchaseToken: String, callback: ((Boolean) -> Unit)? = null) {
+        billing.consumePurchase(purchaseToken, callback)
+    }
+
+    fun restorePurchases() {
+        billing.restorePurchases()
+    }
+
+    fun getProductPurchaseStatus(productId: String) {
+        billing.getProductPurchaseStatus(productId)
+    }
+
+    fun completePurchaseProcessing(
+        purchaseToken: String,
+        consumableType: ConsumableType,
+        verified: Boolean,
+        callback: ((Boolean) -> Unit)? = null
+    ) {
+        billing.completePurchaseProcessing(purchaseToken, consumableType, verified, callback)
+    }
+
+    fun reconnectBilling() {
+        billing.reconnect()
+    }
+
+    fun disposeBilling() {
+        billing.dispose()
+    }
+
+    fun isBillingReady(): Boolean = billing.isReady()
+
+    // ------------------------------------
     // Private SDK Initialization
     // ------------------------------------
+
+    private fun createBilling(): BillingService {
+        return BillingService(appContext, billingConfig)
+    }
 
     private fun createAdjust(config: NoctuaConfig): AdjustService? =
         try {

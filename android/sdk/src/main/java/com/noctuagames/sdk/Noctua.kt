@@ -4,6 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.noctuagames.sdk.models.Account
+import com.noctuagames.sdk.models.BillingErrorCode
+import com.noctuagames.sdk.models.ConsumableType
+import com.noctuagames.sdk.models.NoctuaBillingConfig
+import com.noctuagames.sdk.models.NoctuaProductDetails
+import com.noctuagames.sdk.models.ProductType
+import com.noctuagames.sdk.models.NoctuaProductPurchaseStatus
+import com.noctuagames.sdk.models.NoctuaPurchaseResult
 import com.noctuagames.sdk.presenter.NoctuaPresenter
 
 /**
@@ -36,9 +43,14 @@ object Noctua {
      *
      * @param context Application or Activity context.
      * @param publishedApps Optional list of published application identifiers.
+     * @param billingConfig Optional billing configuration. If not provided, defaults are used.
      */
-    fun init(context: Context, publishedApps: List<String> = emptyList()) {
-        presenter = NoctuaPresenter(context, publishedApps)
+    fun init(
+        context: Context,
+        publishedApps: List<String> = emptyList(),
+        billingConfig: NoctuaBillingConfig = NoctuaBillingConfig()
+    ) {
+        presenter = NoctuaPresenter(context, publishedApps, billingConfig)
         askNotificationPermission(context as Activity)
     }
 
@@ -305,6 +317,151 @@ object Noctua {
      */
     fun deleteEvents() =
         ensureInit { presenter.deleteEvents() }
+
+    // ------------------------------------
+    // In-App Purchases (Billing)
+    // ------------------------------------
+
+    /**
+     * Initializes the billing service for in-app purchases.
+     *
+     * @param onPurchaseCompleted Callback when a purchase is completed.
+     * @param onPurchaseUpdated Callback when a purchase is updated.
+     * @param onProductDetailsLoaded Callback when product details are loaded.
+     * @param onQueryPurchasesCompleted Callback when purchases are queried.
+     * @param onRestorePurchasesCompleted Callback when restore purchases completes.
+     * @param onProductPurchaseStatusResult Callback with the purchase status of a product.
+     * @param onServerVerificationRequired Callback when a purchase requires server verification.
+     *   The integrator must verify the purchase on their server and then call
+     *   [completePurchaseProcessing] with the result.
+     * @param onBillingError Callback when a billing error occurs.
+     */
+    fun initializeBilling(
+        onPurchaseCompleted: ((NoctuaPurchaseResult) -> Unit)? = null,
+        onPurchaseUpdated: ((NoctuaPurchaseResult) -> Unit)? = null,
+        onProductDetailsLoaded: ((List<NoctuaProductDetails>) -> Unit)? = null,
+        onQueryPurchasesCompleted: ((List<NoctuaPurchaseResult>) -> Unit)? = null,
+        onRestorePurchasesCompleted: ((List<NoctuaPurchaseResult>) -> Unit)? = null,
+        onProductPurchaseStatusResult: ((NoctuaProductPurchaseStatus) -> Unit)? = null,
+        onServerVerificationRequired: ((NoctuaPurchaseResult, ConsumableType) -> Unit)? = null,
+        onBillingError: ((BillingErrorCode, String) -> Unit)? = null
+    ) = ensureInit {
+        presenter.initializeBilling(onPurchaseCompleted, onPurchaseUpdated, onProductDetailsLoaded, onQueryPurchasesCompleted, onRestorePurchasesCompleted, onProductPurchaseStatusResult, onServerVerificationRequired, onBillingError)
+    }
+
+    /**
+     * Registers a product with its consumable type.
+     *
+     * @param productId The product ID from Google Play Console.
+     * @param consumableType The type of product (CONSUMABLE, NON_CONSUMABLE, SUBSCRIPTION).
+     */
+    fun registerProduct(productId: String, consumableType: ConsumableType) =
+        ensureInit { presenter.registerProduct(productId, consumableType) }
+
+    /**
+     * Queries product details from Google Play.
+     *
+     * @param productIds List of product IDs to query.
+     * @param productType Type of products (INAPP or SUBS).
+     */
+    fun queryProductDetails(productIds: List<String>, productType: ProductType = ProductType.INAPP) =
+        ensureInit { presenter.queryProductDetails(productIds, productType) }
+
+    /**
+     * Launches the billing flow for a purchase.
+     *
+     * @param activity The activity to launch the billing flow from.
+     * @param productDetails The product details to purchase.
+     */
+    fun launchBillingFlow(activity: Activity, productDetails: NoctuaProductDetails) =
+        ensureInit { presenter.launchBillingFlow(activity, productDetails) }
+
+    /**
+     * Queries existing purchases.
+     *
+     * @param productType Type of products to query.
+     */
+    fun queryPurchases(productType: ProductType = ProductType.INAPP) =
+        ensureInit { presenter.queryPurchases(productType) }
+
+    /**
+     * Acknowledges a purchase.
+     *
+     * @param purchaseToken The purchase token to acknowledge.
+     * @param callback Callback with success status.
+     */
+    fun acknowledgePurchase(purchaseToken: String, callback: ((Boolean) -> Unit)? = null) =
+        ensureInit { presenter.acknowledgePurchase(purchaseToken, callback) }
+
+    /**
+     * Consumes a purchase (for consumable products).
+     *
+     * @param purchaseToken The purchase token to consume.
+     * @param callback Callback with success status.
+     */
+    fun consumePurchase(purchaseToken: String, callback: ((Boolean) -> Unit)? = null) =
+        ensureInit { presenter.consumePurchase(purchaseToken, callback) }
+
+    /**
+     * Completes purchase processing after server verification.
+     *
+     * Call this after your server has verified (and acknowledged) the purchase
+     * received via [onServerVerificationRequired].
+     * - For **consumables**: consumes the purchase client-side so it can be bought again.
+     * - For **non-consumables / subscriptions**: no client-side action needed since
+     *   the server already acknowledged via the Google Play Developer API.
+     *
+     * @param purchaseToken The purchase token that was verified.
+     * @param consumableType The consumable type of the product.
+     * @param verified Whether the server verification succeeded.
+     * @param callback Optional callback with success status.
+     */
+    fun completePurchaseProcessing(
+        purchaseToken: String,
+        consumableType: ConsumableType,
+        verified: Boolean,
+        callback: ((Boolean) -> Unit)? = null
+    ) = ensureInit {
+        presenter.completePurchaseProcessing(purchaseToken, consumableType, verified, callback)
+    }
+
+    /**
+     * Restores all purchases by querying both INAPP and SUBS purchases.
+     * Unacknowledged purchases are automatically processed (acknowledged or consumed)
+     * based on their registered consumable type.
+     */
+    fun restorePurchases() =
+        ensureInit { presenter.restorePurchases() }
+
+    /**
+     * Gets the purchase status of a specific product.
+     * The result is returned via the [onProductPurchaseStatusResult] callback
+     * registered in [initializeBilling].
+     *
+     * @param productId The product ID to check.
+     */
+    fun getProductPurchaseStatus(productId: String) =
+        ensureInit { presenter.getProductPurchaseStatus(productId) }
+
+    /**
+     * Reconnects the billing client.
+     */
+    fun reconnectBilling() =
+        ensureInit { presenter.reconnectBilling() }
+
+    /**
+     * Disposes the billing service.
+     */
+    fun disposeBilling() =
+        ensureInit { presenter.disposeBilling() }
+
+    /**
+     * Checks if billing client is ready.
+     *
+     * @return True if billing is ready, false otherwise.
+     */
+    fun isBillingReady(): Boolean =
+        ifInitialized { presenter.isBillingReady() } ?: false
 
     // ------------------------------------
     // Internal Helpers
