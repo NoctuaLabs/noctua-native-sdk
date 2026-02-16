@@ -1,32 +1,21 @@
 import Foundation
-import os
 import StoreKit
 
-public typealias CompletionCallback = (Bool, String) -> Void
-
-struct NoctuaServiceConfig: Decodable {
-    let iapDisabled: Bool?
-    let nativeInternalTrackerEnabled: Bool?
-}
-
-class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
+class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver, IAPServiceProtocol {
     private var productCallbacks: [String: CompletionCallback] = [:]
     private var currencyCallbacks: [String: CompletionCallback] = [:]
     private var noctuaConfig: NoctuaServiceConfig?
-
-    private let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: NoctuaService.self)
-    )
+    private let logger: NoctuaLogger
 
     var iapDisabled: Bool {
         noctuaConfig?.iapDisabled ?? false
     }
 
-    init(config: NoctuaServiceConfig) {
+    init(config: NoctuaServiceConfig, logger: NoctuaLogger = IOSLogger(category: "NoctuaService")) {
+        self.logger = logger
         super.init()
         noctuaConfig = config
-        
+
         logger.debug("Disable IAP is : \(self.iapDisabled)")
 
         if !iapDisabled {
@@ -68,12 +57,10 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
             let productId = product.productIdentifier
 
             if let purchaseCallback = productCallbacks[productId] {
-                // Handle purchase flow
                 logger.info("Found product for purchase: \(productId)")
                 let payment = SKPayment(product: product)
                 SKPaymentQueue.default().add(payment)
             } else if let currencyCallback = currencyCallbacks[productId] {
-                // Handle currency query
                 if let currency = product.priceLocale.currencyCode {
                     logger.info("Product currency: \(currency)")
                     currencyCallback(true, currency)
@@ -128,7 +115,6 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
                 callback(false, "Payment deferred")
 
             case .purchasing:
-                // In progress; do nothing.
                 logger.warning("Transaction in progress")
                 break
 
@@ -156,21 +142,17 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
             callback(false, "Transaction succeeded, but no receipt data available")
         }
     }
-    
+
     func getProductPurchasedById(id productId: String, completion: @escaping (Bool) -> Void) async {
         if #available(iOS 15.0, *) {
             let purchased = await self.getProductPurchasedStoreKit2(id: productId)
             completion(purchased)
         } else {
-            // StoreKit 1 does not provide a reliable way to check purchase status on-device.
-            // For older iOS versions, verify the receipt with your server-side backend instead.
-            // to get the receipt use getReceiptProductPurchasedStoreKit1(id: productId)
-            
             completion(false)
             logger.warning("Unable to verify product purchase on iOS versions below 15.0")
         }
     }
-    
+
     @available(iOS 15.0, *)
     private func getProductPurchasedStoreKit2(id productId: String) async -> Bool {
         for await result in Transaction.currentEntitlements {
@@ -182,18 +164,17 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
         }
         return false
     }
-    
-    
+
     func getReceiptProductPurchasedStoreKit1(id productId: String, completion: @escaping (String) -> Void) {
         guard let appStoreReceiptUrl = Bundle.main.appStoreReceiptURL,
               let receiptData = try? Data(contentsOf: appStoreReceiptUrl) else {
             return completion("")
         }
-        
+
         let receiptString = receiptData.base64EncodedString(options: [])
-        
+
         logger.info("Product receipt: \(receiptString.prefix(50))...")
-        
+
         completion(receiptString)
     }
 }
