@@ -3,5 +3,5 @@ import Foundation
 protocol AdjustSpecificProtocol {
     func onOnline()
     func onOffline()
-    func getAdjustCurrentAttribution() -> [String: Any]?
+    func getAdjustCurrentAttribution(completion: @escaping ([String: Any]) -> Void)
 }

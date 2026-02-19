@@ -64,7 +64,7 @@ struct FirebaseSection: View {
                     remoteConfigResult = "String: \(value)"
                     logger.debug("Remote Config String[\(remoteConfigKey)]: \(value)")
                 }) {
-                    actionButtonLabel("String", color: Color(red: 0.0, green: 0.6, blue: 0.6))
+                    actionButtonLabel("String", color: Color.teal)
                 }
 
                 Button(action: {
@@ -72,7 +72,7 @@ struct FirebaseSection: View {
                     remoteConfigResult = "Boolean: \(value)"
                     logger.debug("Remote Config Bool[\(remoteConfigKey)]: \(value)")
                 }) {
-                    actionButtonLabel("Boolean", color: Color(red: 0.0, green: 0.6, blue: 0.6))
+                    actionButtonLabel("Boolean", color: Color.teal)
                 }
             }
 
@@ -82,7 +82,7 @@ struct FirebaseSection: View {
                     remoteConfigResult = "Double: \(value)"
                     logger.debug("Remote Config Double[\(remoteConfigKey)]: \(value)")
                 }) {
-                    actionButtonLabel("Double", color: Color(red: 0.0, green: 0.6, blue: 0.6))
+                    actionButtonLabel("Double", color: Color.teal)
                 }
 
                 Button(action: {
@@ -90,7 +90,7 @@ struct FirebaseSection: View {
                     remoteConfigResult = "Long: \(value)"
                     logger.debug("Remote Config Long[\(remoteConfigKey)]: \(value)")
                 }) {
-                    actionButtonLabel("Long", color: Color(red: 0.0, green: 0.6, blue: 0.6))
+                    actionButtonLabel("Long", color: Color.teal)
                 }
             }
 
@@ -100,7 +100,7 @@ struct FirebaseSection: View {
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(8)
-                    .background(Color(red: 0.0, green: 0.6, blue: 0.6).opacity(0.1))
+                    .background(Color.teal.opacity(0.1))
                     .cornerRadius(6)
             }
         }

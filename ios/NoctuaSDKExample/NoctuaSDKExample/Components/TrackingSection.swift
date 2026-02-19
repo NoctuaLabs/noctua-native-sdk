@@ -12,21 +12,21 @@ struct TrackingSection: View {
             Button(action: {
                 requestPermission()
 
-                let attribution = Noctua.getAdjustCurrentAttribution()
-                logger.debug("""
-                Current Adjust Attribution:
-                - trackerToken: \(attribution["trackerToken"] as? String ?? "nil")
-                - trackerName: \(attribution["trackerName"] as? String ?? "nil")
-                - network: \(attribution["network"] as? String ?? "nil")
-                - campaign: \(attribution["campaign"] as? String ?? "nil")
-                - adgroup: \(attribution["adgroup"] as? String ?? "nil")
-                - creative: \(attribution["creative"] as? String ?? "nil")
-                - clickLabel: \(attribution["clickLabel"] as? String ?? "nil")
-                - adid: \(attribution["adid"] as? String ?? "nil")
-                - costType: \(attribution["costType"] as? String ?? "nil")
-                - costAmount: \(attribution["costAmount"] as? Double ?? 0)
-                - costCurrency: \(attribution["costCurrency"] as? String ?? "nil")
-                """)
+                Noctua.getAdjustCurrentAttribution { attribution in
+                    logger.debug("""
+                    Current Adjust Attribution:
+                    - trackerToken: \(attribution["trackerToken"] as? String ?? "nil")
+                    - trackerName: \(attribution["trackerName"] as? String ?? "nil")
+                    - network: \(attribution["network"] as? String ?? "nil")
+                    - campaign: \(attribution["campaign"] as? String ?? "nil")
+                    - adgroup: \(attribution["adgroup"] as? String ?? "nil")
+                    - creative: \(attribution["creative"] as? String ?? "nil")
+                    - clickLabel: \(attribution["clickLabel"] as? String ?? "nil")
+                    - costType: \(attribution["costType"] as? String ?? "nil")
+                    - costAmount: \(attribution["costAmount"] as? Double ?? 0)
+                    - costCurrency: \(attribution["costCurrency"] as? String ?? "nil")
+                    """)
+                }
             }) {
                 actionButtonLabel("Get Adjust Attribution")
             }
@@ -56,21 +56,19 @@ struct TrackingSection: View {
     }
 
     private func requestPermission() {
-        if #available(iOS 14, *) {
-            ATTrackingManager.requestTrackingAuthorization { status in
-                switch status {
-                case .authorized:
-                    print("Authorized")
-                    print(ASIdentifierManager.shared().advertisingIdentifier)
-                case .denied:
-                    print("Denied")
-                case .notDetermined:
-                    print("Not Determined")
-                case .restricted:
-                    print("Restricted")
-                @unknown default:
-                    print("Unknown")
-                }
+        ATTrackingManager.requestTrackingAuthorization { status in
+            switch status {
+            case .authorized:
+                print("Authorized")
+                print(ASIdentifierManager.shared().advertisingIdentifier)
+            case .denied:
+                print("Denied")
+            case .notDetermined:
+                print("Not Determined")
+            case .restricted:
+                print("Restricted")
+            @unknown default:
+                print("Unknown")
             }
         }
     }

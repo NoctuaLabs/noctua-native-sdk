@@ -160,7 +160,11 @@ class SessionPresenter {
 
     // MARK: - Attribution
 
-    func getAdjustCurrentAttribution() -> [String: Any] {
-        return adjustSpecific?.getAdjustCurrentAttribution() ?? [:]
+    func getAdjustCurrentAttribution(completion: @escaping ([String: Any]) -> Void) {
+        if let adjustSpecific = adjustSpecific {
+            adjustSpecific.getAdjustCurrentAttribution(completion: completion)
+        } else {
+            completion([:])
+        }
     }
 }

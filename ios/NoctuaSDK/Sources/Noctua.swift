@@ -233,8 +233,12 @@ import Foundation
         session?.getEventCount(onResult: onResult)
     }
 
-    @objc public static func getAdjustCurrentAttribution() -> [String: Any] {
-        return session?.getAdjustCurrentAttribution() ?? [:]
+    @objc public static func getAdjustCurrentAttribution(completion: @escaping ([String: Any]) -> Void) {
+        if let session = session {
+            session.getAdjustCurrentAttribution(completion: completion)
+        } else {
+            completion([:])
+        }
     }
 
     // MARK: - Private
@@ -260,16 +264,10 @@ import Foundation
         var adjustSpecific: AdjustSpecificProtocol? = nil
         var firebaseQuery: FirebaseQueryServiceProtocol? = nil
 
-        // StoreKit Service (runtime version check for backward compatibility)
+        // StoreKit Service (StoreKit 2, requires iOS 15+)
         let storeKitConfig = NoctuaStoreKitConfig()
-        var storeKitService: StoreKitServiceProtocol?
-        if #available(iOS 15.0, *) {
-            storeKitService = StoreKitService(config: storeKitConfig, logger: logger)
-            logger.info("StoreKitService initialized (StoreKit 2)")
-        } else {
-            storeKitService = StoreKitLegacyService(config: storeKitConfig, logger: logger)
-            logger.info("StoreKitLegacyService initialized (StoreKit 1 fallback)")
-        }
+        let storeKitService: StoreKitServiceProtocol? = StoreKitService(config: storeKitConfig, logger: logger)
+        logger.info("StoreKitService initialized (StoreKit 2)")
 
         // AdjustService
         if config.adjust == nil {

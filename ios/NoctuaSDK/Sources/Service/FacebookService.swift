@@ -46,9 +46,9 @@ class FacebookService: TrackerServiceProtocol {
             parameters[AppEvents.ParameterName(key)] = value
         }
 
-        AppEvents.shared.logEvent(AppEvents.Name("ad_revenue"), parameters: parameters)
+        AppEvents.shared.logEvent(AppEvents.Name.adImpression, parameters: parameters)
 
-        logger.debug("'ad_revenue' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
+        logger.debug("'adImpression' tracked: source: \(source), revenue: \(revenue), currency: \(currency), extraPayload: \(extraPayload)")
 #endif
     }
 
