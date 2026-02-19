@@ -32,10 +32,10 @@ class CurrencyQueryService: NSObject, SKProductsRequestDelegate {
             if let callback = callbacks[productId] {
                 if let currency = product.priceLocale.currencyCode {
                     logger.debug("Currency for \(productId): \(currency)")
-                    callback(true, currency)
+                    DispatchQueue.main.async { callback(true, currency) }
                 } else {
                     logger.warning("Unable to retrieve currency for \(productId)")
-                    callback(false, "Unable to retrieve product currency")
+                    DispatchQueue.main.async { callback(false, "Unable to retrieve product currency") }
                 }
                 callbacks.removeValue(forKey: productId)
             }
@@ -45,7 +45,7 @@ class CurrencyQueryService: NSObject, SKProductsRequestDelegate {
         for invalidId in response.invalidProductIdentifiers {
             if let callback = callbacks[invalidId] {
                 logger.warning("Invalid product ID: \(invalidId)")
-                callback(false, "Invalid product ID: \(invalidId)")
+                DispatchQueue.main.async { callback(false, "Invalid product ID: \(invalidId)") }
                 callbacks.removeValue(forKey: invalidId)
             }
         }
@@ -58,10 +58,9 @@ class CurrencyQueryService: NSObject, SKProductsRequestDelegate {
 
         // Notify all pending callbacks for this request about the failure
         if let productsRequest = request as? SKProductsRequest {
-            // We can't directly get the product IDs from the request,
-            // so notify all pending callbacks
             for (productId, callback) in callbacks {
-                callback(false, "Request failed: \(error.localizedDescription)")
+                let errorMessage = "Request failed: \(error.localizedDescription)"
+                DispatchQueue.main.async { callback(false, errorMessage) }
                 callbacks.removeValue(forKey: productId)
             }
             cleanupRequest(productsRequest)
