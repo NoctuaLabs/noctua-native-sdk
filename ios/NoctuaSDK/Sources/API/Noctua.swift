@@ -2,7 +2,7 @@ import Foundation
 
 @objc public class Noctua: NSObject {
     @objc public static func initNoctua() throws {
-        if tracker == nil && iap == nil && account == nil && session == nil {
+        if tracker == nil && storeKit == nil && account == nil && session == nil {
             let config = try loadConfig()
             let logger = IOSLogger(category: "Noctua")
 
@@ -15,8 +15,8 @@ import Foundation
                 logger: logger
             )
 
-            iap = IAPPresenter(
-                iapService: services.iapService,
+            storeKit = StoreKitPresenter(
+                storeKitService: services.storeKitService,
                 logger: logger
             )
 
@@ -35,6 +35,8 @@ import Foundation
         }
     }
 
+    // MARK: - Tracking
+
     @objc public static func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String: Any] = [:]) {
         tracker?.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
     }
@@ -51,21 +53,77 @@ import Foundation
         tracker?.trackCustomEventWithRevenue(eventName, revenue: revenue, currency: currency, payload: payload)
     }
 
-    @objc public static func purchaseItem(_ productId: String, completion: @escaping (Bool, String) -> Void) {
-        iap?.purchaseItem(productId: productId, completion: completion)
+    // MARK: - StoreKit / In-App Purchases
+
+    @objc public static func initializeStoreKit(
+        onPurchaseCompleted: ((NoctuaPurchaseResult) -> Void)? = nil,
+        onPurchaseUpdated: ((NoctuaPurchaseResult) -> Void)? = nil,
+        onProductDetailsLoaded: (([NoctuaProductDetails]) -> Void)? = nil,
+        onQueryPurchasesCompleted: (([NoctuaPurchaseResult]) -> Void)? = nil,
+        onRestorePurchasesCompleted: (([NoctuaPurchaseResult]) -> Void)? = nil,
+        onProductPurchaseStatusResult: ((NoctuaProductPurchaseStatus) -> Void)? = nil,
+        onServerVerificationRequired: ((NoctuaPurchaseResult, ConsumableType) -> Void)? = nil,
+        onStoreKitError: ((StoreKitErrorCode, String) -> Void)? = nil
+    ) {
+        storeKit?.initializeStoreKit(
+            onPurchaseCompleted: onPurchaseCompleted,
+            onPurchaseUpdated: onPurchaseUpdated,
+            onProductDetailsLoaded: onProductDetailsLoaded,
+            onQueryPurchasesCompleted: onQueryPurchasesCompleted,
+            onRestorePurchasesCompleted: onRestorePurchasesCompleted,
+            onProductPurchaseStatusResult: onProductPurchaseStatusResult,
+            onServerVerificationRequired: onServerVerificationRequired,
+            onStoreKitError: onStoreKitError
+        )
     }
 
-    @objc public static func getProductPurchasedById(id productId: String, completion: @escaping (Bool) -> Void) async {
-        await iap?.getProductPurchasedById(id: productId, completion: completion)
+    @objc public static func registerProduct(productId: String, consumableType: ConsumableType) {
+        storeKit?.registerProduct(productId: productId, consumableType: consumableType)
     }
 
-    @objc public static func getReceiptProductPurchasedStoreKit1(id productId: String, completion: @escaping (String) -> Void) {
-        iap?.getReceiptProductPurchasedStoreKit1(id: productId, completion: completion)
+    @objc public static func queryProductDetails(productIds: [String], productType: ProductType = .inapp) {
+        storeKit?.queryProductDetails(productIds: productIds, productType: productType)
     }
 
-    @objc public static func getActiveCurrency(_ productId: String, completion: @escaping (Bool, String) -> Void) {
-        iap?.getActiveCurrency(productId: productId, completion: completion)
+    @objc public static func purchase(productId: String) {
+        storeKit?.purchase(productId: productId)
     }
+
+    @objc public static func queryPurchases(productType: ProductType = .inapp) {
+        storeKit?.queryPurchases(productType: productType)
+    }
+
+    @objc public static func restorePurchases() {
+        storeKit?.restorePurchases()
+    }
+
+    @objc public static func getProductPurchaseStatus(productId: String) {
+        storeKit?.getProductPurchaseStatus(productId: productId)
+    }
+
+    @objc public static func completePurchaseProcessing(
+        purchaseToken: String,
+        consumableType: ConsumableType,
+        verified: Bool,
+        callback: ((Bool) -> Void)? = nil
+    ) {
+        storeKit?.completePurchaseProcessing(
+            purchaseToken: purchaseToken,
+            consumableType: consumableType,
+            verified: verified,
+            callback: callback
+        )
+    }
+
+    @objc public static func disposeStoreKit() {
+        storeKit?.disposeStoreKit()
+    }
+
+    @objc public static func isStoreKitReady() -> Bool {
+        return storeKit?.isStoreKitReady() ?? false
+    }
+
+    // MARK: - Accounts
 
     @objc public static func putAccount(gameId: Int64, playerId: Int64, rawData: String) {
         account?.putAccount(gameId: gameId, playerId: playerId, rawData: rawData)
@@ -82,6 +140,8 @@ import Foundation
     @objc public static func deleteAccount(gameId: Int64, playerId: Int64) {
         account?.deleteAccount(gameId: gameId, playerId: playerId)
     }
+
+    // MARK: - Session & Lifecycle
 
     @objc public static func onOnline() {
         session?.onOnline()
@@ -162,13 +222,13 @@ import Foundation
     // MARK: - Private
 
     private static var tracker: TrackerPresenter?
-    private static var iap: IAPPresenter?
+    private static var storeKit: StoreKitPresenter?
     private static var account: AccountPresenter?
     private static var session: SessionPresenter?
 
     private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger) -> (
         trackers: [TrackerServiceProtocol],
-        iapService: IAPServiceProtocol?,
+        storeKitService: StoreKitServiceProtocol?,
         adjustSpecific: AdjustSpecificProtocol?,
         firebaseQuery: FirebaseQueryServiceProtocol?,
         noctuaInternal: NoctuaInternalServiceProtocol?,
@@ -181,15 +241,16 @@ import Foundation
         var trackers: [TrackerServiceProtocol] = []
         var adjustSpecific: AdjustSpecificProtocol? = nil
         var firebaseQuery: FirebaseQueryServiceProtocol? = nil
-        var iapService: IAPServiceProtocol? = nil
 
-        // NoctuaService (IAP)
-        if config.noctua == nil {
-            logger.warning("config for NoctuaService not found")
+        // StoreKit Service (runtime version check for backward compatibility)
+        let storeKitConfig = NoctuaStoreKitConfig()
+        var storeKitService: StoreKitServiceProtocol?
+        if #available(iOS 15.0, *) {
+            storeKitService = StoreKitService(config: storeKitConfig, logger: logger)
+            logger.info("StoreKitService initialized (StoreKit 2)")
         } else {
-            let service = NoctuaService(config: config.noctua!, logger: logger)
-            iapService = service
-            logger.info("NoctuaService initialized")
+            storeKitService = StoreKitLegacyService(config: storeKitConfig, logger: logger)
+            logger.info("StoreKitLegacyService initialized (StoreKit 1 fallback)")
         }
 
         // AdjustService
@@ -253,7 +314,7 @@ import Foundation
 
         let accountRepo = AccountRepository(logger: logger)
 
-        return (trackers, iapService, adjustSpecific, firebaseQuery, noctuaInternal, accountRepo)
+        return (trackers, storeKitService, adjustSpecific, firebaseQuery, noctuaInternal, accountRepo)
     }
 }
 

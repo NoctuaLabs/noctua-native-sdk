@@ -9,7 +9,6 @@ struct NoctuaConfig: Decodable {
 }
 
 struct NoctuaServiceConfig: Decodable {
-    let iapDisabled: Bool?
     let nativeInternalTrackerEnabled: Bool?
 }
 
