@@ -1,4 +1,21 @@
-## [ios-sdk-v0.26.1] - 2026-02-02
+## [ios-sdk-v0.28.0] - 2026-02-19
+
+### 🚀 Features
+
+- *(ios)* Add StoreKit 2 billing with legacy fallback and split example app into components
+- Add per-row event storage methods and sample app demo
+- *(ios)* Implement all missing SDK APIs in sample app
+- *(ios)* Merge main-icm dependency upgrades into MVP architecture
+- *(ios)* Add getActiveCurrency API and iapDisabled config flag
+
+### 🐛 Bug Fixes
+
+- *(ios)* Dispatch getActiveCurrency callbacks on main thread
+
+### 🚜 Refactor
+
+- *(ios)* Restructure SDK to MVP architecture
+## [ios-sdk-v0.27.0] - 2026-02-02
 
 ### 🐛 Bug Fixes
 
