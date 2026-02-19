@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew :sdk:testReleaseUnitTest:*)",
+      "Bash(./gradlew:*)",
+      "Bash(for f in C:/Users/User/Documents/noctua-sdk-native/android/sdk/build/test-results/testReleaseUnitTest/*.xml C:/Users/User/Documents/noctua-sdk-native/android/app/build/test-results/testReleaseUnitTest/*.xml)",
+      "Bash(do basename \"$f\")",
+      "Bash(find:*)"
+    ]
+  }
+}

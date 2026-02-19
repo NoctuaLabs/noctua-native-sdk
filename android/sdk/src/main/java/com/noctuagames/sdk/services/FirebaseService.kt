@@ -1,0 +1,174 @@
+package com.noctuagames.sdk.services
+
+import android.content.Context
+import android.util.Log
+import android.os.Bundle
+import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
+import com.noctuagames.sdk.models.FirebaseServiceAndroidConfig
+import com.noctuagames.sdk.utils.putExtras
+
+class FirebaseService(private val config: FirebaseServiceAndroidConfig, context: Context) {
+    private val TAG = this::class.simpleName
+    private val analytics: FirebaseAnalytics
+    private val remoteConfig: FirebaseRemoteConfig
+
+    init {
+        if (FirebaseApp.getApps(context).isEmpty()) {
+            if (FirebaseApp.initializeApp(context) == null) {
+                throw Exception("Failed to initialize Firebase")
+            }
+        }
+
+        analytics = FirebaseAnalytics.getInstance(context)
+
+        remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        fetchRemoteConfig()
+        Log.i(TAG, "Firebase Analytics initialized successfully")
+    }
+
+    fun fetchRemoteConfig() {
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val updated = task.result
+                    Log.d(TAG, "Firebase Remote Config params updated: $updated")
+                } else {
+                    Log.e(TAG, "Failed to fetch and activate Firebase RemoteConfig", task.exception)
+                }
+            }
+    }
+
+    fun getFirebaseInstallationID(onResult: (String) -> Unit) {
+        FirebaseInstallations.getInstance().id
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(task.result)
+                } else {
+                    onResult("")
+                }
+            }
+    }
+
+    fun getFirebaseAnalyticsSessionID(onResult: (String) -> Unit) {
+        analytics.appInstanceId.addOnSuccessListener { appInstanceId  ->
+            onResult(appInstanceId ?: "")
+        }.addOnFailureListener {
+            onResult("")
+        }
+    }
+
+    private fun getAdPlatform(source: String) = when (source) {
+        "applovin_max_sdk" -> "applovin"
+        "unity_ads_sdk" -> "unity"
+        "admob_sdk" -> "admob"
+        else -> "unknown"
+    }
+
+    fun trackAdRevenue(
+        source: String,
+        revenue: Double,
+        currency: String,
+        extraPayload: MutableMap<String, Any> = mutableMapOf()
+    ) {
+        val adPlatform = getAdPlatform(source)
+
+        val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.AD_PLATFORM, adPlatform)
+            putString(FirebaseAnalytics.Param.AD_SOURCE, source)
+            putDouble(FirebaseAnalytics.Param.VALUE, revenue)
+            putString(FirebaseAnalytics.Param.CURRENCY, currency)
+            putExtras(extraPayload)
+        }
+
+        analytics.logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, bundle)
+
+        Log.d(
+            TAG,
+            "'ad_revenue' tracked: " +
+                    "source: $source, " +
+                    "revenue: $revenue, " +
+                    "currency: $currency, " +
+                    "extraPayload: $extraPayload"
+        )
+    }
+
+    fun trackPurchase(
+        orderId: String,
+        amount: Double,
+        currency: String,
+        extraPayload: MutableMap<String, Any> = mutableMapOf()
+    ) {
+        val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.TRANSACTION_ID, orderId)
+            putDouble(FirebaseAnalytics.Param.VALUE, amount)
+            putString(FirebaseAnalytics.Param.CURRENCY, currency)
+            putExtras(extraPayload)
+        }
+
+        analytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
+
+        Log.d(
+            TAG,
+            "'${FirebaseAnalytics.Event.PURCHASE}' tracked: " +
+                    "currency: $currency, " +
+                    "amount: $amount, " +
+                    "orderId: $orderId, " +
+                    "extraPayload $extraPayload"
+        )
+    }
+
+    fun trackCustomEvent(eventName: String, payload: Map<String, Any> = emptyMap()) {
+        if (config.customEventDisabled) {
+            return
+        }
+
+        val eventName = payload["suffix"]?.let { "gf_${eventName}_${it}" } ?: "gf_$eventName"
+        val payload = payload.filterKeys { it != "suffix" }
+
+        analytics.logEvent(eventName, Bundle().apply { putExtras(payload) })
+
+        Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
+    }
+
+    fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: Map<String, Any> = emptyMap()) {
+        if (config.customEventDisabled) {
+            return
+        }
+
+        val bundle = Bundle().apply {
+            putDouble("revenue", revenue)
+            putString("currency", currency)
+            putExtras(payload)
+        }
+
+        analytics.logEvent("gf_$eventName", bundle)
+
+        Log.d(TAG, "'$eventName' (custom) tracked: payload: $bundle")
+    }
+
+    fun getFirebaseRemoteConfigString(key: String): String {
+        return remoteConfig.getString(key)
+    }
+
+    fun getFirebaseRemoteConfigBoolean(key: String): Boolean {
+        return remoteConfig.getBoolean(key)
+    }
+
+    fun getFirebaseRemoteConfigDouble(key: String): Double {
+        return remoteConfig.getDouble(key)
+    }
+
+    fun getFirebaseRemoteConfigLong(key: String): Long {
+        return remoteConfig.getLong(key)
+    }
+}

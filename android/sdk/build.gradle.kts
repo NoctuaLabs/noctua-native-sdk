@@ -47,6 +47,10 @@ android {
     buildFeatures {
         compose = false
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 mavenPublishing {
@@ -126,11 +130,21 @@ dependencies {
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.firebase.messaging)
     implementation(libs.facebook.core)
+    implementation(platform(libs.firebase.bom))
+
     testImplementation(libs.junit)
-    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.koin.core)
 
     // Add the dependencies for the Remote Config and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-config")
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.config)
+    implementation(libs.google.firebase.analytics)
+
+    // Google Play Billing Library 8.2.1
+    implementation(libs.billing)
+    implementation(libs.billing.ktx)
 }
