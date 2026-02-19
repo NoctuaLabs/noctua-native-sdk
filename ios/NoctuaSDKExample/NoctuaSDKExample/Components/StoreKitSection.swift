@@ -56,11 +56,21 @@ struct StoreKitSection: View {
                 actionButtonLabel("Restore Purchases", color: .orange)
             }
 
-            Button(action: {
-                logger.debug("StoreKit ready: \(Noctua.isStoreKitReady())")
-                statusMessage = "StoreKit ready: \(Noctua.isStoreKitReady())"
-            }) {
-                actionButtonLabel("Check StoreKit Ready", color: .gray)
+            HStack(spacing: 8) {
+                Button(action: {
+                    logger.debug("StoreKit ready: \(Noctua.isStoreKitReady())")
+                    statusMessage = "StoreKit ready: \(Noctua.isStoreKitReady())"
+                }) {
+                    actionButtonLabel("Check Ready", color: .gray)
+                }
+
+                Button(action: {
+                    Noctua.disposeStoreKit()
+                    statusMessage = "StoreKit disposed"
+                    logger.debug("StoreKit disposed")
+                }) {
+                    actionButtonLabel("Dispose", color: .red)
+                }
             }
 
             // Products List

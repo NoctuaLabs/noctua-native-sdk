@@ -217,7 +217,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  NoctuaSDK: 952b09bb57f5877d179fb15d8bf4020345eee964
+  NoctuaSDK: df6ea32eb91a6a0d7396e4883ac8bddace1596a7
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
 

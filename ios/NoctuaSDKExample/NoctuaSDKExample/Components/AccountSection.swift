@@ -24,6 +24,7 @@ struct AccountModel: Identifiable {
 
 class AccountViewModel: ObservableObject {
     @Published var accounts: [AccountModel] = []
+    @Published var singleAccountResult: String? = nil
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountViewModel")
 
     init() {
@@ -46,6 +47,19 @@ class AccountViewModel: ObservableObject {
         Noctua.putAccount(gameId: gameId, playerId: (1000 * gameId) + randomPlayerId, rawData: UUID().uuidString)
         logger.debug("Random account saved")
         loadAccounts()
+    }
+
+    func getSingleAccount(gameId: Int64, playerId: Int64) {
+        if let account = Noctua.getSingleAccount(gameId: gameId, playerId: playerId) {
+            let pid = account["playerId"] as? Int64 ?? 0
+            let gid = account["gameId"] as? Int64 ?? 0
+            let raw = account["rawData"] as? String ?? ""
+            singleAccountResult = "Player:\(pid) Game:\(gid) Data:\(String(raw.prefix(20)))"
+            logger.debug("Found account: \(pid)")
+        } else {
+            singleAccountResult = "Not found"
+            logger.debug("Account not found")
+        }
     }
 
     func deleteAccount(gameId: Int64, playerId: Int64) {
@@ -94,6 +108,25 @@ struct AccountSection: View {
                 viewModel.loadAccounts()
             }) {
                 actionButtonLabel("Refresh", color: .gray)
+            }
+
+            // Get Single Account
+            if let first = viewModel.accounts.first {
+                Button(action: {
+                    viewModel.getSingleAccount(gameId: first.gameId, playerId: first.playerId)
+                }) {
+                    actionButtonLabel("Get Single Account", color: .purple)
+                }
+
+                if let result = viewModel.singleAccountResult {
+                    Text(result)
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(6)
+                        .background(Color.purple.opacity(0.1))
+                        .cornerRadius(6)
+                }
             }
 
             // Account Count
