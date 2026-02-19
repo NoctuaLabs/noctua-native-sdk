@@ -1,3 +1,8 @@
+## [ios-sdk-v0.29.0] - 2026-02-19
+
+### 🚀 Features
+
+- *(ios)* Add verifyPurchasesOnServer param, fix Firebase custom event params, enable iapDisabled in example
 ## [ios-sdk-v0.28.0] - 2026-02-19
 
 ### 🚀 Features
