@@ -233,8 +233,24 @@ import Foundation
         session?.getEventCount(onResult: onResult)
     }
 
-    @objc public static func getAdjustCurrentAttribution() -> [String: Any] {
-        return session?.getAdjustCurrentAttribution() ?? [:]
+    @objc public static func getAdjustCurrentAttribution(completion: @escaping ([String: Any]) -> Void) {
+        if let session = session {
+            session.getAdjustCurrentAttribution(completion: completion)
+        } else {
+            completion([:])
+        }
+    }
+
+    // MARK: - Currency Query (Delegated IAP)
+
+    /// Queries the App Store for a product's currency code using SKProductsRequest.
+    /// This is a read-only query — no SKPaymentTransactionObserver is added,
+    /// so it will NOT conflict with game developers' own IAP implementations.
+    @objc public static func getActiveCurrency(_ productId: String, completion: @escaping (Bool, String) -> Void) {
+        if currencyQuery == nil {
+            currencyQuery = CurrencyQueryService()
+        }
+        currencyQuery?.getActiveCurrency(productId: productId, completion: completion)
     }
 
     // MARK: - Private
@@ -243,6 +259,7 @@ import Foundation
     private static var storeKit: StoreKitPresenter?
     private static var account: AccountPresenter?
     private static var session: SessionPresenter?
+    private static var currencyQuery: CurrencyQueryService?
 
     private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger) -> (
         trackers: [TrackerServiceProtocol],
@@ -260,15 +277,15 @@ import Foundation
         var adjustSpecific: AdjustSpecificProtocol? = nil
         var firebaseQuery: FirebaseQueryServiceProtocol? = nil
 
-        // StoreKit Service (runtime version check for backward compatibility)
-        let storeKitConfig = NoctuaStoreKitConfig()
-        var storeKitService: StoreKitServiceProtocol?
-        if #available(iOS 15.0, *) {
+        // StoreKit Service (StoreKit 2, requires iOS 15+)
+        let storeKitService: StoreKitServiceProtocol?
+        if config.noctua?.iapDisabled == true {
+            storeKitService = nil
+            logger.info("StoreKit disabled by config (iapDisabled: true)")
+        } else {
+            let storeKitConfig = NoctuaStoreKitConfig()
             storeKitService = StoreKitService(config: storeKitConfig, logger: logger)
             logger.info("StoreKitService initialized (StoreKit 2)")
-        } else {
-            storeKitService = StoreKitLegacyService(config: storeKitConfig, logger: logger)
-            logger.info("StoreKitLegacyService initialized (StoreKit 1 fallback)")
         }
 
         // AdjustService

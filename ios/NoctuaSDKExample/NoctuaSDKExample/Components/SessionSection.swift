@@ -131,7 +131,7 @@ struct SessionSection: View {
                         .font(.system(size: 12))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color(red: 0.0, green: 0.7, blue: 0.5))
+                        .background(Color.mint)
                         .foregroundColor(.white)
                         .cornerRadius(6)
                 }
@@ -153,14 +153,14 @@ struct SessionSection: View {
                         .font(.system(size: 12))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color(red: 0.0, green: 0.7, blue: 0.5))
+                        .background(Color.mint)
                         .foregroundColor(.white)
                         .cornerRadius(6)
                 }
             }
 
             if !currentGeneralExperiment.isEmpty {
-                ResultRow(label: "General Experiment", value: currentGeneralExperiment, color: Color(red: 0.0, green: 0.7, blue: 0.5))
+                ResultRow(label: "General Experiment", value: currentGeneralExperiment, color: Color.mint)
             }
 
             // Session Extra Params

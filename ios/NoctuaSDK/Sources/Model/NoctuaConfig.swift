@@ -2,6 +2,7 @@ import Foundation
 
 struct NoctuaConfig: Decodable {
     let clientId: String
+    let gameId: Int?
     let noctua: NoctuaServiceConfig?
     let adjust: AdjustServiceConfig?
     let firebase: FirebaseServiceConfig?
@@ -10,6 +11,7 @@ struct NoctuaConfig: Decodable {
 
 struct NoctuaServiceConfig: Decodable {
     let nativeInternalTrackerEnabled: Bool?
+    let iapDisabled: Bool?
 }
 
 struct AdjustServiceConfig: Codable {

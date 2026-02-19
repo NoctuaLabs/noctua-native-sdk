@@ -1,6 +1,6 @@
 import Foundation
-#if canImport(Adjust)
-import Adjust
+#if canImport(AdjustSdk)
+import AdjustSdk
 #endif
 
 class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
@@ -8,7 +8,7 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
     private let logger: NoctuaLogger
 
     init(config: AdjustServiceIosConfig, logger: NoctuaLogger = IOSLogger(category: "AdjustService")) throws {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         self.config = config
         self.logger = logger
 
@@ -27,42 +27,43 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
             throw AdjustServiceError.invalidConfig("appToken is empty")
         }
         let adjustConfig = ADJConfig(appToken: appToken, environment: environment)
-        adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevelWarn } else { ADJLogLevelDebug }
-        adjustConfig?.needsCost = true
+        adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevel.warn } else { ADJLogLevel.debug }
+        adjustConfig?.enableCostDataInAttribution()
 
-        Adjust.appDidLaunch(adjustConfig)
+        Adjust.initSdk(adjustConfig)
 #else
         throw AdjustServiceError.adjustNotFound
 #endif
     }
 
-    func getAdjustCurrentAttribution() -> [String: Any]? {
-    #if canImport(Adjust)
-        guard let adjAttribution = Adjust.attribution() else {
-            logger.warning("Adjust attribution is nil")
-            return [:]
-        }
+    func getAdjustCurrentAttribution(completion: @escaping ([String: Any]) -> Void) {
+    #if canImport(AdjustSdk)
+        Adjust.attribution { attribution in
+            guard let attribution = attribution else {
+                completion([:])
+                return
+            }
 
-        return [
-            "trackerToken": adjAttribution.trackerToken ?? "",
-            "trackerName": adjAttribution.trackerName ?? "",
-            "network": adjAttribution.network ?? "",
-            "campaign": adjAttribution.campaign ?? "",
-            "adgroup": adjAttribution.adgroup ?? "",
-            "creative": adjAttribution.creative ?? "",
-            "clickLabel": adjAttribution.clickLabel ?? "",
-            "adid": adjAttribution.adid ?? "",
-            "costType": adjAttribution.costType ?? "",
-            "costAmount": adjAttribution.costAmount?.doubleValue ?? 0,
-            "costCurrency": adjAttribution.costCurrency ?? ""
-        ]
+            completion([
+                "trackerToken": attribution.trackerToken ?? "",
+                "trackerName": attribution.trackerName ?? "",
+                "network": attribution.network ?? "",
+                "campaign": attribution.campaign ?? "",
+                "adgroup": attribution.adgroup ?? "",
+                "creative": attribution.creative ?? "",
+                "clickLabel": attribution.clickLabel ?? "",
+                "costType": attribution.costType ?? "",
+                "costAmount": attribution.costAmount?.doubleValue ?? 0,
+                "costCurrency": attribution.costCurrency ?? ""
+            ])
+        }
     #else
-        return [:]
+        completion([:])
     #endif
     }
 
     func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String: Any]) {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         let adRevenue = ADJAdRevenue(source: source)!
         adRevenue.setRevenue(revenue, currency: currency)
 
@@ -75,7 +76,7 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
     }
 
     func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String: Any]) {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         let eventToken = config.eventMap?["purchase"] ?? ""
         guard !eventToken.isEmpty else {
             logger.warning("no eventToken for purchase")
@@ -94,7 +95,7 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
     }
 
     func trackCustomEvent(_ eventName: String, payload: [String: Any]) {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         if (config.customEventDisabled ?? false) {
             logger.warning("custom event is disabled")
             return
@@ -121,7 +122,7 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
     }
 
     func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, payload: [String: Any]) {
-#if canImport(Adjust)
+#if canImport(AdjustSdk)
         if (config.customEventDisabled ?? false) {
             logger.warning("custom event is disabled")
             return
@@ -152,14 +153,14 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
     }
 
     func onOnline() {
-#if canImport(Adjust)
-        Adjust.setOfflineMode(false)
+#if canImport(AdjustSdk)
+        Adjust.switchBackToOnlineMode()
 #endif
     }
 
     func onOffline() {
-#if canImport(Adjust)
-        Adjust.setOfflineMode(true)
+#if canImport(AdjustSdk)
+        Adjust.switchToOfflineMode()
 #endif
     }
 }
