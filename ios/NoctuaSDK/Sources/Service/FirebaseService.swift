@@ -123,7 +123,7 @@ class FirebaseService: TrackerServiceProtocol, FirebaseQueryServiceProtocol {
             parameters[key] = value
         }
 
-        Analytics.logEvent("gf_\(eventName)", parameters: extraPayload)
+        Analytics.logEvent("gf_\(eventName)", parameters: parameters)
 
         logger.debug("'gf_\(eventName)' (custom) tracked: payload: \(extraPayload)")
 #endif

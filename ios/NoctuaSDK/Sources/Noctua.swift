@@ -1,12 +1,12 @@
 import Foundation
 
 @objc public class Noctua: NSObject {
-    @objc public static func initNoctua() throws {
+    @objc public static func initNoctua(verifyPurchasesOnServer: Bool = false) throws {
         if tracker == nil && storeKit == nil && account == nil && session == nil {
             let config = try loadConfig()
             let logger = IOSLogger(category: "Noctua")
 
-            let services = buildServices(config: config, logger: logger)
+            let services = buildServices(config: config, logger: logger, verifyPurchasesOnServer: verifyPurchasesOnServer)
 
             tracker = TrackerPresenter(
                 config: config,
@@ -261,7 +261,7 @@ import Foundation
     private static var session: SessionPresenter?
     private static var currencyQuery: CurrencyQueryService?
 
-    private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger) -> (
+    private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger, verifyPurchasesOnServer: Bool = false) -> (
         trackers: [TrackerServiceProtocol],
         storeKitService: StoreKitServiceProtocol?,
         adjustSpecific: AdjustSpecificProtocol?,
@@ -283,7 +283,7 @@ import Foundation
             storeKitService = nil
             logger.info("StoreKit disabled by config (iapDisabled: true)")
         } else {
-            let storeKitConfig = NoctuaStoreKitConfig()
+            let storeKitConfig = NoctuaStoreKitConfig(verifyPurchasesOnServer: verifyPurchasesOnServer)
             storeKitService = StoreKitService(config: storeKitConfig, logger: logger)
             logger.info("StoreKitService initialized (StoreKit 2)")
         }
