@@ -241,12 +241,25 @@ import Foundation
         }
     }
 
+    // MARK: - Currency Query (Delegated IAP)
+
+    /// Queries the App Store for a product's currency code using SKProductsRequest.
+    /// This is a read-only query — no SKPaymentTransactionObserver is added,
+    /// so it will NOT conflict with game developers' own IAP implementations.
+    @objc public static func getActiveCurrency(_ productId: String, completion: @escaping (Bool, String) -> Void) {
+        if currencyQuery == nil {
+            currencyQuery = CurrencyQueryService()
+        }
+        currencyQuery?.getActiveCurrency(productId: productId, completion: completion)
+    }
+
     // MARK: - Private
 
     private static var tracker: TrackerPresenter?
     private static var storeKit: StoreKitPresenter?
     private static var account: AccountPresenter?
     private static var session: SessionPresenter?
+    private static var currencyQuery: CurrencyQueryService?
 
     private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger) -> (
         trackers: [TrackerServiceProtocol],
@@ -265,9 +278,15 @@ import Foundation
         var firebaseQuery: FirebaseQueryServiceProtocol? = nil
 
         // StoreKit Service (StoreKit 2, requires iOS 15+)
-        let storeKitConfig = NoctuaStoreKitConfig()
-        let storeKitService: StoreKitServiceProtocol? = StoreKitService(config: storeKitConfig, logger: logger)
-        logger.info("StoreKitService initialized (StoreKit 2)")
+        let storeKitService: StoreKitServiceProtocol?
+        if config.noctua?.iapDisabled == true {
+            storeKitService = nil
+            logger.info("StoreKit disabled by config (iapDisabled: true)")
+        } else {
+            let storeKitConfig = NoctuaStoreKitConfig()
+            storeKitService = StoreKitService(config: storeKitConfig, logger: logger)
+            logger.info("StoreKitService initialized (StoreKit 2)")
+        }
 
         // AdjustService
         if config.adjust == nil {

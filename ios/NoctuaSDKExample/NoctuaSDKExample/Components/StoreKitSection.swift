@@ -12,6 +12,8 @@ struct StoreKitSection: View {
     let logger: Logger
 
     @State private var statusProductId: String = ""
+    @State private var currencyProductId: String = ""
+    @State private var currencyResult: String = ""
 
     var body: some View {
         VStack(spacing: 8) {
@@ -128,6 +130,41 @@ struct StoreKitSection: View {
 
             if let status = productPurchaseStatus {
                 PurchaseStatusCard(status: status)
+            }
+
+            // Get Active Currency
+            sectionLabel("Get Active Currency")
+
+            HStack(spacing: 8) {
+                TextField("Product ID", text: $currencyProductId)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .font(.system(size: 12))
+
+                Button(action: {
+                    guard !currencyProductId.isEmpty else { return }
+                    Noctua.getActiveCurrency(currencyProductId) { success, result in
+                        currencyResult = success ? "Currency: \(result)" : "Error: \(result)"
+                        logger.debug("getActiveCurrency[\(currencyProductId)]: success=\(success), result=\(result)")
+                    }
+                }) {
+                    Text("Get")
+                        .font(.system(size: 12))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.teal)
+                        .foregroundColor(.white)
+                        .cornerRadius(6)
+                }
+            }
+
+            if !currencyResult.isEmpty {
+                Text(currencyResult)
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(8)
+                    .background(Color.teal.opacity(0.1))
+                    .cornerRadius(6)
             }
 
             // Error Display
