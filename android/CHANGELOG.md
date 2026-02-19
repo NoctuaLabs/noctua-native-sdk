@@ -1,3 +1,22 @@
+## [android-sdk-v0.26.0] - 2026-02-19
+
+### 🚀 Features
+
+- Implement IAP and Subscription
+- Add unit testing for mock and android context
+- Add per-row event storage methods and sample app demo
+
+### 💼 Other
+
+- Bump version code manually
+
+### 🚜 Refactor
+
+- Implement mvp design pattern
+
+### ⚙️ Miscellaneous Tasks
+
+- Bump noctua-internal-native to 0.13.0
 ## [android-sdk-v0.25.6] - 2026-02-09
 
 ### 🐛 Bug Fixes
