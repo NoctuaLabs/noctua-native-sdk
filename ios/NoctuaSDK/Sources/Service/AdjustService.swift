@@ -2,31 +2,16 @@ import Foundation
 #if canImport(Adjust)
 import Adjust
 #endif
-import os
 
-enum AdjustServiceError : Error {
-    case adjustNotFound
-    case invalidConfig(String)
-}
-
-struct AdjustServiceConfig : Codable {
-    let ios: AdjustServiceIosConfig?
-}
-
-struct AdjustServiceIosConfig : Codable {
-    let appToken: String
-    let environment: String?
-    let customEventDisabled: Bool?
-    let eventMap: [String:String]?
-}
-
-class AdjustService {
+class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
     let config: AdjustServiceIosConfig
-    
-    init(config: AdjustServiceIosConfig) throws {
+    private let logger: NoctuaLogger
+
+    init(config: AdjustServiceIosConfig, logger: NoctuaLogger = IOSLogger(category: "AdjustService")) throws {
 #if canImport(Adjust)
         self.config = config
-        
+        self.logger = logger
+
         guard let eventMap = config.eventMap, !eventMap.isEmpty else {
             throw AdjustServiceError.invalidConfig("eventMap is empty")
         }
@@ -34,7 +19,7 @@ class AdjustService {
         guard eventMap.keys.contains("purchase") else {
             throw AdjustServiceError.invalidConfig("no eventToken for purchase")
         }
-        
+
         let environment = config.environment?.isEmpty ?? true ? "sandbox" : config.environment!
 
         let appToken = config.appToken
@@ -44,13 +29,13 @@ class AdjustService {
         let adjustConfig = ADJConfig(appToken: appToken, environment: environment)
         adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevelWarn } else { ADJLogLevelDebug }
         adjustConfig?.needsCost = true
-        
+
         Adjust.appDidLaunch(adjustConfig)
 #else
         throw AdjustServiceError.adjustNotFound
 #endif
     }
-    
+
     func getAdjustCurrentAttribution() -> [String: Any]? {
     #if canImport(Adjust)
         guard let adjAttribution = Adjust.attribution() else {
@@ -75,22 +60,21 @@ class AdjustService {
         return [:]
     #endif
     }
-        
 
-    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String:Any]) {
+    func trackAdRevenue(source: String, revenue: Double, currency: String, extraPayload: [String: Any]) {
 #if canImport(Adjust)
         let adRevenue = ADJAdRevenue(source: source)!
         adRevenue.setRevenue(revenue, currency: currency)
-        
+
         for (key, value) in extraPayload {
             adRevenue.addCallbackParameter(key, value: "\(value)")
         }
-        
+
         Adjust.trackAdRevenue(adRevenue)
 #endif
     }
-    
-    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String:Any]) {
+
+    func trackPurchase(orderId: String, amount: Double, currency: String, extraPayload: [String: Any]) {
 #if canImport(Adjust)
         let eventToken = config.eventMap?["purchase"] ?? ""
         guard !eventToken.isEmpty else {
@@ -100,7 +84,7 @@ class AdjustService {
         let purchase = ADJEvent(eventToken: eventToken)!
         purchase.setTransactionId(orderId)
         purchase.setRevenue(amount, currency: currency)
-        
+
         for (key, value) in extraPayload {
             purchase.addCallbackParameter(key, value: "\(value)")
         }
@@ -108,21 +92,19 @@ class AdjustService {
         Adjust.trackEvent(purchase)
 #endif
     }
-    
-    func trackCustomEvent(_ eventName: String, payload: [String:Any]) {
+
+    func trackCustomEvent(_ eventName: String, payload: [String: Any]) {
 #if canImport(Adjust)
         if (config.customEventDisabled ?? false) {
             logger.warning("custom event is disabled")
             return
         }
 
-        // Check for null
         guard let eventToken = config.eventMap?[eventName] else {
             logger.warning("no eventToken for \(eventName)")
             return
         }
 
-        // Check for empty string
         guard !eventToken.isEmpty else {
             logger.warning("no eventToken for \(eventName)")
             return
@@ -138,39 +120,35 @@ class AdjustService {
 #endif
     }
 
-    func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, payload: [String:Any]) {
+    func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, payload: [String: Any]) {
 #if canImport(Adjust)
         if (config.customEventDisabled ?? false) {
             logger.warning("custom event is disabled")
             return
         }
-        
-        // Check for null
+
         guard let eventToken = config.eventMap?[eventName] else {
             logger.warning("no eventToken for \(eventName)")
             return
         }
 
-        // Check for empty string
         guard !eventToken.isEmpty else {
             logger.warning("no eventToken for \(eventName)")
             return
         }
-        
+
         let event = ADJEvent(eventToken: eventToken)!
-        
+
         var extraPayload = payload
         extraPayload["revenue"] = revenue
         extraPayload["currency"] = currency
 
-        // Add parameters to the event`
         for (key, value) in extraPayload {
             event.addCallbackParameter(key, value: "\(value)")
         }
-        
+
         Adjust.trackEvent(event)
 #endif
-
     }
 
     func onOnline() {
@@ -183,10 +161,5 @@ class AdjustService {
 #if canImport(Adjust)
         Adjust.setOfflineMode(true)
 #endif
-    }   
-
-    private let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: AdjustService.self)
-    )
+    }
 }

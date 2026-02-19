@@ -16,6 +16,12 @@
 		B135B7BF2C5B3A8D0091DCC8 /* noctuagg.json in Resources */ = {isa = PBXBuildFile; fileRef = B135B7BE2C5B3A8D0091DCC8 /* noctuagg.json */; };
 		CE680DF02EF54058009AFB20 /* NoctuaInternalSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */; };
 		CE680DF12EF54058009AFB20 /* NoctuaInternalSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E8C578FEDBBA952F99EF4742 /* AccountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28F7E910D9DBB1590E06C75 /* AccountSection.swift */; };
+		A8F5408273D06ABE1CB5C027 /* OtherSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2763EFCD75B967592F03186F /* OtherSection.swift */; };
+		9A65F2623575F8C63273A403 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */; };
+		F9F58F8DCA1487E1D0DA0F8F /* SharedStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C2792A227EEE3DEA87F830 /* SharedStyles.swift */; };
+		498B145B83AB9D1985D68228 /* StoreKitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69581917A977A6307DB3A17 /* StoreKitSection.swift */; };
+		9AE87070E719B29127351382 /* TrackingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A644C035078285E3C281E /* TrackingSection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +53,12 @@
 		B135B7BE2C5B3A8D0091DCC8 /* noctuagg.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = noctuagg.json; sourceTree = "<group>"; };
 		B15F9B512C911AAD00006779 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = NoctuaInternalSDK.xcframework; path = "../../../noctua-internal-native-sdk/sdk/ios-sdk/release/NoctuaInternalSDK.xcframework"; sourceTree = "<group>"; };
+		A28F7E910D9DBB1590E06C75 /* AccountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSection.swift; sourceTree = "<group>"; };
+		2763EFCD75B967592F03186F /* OtherSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSection.swift; sourceTree = "<group>"; };
+		CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCard.swift; sourceTree = "<group>"; };
+		52C2792A227EEE3DEA87F830 /* SharedStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStyles.swift; sourceTree = "<group>"; };
+		F69581917A977A6307DB3A17 /* StoreKitSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitSection.swift; sourceTree = "<group>"; };
+		1E2A644C035078285E3C281E /* TrackingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingSection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +113,7 @@
 				B135B7AC2C5AF28D0091DCC8 /* Assets.xcassets */,
 				B135B7AE2C5AF28D0091DCC8 /* Preview Content */,
 				B135B7BE2C5B3A8D0091DCC8 /* noctuagg.json */,
+				D83B10AB5053D5A6DAF3B55B /* Components */,
 			);
 			path = NoctuaSDKExample;
 			sourceTree = "<group>";
@@ -121,6 +134,19 @@
 				9D2786248B248CFB9BD0890E /* Pods_NoctuaSDKExample.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D83B10AB5053D5A6DAF3B55B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A28F7E910D9DBB1590E06C75 /* AccountSection.swift */,
+				2763EFCD75B967592F03186F /* OtherSection.swift */,
+				CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */,
+				52C2792A227EEE3DEA87F830 /* SharedStyles.swift */,
+				F69581917A977A6307DB3A17 /* StoreKitSection.swift */,
+				1E2A644C035078285E3C281E /* TrackingSection.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -242,6 +268,12 @@
 			files = (
 				B135B7AB2C5AF28B0091DCC8 /* ContentView.swift in Sources */,
 				B135B7A92C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift in Sources */,
+				9A65F2623575F8C63273A403 /* SectionCard.swift in Sources */,
+				9AE87070E719B29127351382 /* TrackingSection.swift in Sources */,
+				498B145B83AB9D1985D68228 /* StoreKitSection.swift in Sources */,
+				F9F58F8DCA1487E1D0DA0F8F /* SharedStyles.swift in Sources */,
+				E8C578FEDBBA952F99EF4742 /* AccountSection.swift in Sources */,
+				A8F5408273D06ABE1CB5C027 /* OtherSection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
