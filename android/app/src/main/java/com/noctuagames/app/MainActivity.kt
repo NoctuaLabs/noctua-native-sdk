@@ -132,6 +132,10 @@ fun MainScreen(offset: Int, packageName: String, activity: MainActivity) {
     val accounts = remember { mutableStateListOf<Account>() }
     var events by remember { mutableStateOf<List<String>>(emptyList()) }
 
+    // State for per-row event storage
+    var batchResult by remember { mutableStateOf("") }
+    var eventCount by remember { mutableStateOf(0) }
+
     // State for Firebase IDs
     var installationId by remember { mutableStateOf<String?>(null) }
     var analyticsSessionId by remember { mutableStateOf<String?>(null) }
@@ -613,7 +617,49 @@ fun MainScreen(offset: Int, packageName: String, activity: MainActivity) {
                         onTriggerCrash = {
                             throw RuntimeException("Test Crash")
                         },
-                        events = events
+                        events = events,
+                        // Per-row storage callbacks
+                        onInsertEvent = {
+                            val sampleJson = """{"event_name":"test_event","timestamp":${System.currentTimeMillis()}}"""
+                            Noctua.insertEvent(sampleJson)
+                            showSnackbar("Event inserted")
+                            Log.d("MainActivity", "Inserted event: $sampleJson")
+                        },
+                        onGetEventsBatch = {
+                            Noctua.getEventsBatch(10, 0) { result ->
+                                batchResult = result
+                                showSnackbar("Batch retrieved")
+                                Log.d("MainActivity", "Batch result: $result")
+                            }
+                        },
+                        onGetEventCount = {
+                            Noctua.getEventCount { count ->
+                                eventCount = count
+                                showSnackbar("Event count: $count")
+                                Log.d("MainActivity", "Event count: $count")
+                            }
+                        },
+                        onDeleteEventsByIds = {
+                            if (batchResult.isNotEmpty() && batchResult != "[]") {
+                                // Extract IDs from batch result JSON
+                                val idRegex = """"id":(\d+)""".toRegex()
+                                val ids = idRegex.findAll(batchResult).map { it.groupValues[1] }.toList()
+                                if (ids.isNotEmpty()) {
+                                    val idsJson = "[${ids.joinToString(",")}]"
+                                    Noctua.deleteEventsByIds(idsJson) { deletedCount ->
+                                        batchResult = ""
+                                        showSnackbar("Deleted $deletedCount events")
+                                        Log.d("MainActivity", "Deleted $deletedCount events by IDs: $idsJson")
+                                    }
+                                } else {
+                                    showSnackbar("No IDs found in batch")
+                                }
+                            } else {
+                                showSnackbar("Get a batch first")
+                            }
+                        },
+                        batchResult = batchResult,
+                        eventCount = eventCount
                     )
                 }
             }

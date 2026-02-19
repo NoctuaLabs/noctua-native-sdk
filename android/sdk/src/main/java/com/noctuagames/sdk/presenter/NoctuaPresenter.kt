@@ -352,6 +352,26 @@ class NoctuaPresenter(
     }
 
     // ------------------------------------
+    // Events Per-Row Storage (Unlimited)
+    // ------------------------------------
+
+    fun insertEvent(eventJson: String) {
+        NoctuaInternal.insertExternalEvent(eventJson)
+    }
+
+    fun getEventsBatch(limit: Int, offset: Int, onResult: (String) -> Unit) {
+        NoctuaInternal.getExternalEventsBatch(limit, offset, onResult)
+    }
+
+    fun deleteEventsByIds(idsJson: String, onResult: (Int) -> Unit) {
+        NoctuaInternal.deleteExternalEventsByIds(idsJson, onResult)
+    }
+
+    fun getEventCount(onResult: (Int) -> Unit) {
+        NoctuaInternal.getExternalEventCount(onResult)
+    }
+
+    // ------------------------------------
     // Billing / In-App Purchases
     // ------------------------------------
 

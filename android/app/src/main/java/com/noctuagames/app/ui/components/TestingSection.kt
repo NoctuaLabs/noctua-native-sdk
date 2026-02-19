@@ -37,12 +37,26 @@ fun TestingSection(
     onGetEvents: () -> Unit,
     onDeleteEvents: () -> Unit,
     onTriggerCrash: () -> Unit,
-    events: List<String>
+    events: List<String>,
+    // Per-row storage callbacks
+    onInsertEvent: () -> Unit,
+    onGetEventsBatch: () -> Unit,
+    onGetEventCount: () -> Unit,
+    onDeleteEventsByIds: () -> Unit,
+    batchResult: String,
+    eventCount: Int
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Legacy blob storage
+        Text(
+            text = "Legacy Blob Storage",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -103,6 +117,84 @@ fun TestingSection(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Per-row storage (unlimited)
+        Text(
+            text = "Per-Row Storage (Unlimited)",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            maxItemsInEachRow = 2
+        ) {
+            ActionButton(
+                onClick = onInsertEvent,
+                icon = Icons.Default.Add,
+                label = "Insert Event",
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.weight(1f)
+            )
+            ActionButton(
+                onClick = onGetEventsBatch,
+                icon = Icons.AutoMirrored.Filled.Send,
+                label = "Get Batch (10)",
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.weight(1f)
+            )
+            ActionButton(
+                onClick = onGetEventCount,
+                icon = Icons.Default.Check,
+                label = "Get Count",
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.weight(1f)
+            )
+            ActionButton(
+                onClick = onDeleteEventsByIds,
+                icon = Icons.Default.Delete,
+                label = "Delete By IDs",
+                containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        if (eventCount > 0) {
+            Text(
+                text = "Event Count: $eventCount",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        if (batchResult.isNotEmpty() && batchResult != "[]") {
+            Text(
+                text = "Batch Result",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = batchResult,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(8.dp),
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

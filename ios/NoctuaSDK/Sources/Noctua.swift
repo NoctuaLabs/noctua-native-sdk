@@ -215,6 +215,24 @@ import Foundation
         session?.deleteEvents()
     }
 
+    // MARK: - Per-Row Event Storage (Unlimited)
+
+    @objc public static func insertEvent(eventJson: String) {
+        session?.insertEvent(eventJson: eventJson)
+    }
+
+    @objc public static func getEventsBatch(limit: Int32, offset: Int32, onResult: @escaping (String) -> Void) {
+        session?.getEventsBatch(limit: limit, offset: offset, onResult: onResult)
+    }
+
+    @objc public static func deleteEventsByIds(idsJson: String, onResult: @escaping (Int32) -> Void) {
+        session?.deleteEventsByIds(idsJson: idsJson, onResult: onResult)
+    }
+
+    @objc public static func getEventCount(onResult: @escaping (Int32) -> Void) {
+        session?.getEventCount(onResult: onResult)
+    }
+
     @objc public static func getAdjustCurrentAttribution() -> [String: Any] {
         return session?.getAdjustCurrentAttribution() ?? [:]
     }

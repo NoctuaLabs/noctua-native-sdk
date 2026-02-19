@@ -13,4 +13,10 @@ protocol NoctuaInternalServiceProtocol {
     func saveExternalEvents(jsonString: String)
     func getExternalEvents(onResult: @escaping ([String]) -> Void)
     func deleteExternalEvents()
+
+    // Per-row event storage for unlimited event tracking
+    func insertExternalEvent(eventJson: String)
+    func getExternalEventsBatch(limit: Int32, offset: Int32, onResult: @escaping (String) -> Void)
+    func deleteExternalEventsByIds(idsJson: String, onResult: @escaping (Int32) -> Void)
+    func getExternalEventCount(onResult: @escaping (Int32) -> Void)
 }

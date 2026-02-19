@@ -140,6 +140,24 @@ class SessionPresenter {
         noctuaInternal?.deleteExternalEvents()
     }
 
+    // MARK: - Per-Row Events (Unlimited)
+
+    func insertEvent(eventJson: String) {
+        noctuaInternal?.insertExternalEvent(eventJson: eventJson)
+    }
+
+    func getEventsBatch(limit: Int32, offset: Int32, onResult: @escaping (String) -> Void) {
+        noctuaInternal?.getExternalEventsBatch(limit: limit, offset: offset, onResult: onResult)
+    }
+
+    func deleteEventsByIds(idsJson: String, onResult: @escaping (Int32) -> Void) {
+        noctuaInternal?.deleteExternalEventsByIds(idsJson: idsJson, onResult: onResult)
+    }
+
+    func getEventCount(onResult: @escaping (Int32) -> Void) {
+        noctuaInternal?.getExternalEventCount(onResult: onResult)
+    }
+
     // MARK: - Attribution
 
     func getAdjustCurrentAttribution() -> [String: Any] {

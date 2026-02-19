@@ -319,6 +319,45 @@ object Noctua {
         ensureInit { presenter.deleteEvents() }
 
     // ------------------------------------
+    // Events Per-Row Storage (Unlimited)
+    // ------------------------------------
+
+    /**
+     * Inserts a single event JSON into per-row database storage.
+     *
+     * @param eventJson Serialized JSON string for one event.
+     */
+    fun insertEvent(eventJson: String) =
+        ensureInit { presenter.insertEvent(eventJson) }
+
+    /**
+     * Retrieves a batch of events from database storage.
+     *
+     * @param limit Maximum number of events to return.
+     * @param offset Number of events to skip.
+     * @param onResult Callback returning JSON array of event objects.
+     */
+    fun getEventsBatch(limit: Int, offset: Int, onResult: (String) -> Unit) =
+        ensureInit { presenter.getEventsBatch(limit, offset, onResult) }
+
+    /**
+     * Deletes specific events by their database IDs.
+     *
+     * @param idsJson JSON array string of IDs to delete, e.g. "[1,2,3]".
+     * @param onResult Callback returning the number of deleted rows.
+     */
+    fun deleteEventsByIds(idsJson: String, onResult: (Int) -> Unit) =
+        ensureInit { presenter.deleteEventsByIds(idsJson, onResult) }
+
+    /**
+     * Returns the total count of stored events.
+     *
+     * @param onResult Callback returning the event count.
+     */
+    fun getEventCount(onResult: (Int) -> Unit) =
+        ensureInit { presenter.getEventCount(onResult) }
+
+    // ------------------------------------
     // In-App Purchases (Billing)
     // ------------------------------------
 

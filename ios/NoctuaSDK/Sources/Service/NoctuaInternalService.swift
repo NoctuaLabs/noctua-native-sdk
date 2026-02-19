@@ -82,4 +82,30 @@ class NoctuaInternalService: NoctuaInternalServiceProtocol {
         NoctuaInternal.shared.deleteExternalEvents()
         #endif
     }
+
+    // MARK: - Per-Row Event Storage (Unlimited)
+
+    func insertExternalEvent(eventJson: String) {
+        #if canImport(NoctuaInternalSDK)
+        NoctuaInternal.shared.insertExternalEvent(eventJson: eventJson)
+        #endif
+    }
+
+    func getExternalEventsBatch(limit: Int32, offset: Int32, onResult: @escaping (String) -> Void) {
+        #if canImport(NoctuaInternalSDK)
+        NoctuaInternal.shared.getExternalEventsBatch(limit: limit, offset: offset, callback: onResult)
+        #endif
+    }
+
+    func deleteExternalEventsByIds(idsJson: String, onResult: @escaping (Int32) -> Void) {
+        #if canImport(NoctuaInternalSDK)
+        NoctuaInternal.shared.deleteExternalEventsByIds(idsJson: idsJson, callback: onResult)
+        #endif
+    }
+
+    func getExternalEventCount(onResult: @escaping (Int32) -> Void) {
+        #if canImport(NoctuaInternalSDK)
+        NoctuaInternal.shared.getExternalEventCount(callback: onResult)
+        #endif
+    }
 }
