@@ -8,254 +8,149 @@
 import SwiftUI
 import os
 import NoctuaSDK
-import AppTrackingTransparency
-import AdSupport
 
-struct AccountModel : Identifiable {
-    let id: Int64
-    let playerId: Int64
-    let gameId: Int64
-    let rawData: String
-    let lastUpdated: Int64
-    
-    init(playerId: Int64, gameId: Int64, rawData: String, lastUpdated: Int64 = 0) {
-        self.id = playerId
-        self.playerId = playerId
-        self.gameId = gameId
-        self.rawData = rawData
-        self.lastUpdated = lastUpdated
-    }
-}
+// MARK: - Default Test Products
 
-class AccountViewModel: ObservableObject {
-    @Published var accounts: [AccountModel] = []
-    let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountViewModel")
-    
-    init() {
-        loadAccounts()
-    }
-    
-    func loadAccounts() {
-        accounts = Noctua.getAllAccounts().map {
-            account in
-            AccountModel(
-                playerId: account["playerId"] as? Int64 ?? 0,
-                gameId: account["gameId"] as? Int64 ?? 0,
-                rawData: account["rawData"] as? String ?? "",
-                lastUpdated: account["lastUpdated"] as? Int64 ?? 0
-            )
-        }
-    }
-    
-    func saveRandomAccount(gameId: Int64) {
-        let randomPlayerId = Int64.random(in: 1...3)
-        Noctua.putAccount(gameId: gameId, playerId: (1000*gameId) + randomPlayerId, rawData: UUID().uuidString)
-        logger.debug("Random account saved")
-        loadAccounts()
-    }
-    
-    func deleteRandomAccount(gameId: Int64) {
-        let offset = gameId * 1000
-        let filteredAccounts = accounts.filter { $0.playerId >= offset && $0.playerId < offset + 1000 }
-        if let accountToDelete = filteredAccounts.randomElement() {
-            Noctua.deleteAccount(gameId: accountToDelete.gameId, playerId: accountToDelete.playerId)
-            loadAccounts()
-        } else {
-            logger.debug("No accounts to delete")
-        }
-    }
-}
+let defaultTestProducts: [(String, ConsumableType)] = [
+    ("noctua.sub.1", .subscription),
+    ("noctua.sub.2", .subscription),
+    ("noctua.sub.3", .subscription),
+    ("noctua.sdktest.ios.pack1", .consumable),
+    ("noctua.unitysdktest.noads.banner", .nonConsumable),
+]
 
 struct ContentView: View {
     @StateObject private var viewModel = AccountViewModel()
     let gameId: Int64
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
-    
-    func requestPermission() {
-        if #available(iOS 14, *) {
-            ATTrackingManager.requestTrackingAuthorization { status in
-                switch status {
-                case .authorized:
-                    // Tracking authorization dialog was shown
-                    // and we are authorized
-                    print("Authorized")
-                    
-                    // Now that we are authorized we can get the IDFA
-                    print(ASIdentifierManager.shared().advertisingIdentifier)
-                case .denied:
-                    // Tracking authorization dialog was
-                    // shown and permission is denied
-                    print("Denied")
-                case .notDetermined:
-                    // Tracking authorization dialog has not been shown
-                    print("Not Determined")
-                case .restricted:
-                    print("Restricted")
-                @unknown default:
-                    print("Unknown")
+
+    // StoreKit state
+    @State private var storeKitProducts: [NoctuaProductDetails] = []
+    @State private var storeKitPurchases: [NoctuaPurchaseResult] = []
+    @State private var storeKitError: String? = nil
+    @State private var productPurchaseStatus: NoctuaProductPurchaseStatus? = nil
+    @State private var statusMessage: String = ""
+    @State private var storeKitInitialized: Bool = false
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 12) {
+                SectionCard(title: "Tracking", icon: "chart.bar", iconColor: .blue) {
+                    TrackingSection(logger: logger)
+                }
+
+                SectionCard(title: "StoreKit", icon: "cart", iconColor: .green) {
+                    StoreKitSection(
+                        products: $storeKitProducts,
+                        purchases: $storeKitPurchases,
+                        storeKitError: $storeKitError,
+                        productPurchaseStatus: $productPurchaseStatus,
+                        statusMessage: $statusMessage,
+                        defaultProducts: defaultTestProducts,
+                        logger: logger
+                    )
+                }
+
+                SectionCard(title: "Accounts", icon: "person.2", iconColor: .orange) {
+                    AccountSection(viewModel: viewModel, gameId: gameId)
+                }
+
+                SectionCard(title: "Other", icon: "wrench", iconColor: .gray, expandedByDefault: false) {
+                    OtherSection(logger: logger)
+                }
+
+                // Status Message Bar
+                if !statusMessage.isEmpty {
+                    HStack(spacing: 6) {
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                        Text(statusMessage)
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(8)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(6)
                 }
             }
+            .padding()
+        }
+        .background(Color(.secondarySystemGroupedBackground))
+        .onAppear {
+            initializeStoreKit()
         }
     }
 
-    
-    var body: some View {
-        VStack {
-            
-            Button(action: {
-                requestPermission()
-                
-                let attribution = Noctua.getAdjustCurrentAttribution()
-                logger.debug("""
-                Current Adjust Attribution:
-                - trackerToken: \(attribution["trackerToken"] as? String ?? "nil")
-                - trackerName: \(attribution["trackerName"] as? String ?? "nil")
-                - network: \(attribution["network"] as? String ?? "nil")
-                - campaign: \(attribution["campaign"] as? String ?? "nil")
-                - adgroup: \(attribution["adgroup"] as? String ?? "nil")
-                - creative: \(attribution["creative"] as? String ?? "nil")
-                - clickLabel: \(attribution["clickLabel"] as? String ?? "nil")
-                - adid: \(attribution["adid"] as? String ?? "nil")
-                - costType: \(attribution["costType"] as? String ?? "nil")
-                - costAmount: \(attribution["costAmount"] as? Double ?? 0)
-                - costCurrency: \(attribution["costCurrency"] as? String ?? "nil")
-                """)
-            }) {
-                Text("Get Adjust Attribution")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            
-            Button(action: {
-                Noctua.trackAdRevenue(source: "admob_sdk", revenue: 1.3, currency: "USD", extraPayload: [:])
-                logger.debug("Track Ad Revenue tapped")
-            }) {
-                Text("Track Ad Revenue")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            
-            Button(action: {
-                Noctua.trackPurchase(orderId: "orderId", amount: 1.7, currency: "USD", extraPayload: [:])
-                logger.debug("Track Purchase tapped")
-            }) {
-                Text("Track Purchase")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            
-            Button(action: {
-                Noctua.trackCustomEvent("login", payload: ["k1": "v1", "k2" : "v2", "suffix": 123])
-                Noctua.trackCustomEventWithRevenue("login", revenue: 0.9, currency: "USD")
-                logger.debug("Track Custom Event tapped")
-            }) {
-                Text("Track Custom Event")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            
-            Button(action: {
-                Task {
-                    
-                    let productId = "noctua.unitysdktest.noads.banner"
-                    var isPurchased = false
-                    
-                    await Noctua.getProductPurchasedById(id: productId, completion: { purchased in
-                        logger.debug("Product is \(purchased)")
-                        isPurchased = purchased
-                    })
-                    
-                    if isPurchased {
-                        logger.debug("Product \(productId) already purchased!")
-                        return
-                    }
-                    
-                    Noctua.purchaseItem(productId, completion: { (success, message) in
-                        logger.debug("Purchase Item tapped: \(success), \(message)")
-                    });
-                    
+    // MARK: - StoreKit Initialization
+
+    private func initializeStoreKit() {
+        guard !storeKitInitialized else { return }
+
+        Noctua.initializeStoreKit(
+            onPurchaseCompleted: { result in
+                logger.debug("Purchase completed: \(result.productId), success: \(result.success)")
+                statusMessage = "Purchase \(result.success ? "succeeded" : "failed"): \(result.productId) - \(result.message)"
+                if result.success {
+                    storeKitPurchases.append(result)
                 }
-            }) {
-                Text("Purchase Item")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+            },
+            onPurchaseUpdated: { result in
+                logger.debug("Purchase updated: \(result.productId)")
+                if let idx = storeKitPurchases.firstIndex(where: { $0.purchaseToken == result.purchaseToken }) {
+                    storeKitPurchases[idx] = result
+                } else {
+                    storeKitPurchases.append(result)
+                }
+            },
+            onProductDetailsLoaded: { products in
+                logger.debug("Products loaded: \(products.count)")
+                storeKitProducts = products
+                statusMessage = "Loaded \(products.count) products"
+            },
+            onQueryPurchasesCompleted: { purchases in
+                logger.debug("Purchases queried: \(purchases.count)")
+                storeKitPurchases = purchases
+                statusMessage = "Found \(purchases.count) purchases"
+            },
+            onRestorePurchasesCompleted: { purchases in
+                logger.debug("Purchases restored: \(purchases.count)")
+                storeKitPurchases = purchases
+                statusMessage = "Restored \(purchases.count) purchases"
+            },
+            onProductPurchaseStatusResult: { status in
+                logger.debug("Purchase status: \(status.productId) isPurchased=\(status.isPurchased)")
+                productPurchaseStatus = status
+                statusMessage = "Status for \(status.productId): \(status.isPurchased ? "Purchased" : "Not Purchased")"
+            },
+            onServerVerificationRequired: { result, consumableType in
+                logger.debug("Server verification required: \(result.productId)")
+                statusMessage = "Verifying purchase: \(result.productId)..."
+                // Auto-complete for demo (no real server)
+                Noctua.completePurchaseProcessing(
+                    purchaseToken: result.purchaseToken,
+                    consumableType: consumableType,
+                    verified: true,
+                    callback: { success in
+                        statusMessage = "Verification completed: \(success ? "OK" : "Failed")"
+                    }
+                )
+            },
+            onStoreKitError: { error, message in
+                logger.error("StoreKit error: \(error.rawValue) - \(message)")
+                storeKitError = "Error(\(error.rawValue)): \(message)"
+                statusMessage = "Error: \(message)"
             }
+        )
 
-            Button(action: {
-                Noctua.getActiveCurrency("noctua.sdktest.ios.pack1", completion: { (success, message) in
-                    logger.debug("Get Active Currency tapped: \(success), \(message)")
-                });
-            }) {
-                Text("Get Active Currency")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            
-            Button(action: {
-                fatalError("Crash was triggered")
-            }) {
-                Text("Crash Me")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            
-            Button(action: {
-                viewModel.saveRandomAccount(gameId: gameId)
-//                Noctua.saveEvents(jsonString: "{\"event\":\"test_event\",\"value\":123}")
-//
-//                Noctua.getEvents(onResult: { events in
-//                    logger.debug("[NoctuaInternal] Events retrieved: \(events) event counts: \(events.count)")
-//                })
-            }) {
-                Text("Save Random Account")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            
-            Button(action: {
-                 viewModel.deleteRandomAccount(gameId: gameId)
-//                Noctua.deleteEvents()
-            }) {
-                Text("Delete Random Account")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                let welcomeMessage = Noctua.getFirebaseRemoteConfigString(key: "welcome_message")
-                logger.debug("Firebase Remote Config value: \(welcomeMessage ?? "")")
-            }) {
-                Text("Get Firebase Remote Config")
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-
-            List(viewModel.accounts) { account in
-                Text("\(account.lastUpdated)-\(account.playerId)-\(account.rawData)")
-                    .font(.system(size: 10))
-            }
+        // Register default test products
+        for (id, type) in defaultTestProducts {
+            Noctua.registerProduct(productId: id, consumableType: type)
         }
-        .padding()
+
+        storeKitInitialized = true
+        statusMessage = "StoreKit initialized"
     }
 }
 

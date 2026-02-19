@@ -133,30 +133,30 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - NoctuaSDK (0.25.0):
-    - NoctuaSDK/Core (= 0.25.0)
-  - NoctuaSDK/Adjust (0.25.0):
+  - NoctuaSDK (0.27.0):
+    - NoctuaSDK/Core (= 0.27.0)
+  - NoctuaSDK/Adjust (0.27.0):
     - Adjust (~> 4.38.4)
-  - NoctuaSDK/Core (0.25.0)
-  - NoctuaSDK/FacebookSDK (0.25.0):
-    - NoctuaSDK/FacebookSDK/FBAEMKit (= 0.25.0)
-    - NoctuaSDK/FacebookSDK/FBSDKCoreKit (= 0.25.0)
-    - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (= 0.25.0)
-  - NoctuaSDK/FacebookSDK/FBAEMKit (0.25.0):
+  - NoctuaSDK/Core (0.27.0)
+  - NoctuaSDK/FacebookSDK (0.27.0):
+    - NoctuaSDK/FacebookSDK/FBAEMKit (= 0.27.0)
+    - NoctuaSDK/FacebookSDK/FBSDKCoreKit (= 0.27.0)
+    - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (= 0.27.0)
+  - NoctuaSDK/FacebookSDK/FBAEMKit (0.27.0):
     - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics
-  - NoctuaSDK/FacebookSDK/FBSDKCoreKit (0.25.0):
+  - NoctuaSDK/FacebookSDK/FBSDKCoreKit (0.27.0):
     - NoctuaSDK/FacebookSDK/FBAEMKit
     - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics
-  - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (0.25.0)
-  - NoctuaSDK/FirebaseAnalytics (0.25.0):
+  - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (0.27.0)
+  - NoctuaSDK/FirebaseAnalytics (0.27.0):
     - FirebaseAnalytics (~> 11.14.0)
-  - NoctuaSDK/FirebaseCrashlytics (0.25.0):
+  - NoctuaSDK/FirebaseCrashlytics (0.27.0):
     - FirebaseCrashlytics (~> 11.14.0)
-  - NoctuaSDK/FirebaseMessaging (0.25.0):
+  - NoctuaSDK/FirebaseMessaging (0.27.0):
     - FirebaseMessaging (~> 11.14.0)
-  - NoctuaSDK/FirebaseRemoteConfig (0.25.0):
+  - NoctuaSDK/FirebaseRemoteConfig (0.27.0):
     - FirebaseRemoteConfig (~> 11.14.0)
-  - NoctuaSDK/NoctuaInternalSDK (0.25.0)
+  - NoctuaSDK/NoctuaInternalSDK (0.27.0)
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
@@ -217,10 +217,10 @@ SPEC CHECKSUMS:
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  NoctuaSDK: 53dd7454687947bb8e6b1d06b37d87bd0e83f83b
+  NoctuaSDK: 952b09bb57f5877d179fb15d8bf4020345eee964
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
 
-PODFILE CHECKSUM: aba99db64b04aa2079c5976ecceaf57e7e9d4cd5
+PODFILE CHECKSUM: b8c1c6b675b194ba065e93793f385971f3d1264f
 
 COCOAPODS: 1.16.2
