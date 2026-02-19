@@ -51,8 +51,24 @@ struct ContentView: View {
                     )
                 }
 
+                SectionCard(title: "Firebase", icon: "flame", iconColor: .orange) {
+                    FirebaseSection(logger: logger)
+                }
+
+                SectionCard(title: "Session & Experiments", icon: "gearshape.2", iconColor: .purple, expandedByDefault: false) {
+                    SessionSection(logger: logger)
+                }
+
+                SectionCard(title: "Lifecycle", icon: "wifi", iconColor: .green, expandedByDefault: false) {
+                    LifecycleSection(logger: logger)
+                }
+
                 SectionCard(title: "Accounts", icon: "person.2", iconColor: .orange) {
                     AccountSection(viewModel: viewModel, gameId: gameId)
+                }
+
+                SectionCard(title: "Event Storage", icon: "tray.full", iconColor: .blue, expandedByDefault: false) {
+                    EventStorageSection(logger: logger)
                 }
 
                 SectionCard(title: "Other", icon: "wrench", iconColor: .gray, expandedByDefault: false) {

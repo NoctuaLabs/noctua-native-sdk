@@ -1,9 +1,11 @@
 import Foundation
+import os
 #if canImport(NoctuaInternalSDK)
 import NoctuaInternalSDK
 #endif
 
 class NoctuaInternalService: NoctuaInternalServiceProtocol {
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "NoctuaSDK", category: "NoctuaInternalService")
 
     func initialize() {
         #if canImport(NoctuaInternalSDK)
@@ -99,13 +101,17 @@ class NoctuaInternalService: NoctuaInternalServiceProtocol {
 
     func deleteExternalEventsByIds(idsJson: String, onResult: @escaping (Int32) -> Void) {
         #if canImport(NoctuaInternalSDK)
-        NoctuaInternal.shared.deleteExternalEventsByIds(idsJson: idsJson, callback: onResult)
+        NoctuaInternal.shared.deleteExternalEventsByIds(idsJson: idsJson, callback: { result in
+            onResult(result.int32Value)
+        })
         #endif
     }
 
     func getExternalEventCount(onResult: @escaping (Int32) -> Void) {
         #if canImport(NoctuaInternalSDK)
-        NoctuaInternal.shared.getExternalEventCount(callback: onResult)
+        NoctuaInternal.shared.getExternalEventCount(callback: { result in
+            onResult(result.int32Value)
+        })
         #endif
     }
 }

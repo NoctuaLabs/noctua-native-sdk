@@ -8,7 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		0C3737F22C60DD3700880FB6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0C3737F12C60DD3700880FB6 /* GoogleService-Info.plist */; };
-		82311A003FF594355E6A41A7 /* Pods_NoctuaSDKExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D2786248B248CFB9BD0890E /* Pods_NoctuaSDKExample.framework */; };
+		117B8C9D0E1F2A3B4C5D6E7F /* LifecycleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3D4E5F6A7B8C9D0E1F2A3B /* LifecycleSection.swift */; };
+		228C9D0E1F2A3B4C5D6E7F8A /* EventStorageSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4E5F6A7B8C9D0E1F2A3B4C /* EventStorageSection.swift */; };
+		498B145B83AB9D1985D68228 /* StoreKitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69581917A977A6307DB3A17 /* StoreKitSection.swift */; };
+		726971832004B01B0B19B178 /* Pods_NoctuaSDKExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB9BC180FDC0E10FA589209B /* Pods_NoctuaSDKExample.framework */; };
+		9A65F2623575F8C63273A403 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */; };
+		9AE87070E719B29127351382 /* TrackingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A644C035078285E3C281E /* TrackingSection.swift */; };
+		A8F5408273D06ABE1CB5C027 /* OtherSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2763EFCD75B967592F03186F /* OtherSection.swift */; };
 		B135B7A92C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135B7A82C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift */; };
 		B135B7AB2C5AF28B0091DCC8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135B7AA2C5AF28B0091DCC8 /* ContentView.swift */; };
 		B135B7AD2C5AF28D0091DCC8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B135B7AC2C5AF28D0091DCC8 /* Assets.xcassets */; };
@@ -17,11 +23,9 @@
 		CE680DF02EF54058009AFB20 /* NoctuaInternalSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */; };
 		CE680DF12EF54058009AFB20 /* NoctuaInternalSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E8C578FEDBBA952F99EF4742 /* AccountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28F7E910D9DBB1590E06C75 /* AccountSection.swift */; };
-		A8F5408273D06ABE1CB5C027 /* OtherSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2763EFCD75B967592F03186F /* OtherSection.swift */; };
-		9A65F2623575F8C63273A403 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */; };
+		EE5F6A7B8C9D0E1F2A3B4C5D /* FirebaseSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B2C3D4E5F6A7B8C9D0E1F /* FirebaseSection.swift */; };
 		F9F58F8DCA1487E1D0DA0F8F /* SharedStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C2792A227EEE3DEA87F830 /* SharedStyles.swift */; };
-		498B145B83AB9D1985D68228 /* StoreKitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69581917A977A6307DB3A17 /* StoreKitSection.swift */; };
-		9AE87070E719B29127351382 /* TrackingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A644C035078285E3C281E /* TrackingSection.swift */; };
+		FF6A7B8C9D0E1F2A3B4C5D6E /* SessionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2C3D4E5F6A7B8C9D0E1F2A /* SessionSection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,9 +44,13 @@
 
 /* Begin PBXFileReference section */
 		0C3737F12C60DD3700880FB6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		9C78F29337D4A6452743C1BB /* Pods-NoctuaSDKExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.release.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.release.xcconfig"; sourceTree = "<group>"; };
-		9D2786248B248CFB9BD0890E /* Pods_NoctuaSDKExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoctuaSDKExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A70307F6CB40FF698CAB5F85 /* Pods-NoctuaSDKExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.debug.xcconfig"; sourceTree = "<group>"; };
+		1E2A644C035078285E3C281E /* TrackingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingSection.swift; sourceTree = "<group>"; };
+		2763EFCD75B967592F03186F /* OtherSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSection.swift; sourceTree = "<group>"; };
+		488E1F32609D14C9706FF7B3 /* Pods-NoctuaSDKExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.debug.xcconfig"; sourceTree = "<group>"; };
+		52C2792A227EEE3DEA87F830 /* SharedStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStyles.swift; sourceTree = "<group>"; };
+		A28F7E910D9DBB1590E06C75 /* AccountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSection.swift; sourceTree = "<group>"; };
+		A51E15055775182C19FAAFB1 /* Pods-NoctuaSDKExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.release.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.release.xcconfig"; sourceTree = "<group>"; };
+		AA1B2C3D4E5F6A7B8C9D0E1F /* FirebaseSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseSection.swift; sourceTree = "<group>"; };
 		B10EAD112CDF17CB00BE236F /* NoctuaSDKExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoctuaSDKExample.entitlements; sourceTree = "<group>"; };
 		B135B7A52C5AF28B0091DCC8 /* NoctuaSDKExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoctuaSDKExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B135B7A82C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoctuaSDKExampleApp.swift; sourceTree = "<group>"; };
@@ -52,13 +60,13 @@
 		B135B7B72C5B1B400091DCC8 /* NoctuaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = NoctuaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B135B7BE2C5B3A8D0091DCC8 /* noctuagg.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = noctuagg.json; sourceTree = "<group>"; };
 		B15F9B512C911AAD00006779 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = NoctuaInternalSDK.xcframework; path = "../../../noctua-internal-native-sdk/sdk/ios-sdk/release/NoctuaInternalSDK.xcframework"; sourceTree = "<group>"; };
-		A28F7E910D9DBB1590E06C75 /* AccountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSection.swift; sourceTree = "<group>"; };
-		2763EFCD75B967592F03186F /* OtherSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSection.swift; sourceTree = "<group>"; };
+		BB2C3D4E5F6A7B8C9D0E1F2A /* SessionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSection.swift; sourceTree = "<group>"; };
+		BB9BC180FDC0E10FA589209B /* Pods_NoctuaSDKExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoctuaSDKExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC3D4E5F6A7B8C9D0E1F2A3B /* LifecycleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifecycleSection.swift; sourceTree = "<group>"; };
 		CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCard.swift; sourceTree = "<group>"; };
-		52C2792A227EEE3DEA87F830 /* SharedStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStyles.swift; sourceTree = "<group>"; };
+		CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = NoctuaInternalSDK.xcframework; path = "../../../noctua-internal-native-sdk/sdk/ios-sdk/release/NoctuaInternalSDK.xcframework"; sourceTree = "<group>"; };
+		DD4E5F6A7B8C9D0E1F2A3B4C /* EventStorageSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStorageSection.swift; sourceTree = "<group>"; };
 		F69581917A977A6307DB3A17 /* StoreKitSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitSection.swift; sourceTree = "<group>"; };
-		1E2A644C035078285E3C281E /* TrackingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingSection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,18 +75,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE680DF02EF54058009AFB20 /* NoctuaInternalSDK.xcframework in Frameworks */,
-				82311A003FF594355E6A41A7 /* Pods_NoctuaSDKExample.framework in Frameworks */,
+				726971832004B01B0B19B178 /* Pods_NoctuaSDKExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		851C4F77F00A99145518D397 /* Pods */ = {
+		3FC91E3ABA271A9BDDD4145E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				A70307F6CB40FF698CAB5F85 /* Pods-NoctuaSDKExample.debug.xcconfig */,
-				9C78F29337D4A6452743C1BB /* Pods-NoctuaSDKExample.release.xcconfig */,
+				488E1F32609D14C9706FF7B3 /* Pods-NoctuaSDKExample.debug.xcconfig */,
+				A51E15055775182C19FAAFB1 /* Pods-NoctuaSDKExample.release.xcconfig */,
 			);
 			name = Pods;
 			path = ../Pods;
@@ -90,7 +98,7 @@
 				B135B7A72C5AF28B0091DCC8 /* NoctuaSDKExample */,
 				B135B7A62C5AF28B0091DCC8 /* Products */,
 				B135B7B62C5B1B400091DCC8 /* Frameworks */,
-				851C4F77F00A99145518D397 /* Pods */,
+				3FC91E3ABA271A9BDDD4145E /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,7 +139,7 @@
 			children = (
 				CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */,
 				B135B7B72C5B1B400091DCC8 /* NoctuaSDK.framework */,
-				9D2786248B248CFB9BD0890E /* Pods_NoctuaSDKExample.framework */,
+				BB9BC180FDC0E10FA589209B /* Pods_NoctuaSDKExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -145,6 +153,10 @@
 				52C2792A227EEE3DEA87F830 /* SharedStyles.swift */,
 				F69581917A977A6307DB3A17 /* StoreKitSection.swift */,
 				1E2A644C035078285E3C281E /* TrackingSection.swift */,
+				AA1B2C3D4E5F6A7B8C9D0E1F /* FirebaseSection.swift */,
+				BB2C3D4E5F6A7B8C9D0E1F2A /* SessionSection.swift */,
+				CC3D4E5F6A7B8C9D0E1F2A3B /* LifecycleSection.swift */,
+				DD4E5F6A7B8C9D0E1F2A3B4C /* EventStorageSection.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -156,12 +168,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B135B7B32C5AF28D0091DCC8 /* Build configuration list for PBXNativeTarget "NoctuaSDKExample" */;
 			buildPhases = (
-				123ADAB4809E4C2378DFD4E8 /* [CP] Check Pods Manifest.lock */,
+				BE4B8830D4144326E9A01B8B /* [CP] Check Pods Manifest.lock */,
 				B135B7A12C5AF28B0091DCC8 /* Sources */,
 				B135B7A22C5AF28B0091DCC8 /* Frameworks */,
 				B135B7A32C5AF28B0091DCC8 /* Resources */,
 				CE680DF22EF54058009AFB20 /* Embed Frameworks */,
-				1F60102835C76BFE000481B7 /* [CP] Embed Pods Frameworks */,
+				6F54F71FFF145A710A31E3E7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -220,7 +232,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		123ADAB4809E4C2378DFD4E8 /* [CP] Check Pods Manifest.lock */ = {
+		6F54F71FFF145A710A31E3E7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BE4B8830D4144326E9A01B8B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -242,23 +271,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1F60102835C76BFE000481B7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -274,6 +286,10 @@
 				F9F58F8DCA1487E1D0DA0F8F /* SharedStyles.swift in Sources */,
 				E8C578FEDBBA952F99EF4742 /* AccountSection.swift in Sources */,
 				A8F5408273D06ABE1CB5C027 /* OtherSection.swift in Sources */,
+				EE5F6A7B8C9D0E1F2A3B4C5D /* FirebaseSection.swift in Sources */,
+				FF6A7B8C9D0E1F2A3B4C5D6E /* SessionSection.swift in Sources */,
+				117B8C9D0E1F2A3B4C5D6E7F /* LifecycleSection.swift in Sources */,
+				228C9D0E1F2A3B4C5D6E7F8A /* EventStorageSection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,7 +417,7 @@
 		};
 		B135B7B42C5AF28D0091DCC8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A70307F6CB40FF698CAB5F85 /* Pods-NoctuaSDKExample.debug.xcconfig */;
+			baseConfigurationReference = 488E1F32609D14C9706FF7B3 /* Pods-NoctuaSDKExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -441,7 +457,7 @@
 		};
 		B135B7B52C5AF28D0091DCC8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C78F29337D4A6452743C1BB /* Pods-NoctuaSDKExample.release.xcconfig */;
+			baseConfigurationReference = A51E15055775182C19FAAFB1 /* Pods-NoctuaSDKExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

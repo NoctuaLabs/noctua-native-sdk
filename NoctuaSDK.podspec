@@ -67,7 +67,7 @@ Pod::Spec.new do |spec|
   # Download NoctuaInternal + Facebook Static XCFrameworks
   spec.prepare_command = <<-CMD
     echo "Downloading NoctuaInternalSDK.xcframework"
-    VERSION="0.14.0"
+    VERSION="0.15.0"
     ZIPFILE="NoctuaInternalSDK.xcframework.zip"
     URL="https://github.com/NoctuaLabs/noctua-internal-native-sdk/releases/download/ios-sdk-v${VERSION}/${ZIPFILE}"
     DESTINATION="ios/NoctuaSDK"

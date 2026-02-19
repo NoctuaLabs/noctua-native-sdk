@@ -16,13 +16,6 @@ struct OtherSection: View {
                 actionButtonLabel("Crash Me", color: .red)
             }
 
-            Button(action: {
-                let welcomeMessage = Noctua.getFirebaseRemoteConfigString(key: "welcome_message")
-                logger.debug("Firebase Remote Config value: \(welcomeMessage ?? "")")
-            }) {
-                actionButtonLabel("Get Firebase Remote Config")
-            }
-
             // Per-Row Storage (Unlimited)
             Divider().padding(.vertical, 4)
 
