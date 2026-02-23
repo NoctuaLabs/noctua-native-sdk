@@ -253,6 +253,30 @@ import Foundation
         currencyQuery?.getActiveCurrency(productId: productId, completion: completion)
     }
 
+    // MARK: - Testing Support
+
+    #if DEBUG
+    static func resetForTesting() {
+        tracker = nil
+        storeKit = nil
+        account = nil
+        session = nil
+        currencyQuery = nil
+    }
+
+    static func configureForTesting(
+        tracker: TrackerPresenter? = nil,
+        storeKit: StoreKitPresenter? = nil,
+        account: AccountPresenter? = nil,
+        session: SessionPresenter? = nil
+    ) {
+        self.tracker = tracker
+        self.storeKit = storeKit
+        self.account = account
+        self.session = session
+    }
+    #endif
+
     // MARK: - Private
 
     private static var tracker: TrackerPresenter?
@@ -353,9 +377,9 @@ import Foundation
     }
 }
 
-func loadConfig() throws -> NoctuaConfig {
-    let firstPath = Bundle.main.path(forResource: "/Data/Raw/noctuagg", ofType: "json")
-    let secondPath = Bundle.main.path(forResource: "noctuagg", ofType: "json")
+func loadConfig(bundle: Bundle = .main) throws -> NoctuaConfig {
+    let firstPath = bundle.path(forResource: "/Data/Raw/noctuagg", ofType: "json")
+    let secondPath = bundle.path(forResource: "noctuagg", ofType: "json")
 
     guard let path = firstPath ?? secondPath else {
         throw ConfigurationError.fileNotFound

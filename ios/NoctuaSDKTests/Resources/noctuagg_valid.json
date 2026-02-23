@@ -1,0 +1,8 @@
+{
+    "clientId": "test-client-id",
+    "gameId": 1,
+    "noctua": {
+        "nativeInternalTrackerEnabled": true,
+        "iapDisabled": false
+    }
+}
