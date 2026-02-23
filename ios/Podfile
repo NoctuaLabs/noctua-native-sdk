@@ -15,4 +15,8 @@ target "NoctuaSDKExample" do
   pod "NoctuaSDK/FirebaseMessaging", :path => ".."
   pod "NoctuaSDK/FirebaseRemoteConfig", :path => ".."
   pod "NoctuaSDK/FacebookSDK", :path => ".."
+
+  target "NoctuaSDKTests" do
+    inherit! :search_paths
+  end
 end

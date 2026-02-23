@@ -7,7 +7,7 @@
     "offlineFirstEnabled": true,
     "welcomeToastDisabled": false,
     "iaaEnabled": true,
-    "iapDisabled": true,
+    "iapDisabled": false,
     "nativeInternalTrackerEnabled": false,
     "remoteFeatureFlags": {
       "vnLegalPurposeEnabled": false,
