@@ -36,7 +36,11 @@ import Foundation
     }
 
     @objc public static func getActiveCurrency(_ productId: String, completion: @escaping (Bool, String) -> Void) {
-        plugin?.getActiveCurrency(productId: productId, completion: completion)
+        guard let plugin = plugin else {
+            completion(false, "Noctua SDK is not initialized")
+            return
+        }
+        plugin.getActiveCurrency(productId: productId, completion: completion)
     }
     
     @objc public static func putAccount(gameId: Int64, playerId: Int64, rawData: String) {

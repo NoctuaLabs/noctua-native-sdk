@@ -216,8 +216,14 @@ class NoctuaPlugin {
 
     func getActiveCurrency(productId: String, completion: @escaping CompletionCallback) {
         logger.debug("productId: \(productId)")
-        
-        self.noctua?.getActiveCurrency(productId: productId, completion: completion)
+
+        guard let noctua = self.noctua else {
+            logger.warning("NoctuaService is not initialized, cannot get active currency")
+            completion(false, "NoctuaService is not initialized")
+            return
+        }
+
+        noctua.getActiveCurrency(productId: productId, completion: completion)
     }
     
     func putAccount(gameId: Int64, playerId: Int64, rawData: String) {

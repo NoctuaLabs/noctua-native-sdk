@@ -12,6 +12,7 @@ struct NoctuaServiceConfig: Decodable {
 class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
     private var productCallbacks: [String: CompletionCallback] = [:]
     private var currencyCallbacks: [String: CompletionCallback] = [:]
+    private var requestProductIdMap: [SKRequest: Set<String>] = [:]
     private var noctuaConfig: NoctuaServiceConfig?
 
     private let logger = Logger(
@@ -39,6 +40,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     func getActiveCurrency(productId: String, completion: @escaping CompletionCallback) {
         currencyCallbacks[productId] = completion
         let request = SKProductsRequest(productIdentifiers: [productId])
+        requestProductIdMap[request] = [productId]
         request.delegate = self
         request.start()
     }
@@ -54,6 +56,7 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
 
         if SKPaymentQueue.canMakePayments() {
             let request = SKProductsRequest(productIdentifiers: [productId])
+            requestProductIdMap[request] = [productId]
             request.delegate = self
             request.start()
         } else {
@@ -63,7 +66,25 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
     }
 
     // MARK: - SKProductsRequestDelegate
+    func request(_ request: SKRequest, didFailWithError error: Error) {
+        logger.warning("SKProductsRequest failed: \(error.localizedDescription)")
+
+        let requestedIds = requestProductIdMap.removeValue(forKey: request) ?? []
+
+        for productId in requestedIds {
+            if let callback = currencyCallbacks.removeValue(forKey: productId) {
+                callback(false, "Product request failed: \(error.localizedDescription)")
+            }
+            if let callback = productCallbacks.removeValue(forKey: productId) {
+                callback(false, "Product request failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        let requestedIds = requestProductIdMap.removeValue(forKey: request) ?? []
+        var handledIds = Set<String>()
+
         for product in response.products {
             let productId = product.productIdentifier
 
@@ -72,6 +93,8 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
                 logger.info("Found product for purchase: \(productId)")
                 let payment = SKPayment(product: product)
                 SKPaymentQueue.default().add(payment)
+                // Note: productCallbacks is NOT removed here, it will be resolved in paymentQueue delegate
+                handledIds.insert(productId)
             } else if let currencyCallback = currencyCallbacks[productId] {
                 // Handle currency query
                 if let currency = product.priceLocale.currencyCode {
@@ -82,14 +105,33 @@ class NoctuaService: NSObject, SKProductsRequestDelegate, SKPaymentTransactionOb
                     currencyCallback(false, "Unable to retrieve product currency")
                 }
                 currencyCallbacks.removeValue(forKey: productId)
+                handledIds.insert(productId)
             }
         }
 
-        if response.products.isEmpty, let productId = response.invalidProductIdentifiers.first {
-            currencyCallbacks[productId]?(false, "Product not found")
-            productCallbacks[productId]?(false, "Product not found")
-            currencyCallbacks.removeValue(forKey: productId)
-            productCallbacks.removeValue(forKey: productId)
+        // Handle all invalid product identifiers
+        for productId in response.invalidProductIdentifiers {
+            if let callback = currencyCallbacks.removeValue(forKey: productId) {
+                callback(false, "Product not found: \(productId)")
+                handledIds.insert(productId)
+            }
+            if let callback = productCallbacks.removeValue(forKey: productId) {
+                callback(false, "Product not found: \(productId)")
+                handledIds.insert(productId)
+            }
+        }
+
+        // Safety net: if any requested productIds were not resolved by the response
+        // (e.g. empty products + empty invalidProductIdentifiers), call them back with error
+        for productId in requestedIds where !handledIds.contains(productId) {
+            if let callback = currencyCallbacks.removeValue(forKey: productId) {
+                logger.warning("Currency callback for \(productId) was not resolved by the product response")
+                callback(false, "Product not found: \(productId)")
+            }
+            if let callback = productCallbacks.removeValue(forKey: productId) {
+                logger.warning("Product callback for \(productId) was not resolved by the product response")
+                callback(false, "Product not found: \(productId)")
+            }
         }
     }
 
