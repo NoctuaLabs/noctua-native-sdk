@@ -75,6 +75,7 @@ data class NoctuaPurchaseResult(
     val orderId: String? = null,
     val purchaseToken: String = "",
     val purchaseTime: Long = 0,
+    val expiryTime: Long = 0,
     val isAcknowledged: Boolean = false,
     val isAutoRenewing: Boolean = false,
     val quantity: Int = 1,
@@ -96,6 +97,7 @@ data class NoctuaProductPurchaseStatus(
     val purchaseState: PurchaseState = PurchaseState.UNSPECIFIED,
     val purchaseToken: String = "",
     val purchaseTime: Long = 0,
+    val expiryTime: Long = 0,
     val orderId: String? = null,
     val originalJson: String = ""
 )

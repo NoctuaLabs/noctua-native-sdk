@@ -181,6 +181,7 @@ class StoreKitService: StoreKitServiceProtocol {
                     purchaseState: .purchased,
                     purchaseToken: String(transaction.id),
                     purchaseTime: Int64(transaction.purchaseDate.timeIntervalSince1970 * 1000),
+                    expiryTime: Int64((transaction.expirationDate?.timeIntervalSince1970 ?? 0) * 1000),
                     orderId: String(transaction.originalID),
                     originalJson: transaction.jsonRepresentation.base64EncodedString()
                 )
