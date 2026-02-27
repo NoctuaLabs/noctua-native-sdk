@@ -1,3 +1,8 @@
+## [android-sdk-v0.27.0] - 2026-02-27
+
+### 🚀 Features
+
+- Add expiryTime field to purchase status models (iOS populated, Android=0)
 ## [android-sdk-v0.26.0] - 2026-02-19
 
 ### 🚀 Features
