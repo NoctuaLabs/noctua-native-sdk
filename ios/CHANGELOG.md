@@ -1,3 +1,13 @@
+## [ios-sdk-v0.30.0] - 2026-02-27
+
+### 🚀 Features
+
+- *(ios)* Add comprehensive unit tests for NoctuaSDK (159 tests, 88% testable coverage)
+- Add expiryTime field to purchase status models (iOS populated, Android=0)
+
+### ⚙️ Miscellaneous Tasks
+
+- *(ios)* Re-enable IAP in example app config (iapDisabled: false)
 ## [ios-sdk-v0.29.0] - 2026-02-19
 
 ### 🚀 Features
