@@ -179,6 +179,7 @@ import Foundation
     @objc public let purchaseState: PurchaseState
     @objc public let purchaseToken: String
     @objc public let purchaseTime: Int64
+    @objc public let expiryTime: Int64
     @objc public let orderId: String?
     @objc public let originalJson: String
 
@@ -190,6 +191,7 @@ import Foundation
         purchaseState: PurchaseState = .unspecified,
         purchaseToken: String = "",
         purchaseTime: Int64 = 0,
+        expiryTime: Int64 = 0,
         orderId: String? = nil,
         originalJson: String = ""
     ) {
@@ -200,6 +202,7 @@ import Foundation
         self.purchaseState = purchaseState
         self.purchaseToken = purchaseToken
         self.purchaseTime = purchaseTime
+        self.expiryTime = expiryTime
         self.orderId = orderId
         self.originalJson = originalJson
         super.init()

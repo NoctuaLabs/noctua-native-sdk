@@ -416,6 +416,7 @@ class BillingService(
                         purchaseState = matchingPurchase.purchaseState,
                         purchaseToken = matchingPurchase.purchaseToken,
                         purchaseTime = matchingPurchase.purchaseTime,
+                        expiryTime = matchingPurchase.expiryTime,
                         orderId = matchingPurchase.orderId,
                         originalJson = matchingPurchase.originalJson
                     )
