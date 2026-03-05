@@ -130,6 +130,7 @@ import Foundation
     @objc public let quantity: Int
     @objc public let message: String
     @objc public let originalJson: String
+    @objc public let transactionJson: String
 
     @objc public init(
         success: Bool,
@@ -143,7 +144,8 @@ import Foundation
         isAutoRenewing: Bool = false,
         quantity: Int = 1,
         message: String = "",
-        originalJson: String = ""
+        originalJson: String = "",
+        transactionJson: String = ""
     ) {
         self.success = success
         self.errorCode = errorCode
@@ -157,6 +159,7 @@ import Foundation
         self.quantity = quantity
         self.message = message
         self.originalJson = originalJson
+        self.transactionJson = transactionJson
         super.init()
     }
 
@@ -182,6 +185,7 @@ import Foundation
     @objc public let expiryTime: Int64
     @objc public let orderId: String?
     @objc public let originalJson: String
+    @objc public let transactionJson: String
 
     @objc public init(
         productId: String,
@@ -193,7 +197,8 @@ import Foundation
         purchaseTime: Int64 = 0,
         expiryTime: Int64 = 0,
         orderId: String? = nil,
-        originalJson: String = ""
+        originalJson: String = "",
+        transactionJson: String = ""
     ) {
         self.productId = productId
         self.isPurchased = isPurchased
@@ -205,6 +210,7 @@ import Foundation
         self.expiryTime = expiryTime
         self.orderId = orderId
         self.originalJson = originalJson
+        self.transactionJson = transactionJson
         super.init()
     }
 }
