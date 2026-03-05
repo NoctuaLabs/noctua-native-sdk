@@ -183,7 +183,8 @@ class StoreKitService: StoreKitServiceProtocol {
                     purchaseTime: Int64(transaction.purchaseDate.timeIntervalSince1970 * 1000),
                     expiryTime: Int64((transaction.expirationDate?.timeIntervalSince1970 ?? 0) * 1000),
                     orderId: String(transaction.originalID),
-                    originalJson: transaction.jsonRepresentation.base64EncodedString()
+                    originalJson: getAppStoreReceipt(),
+                    transactionJson: transaction.jsonRepresentation.base64EncodedString()
                 )
             } else {
                 status = NoctuaProductPurchaseStatus(
@@ -402,6 +403,17 @@ class StoreKitService: StoreKitServiceProtocol {
         queryPurchases(productType: .subs)
     }
 
+    // MARK: - Receipt Helper
+
+    private func getAppStoreReceipt() -> String {
+        guard let receiptURL = Bundle.main.appStoreReceiptURL,
+              let receiptData = try? Data(contentsOf: receiptURL) else {
+            logger.warning("Failed to read receipt from appStoreReceiptURL")
+            return ""
+        }
+        return receiptData.base64EncodedString()
+    }
+
     // MARK: - Mapping Helpers
 
     private func mapProduct(_ product: Product) -> NoctuaProductDetails {
@@ -493,7 +505,8 @@ class StoreKitService: StoreKitServiceProtocol {
             isAutoRenewing: isAutoRenewing,
             quantity: transaction.purchasedQuantity,
             message: "",
-            originalJson: transaction.jsonRepresentation.base64EncodedString()
+            originalJson: getAppStoreReceipt(),
+            transactionJson: transaction.jsonRepresentation.base64EncodedString()
         )
     }
 
