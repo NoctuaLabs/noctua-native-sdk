@@ -1,3 +1,8 @@
+## [ios-sdk-v0.30.1] - 2026-03-05
+
+### 🐛 Bug Fixes
+
+- Use appStoreReceiptURL for receipt data instead of jsonRepresentation
 ## [ios-sdk-v0.30.0] - 2026-02-27
 
 ### 🚀 Features
