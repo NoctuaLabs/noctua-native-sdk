@@ -716,7 +716,7 @@ class StoreKit1ServiceTests: XCTestCase {
 
 // MARK: - Mock SKProductsResponse
 
-class MockSKProductsResponse: @unchecked Sendable, SKProductsResponse {
+class MockSKProductsResponse: SKProductsResponse, @unchecked Sendable {
     private let _products: [SKProduct]
     private let _invalidProductIdentifiers: [String]
 
