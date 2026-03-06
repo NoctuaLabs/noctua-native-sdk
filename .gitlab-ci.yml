@@ -14,6 +14,25 @@ stages:
     - git config --global user.email "gitlab-ci@noctua.gg"
     - git config --global user.name "Noctua Gitlab CI"
 
+test-ios-sdk:
+  stage: test
+  tags:
+    - macmini
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+      changes:
+        - ios/**/*
+        - NoctuaSDK.podspec
+      when: always
+  script:
+    - cd ios
+    - LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pod install
+    - xcodebuild test
+        -workspace NoctuaSDKExample.xcworkspace
+        -scheme NoctuaSDKTests
+        -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
+        | tail -20
+
 test-android-sdk:
   image: cimg/android:2024.07.1
   stage: test
@@ -130,8 +149,9 @@ publish-android-sdk:
     - cp ./sdk/build/outputs/aar/sdk-release.aar "./noctua-$NEW_VERSION_TAG.aar"
     - echo $GITHUB_ACCESS_TOKEN | gh auth login --with-token
     - git remote add github https://github.com/NoctuaLabs/noctua-native-sdk.git || true
-    - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md "./noctua-$NEW_VERSION_TAG.aar"
-    - git remote remove github
+    - git push github $NEW_VERSION_TAG || echo "Failed to push tag $NEW_VERSION_TAG to GitHub. Please push it manually."
+    - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md "./noctua-$NEW_VERSION_TAG.aar" || echo "Failed to create GitHub release for $NEW_VERSION_TAG. Please create it manually."
+    - git remote remove github || true
 
 bump-version-ios-sdk:
   extends: .bump-version
@@ -222,6 +242,7 @@ publish-ios-sdk:
     - source ~/.config/envman/PATH.env
     - echo $GITHUB_ACCESS_TOKEN | gh auth login --with-token
     - git remote add github https://github.com/NoctuaLabs/noctua-native-sdk.git || true
-    - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md
-    - git remote remove github
+    - git push github $NEW_VERSION_TAG || echo "Failed to push tag $NEW_VERSION_TAG to GitHub. Please push it manually."
+    - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md || echo "Failed to create GitHub release for $NEW_VERSION_TAG. Please create it manually."
+    - git remote remove github || true
     - pod trunk push ../NoctuaSDK.podspec --allow-warnings || echo "Failed to push to pod trunk. Please push manually from registered pod maintainer workstation using 'pod trunk push ../NoctuaSDK.podspec --allow-warnings'"
