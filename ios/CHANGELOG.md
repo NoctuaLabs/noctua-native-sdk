@@ -1,3 +1,12 @@
+## [ios-sdk-v0.31.0] - 2026-03-06
+
+### 🚀 Features
+
+- Add StoreKit 1 support with SK1/SK2 switching
+
+### 🐛 Bug Fixes
+
+- Superclass must appear first in MockSKProductsResponse inheritance
 ## [ios-sdk-v0.30.1] - 2026-03-05
 
 ### 🐛 Bug Fixes
