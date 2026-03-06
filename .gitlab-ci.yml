@@ -148,7 +148,7 @@ publish-android-sdk:
     - NEW_VERSION_TAG="android-sdk-v$(cat version.txt)"
     - cp ./sdk/build/outputs/aar/sdk-release.aar "./noctua-$NEW_VERSION_TAG.aar"
     - echo $GITHUB_ACCESS_TOKEN | gh auth login --with-token
-    - git remote add github https://github.com/NoctuaLabs/noctua-native-sdk.git || true
+    - git remote add github https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com/NoctuaLabs/noctua-native-sdk.git || true
     - git push github $NEW_VERSION_TAG || echo "Failed to push tag $NEW_VERSION_TAG to GitHub. Please push it manually."
     - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md "./noctua-$NEW_VERSION_TAG.aar" || echo "Failed to create GitHub release for $NEW_VERSION_TAG. Please create it manually."
     - git remote remove github || true
@@ -241,7 +241,7 @@ publish-ios-sdk:
     - curl -sS https://webi.sh/gh | sh
     - source ~/.config/envman/PATH.env
     - echo $GITHUB_ACCESS_TOKEN | gh auth login --with-token
-    - git remote add github https://github.com/NoctuaLabs/noctua-native-sdk.git || true
+    - git remote add github https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com/NoctuaLabs/noctua-native-sdk.git || true
     - git push github $NEW_VERSION_TAG || echo "Failed to push tag $NEW_VERSION_TAG to GitHub. Please push it manually."
     - gh release create $NEW_VERSION_TAG --title $NEW_VERSION_TAG --notes-file GithubRelease.md || echo "Failed to create GitHub release for $NEW_VERSION_TAG. Please create it manually."
     - git remote remove github || true
