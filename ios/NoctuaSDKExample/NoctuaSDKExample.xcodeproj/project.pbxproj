@@ -21,9 +21,8 @@
 		54661D70E24233555C250BB7 /* StoreKitModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B7187600DF3A0A6C022358 /* StoreKitModelTests.swift */; };
 		60D71C65CBEE4E1F1B3C365C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BCFE414F089C6272C8B9016 /* Foundation.framework */; };
 		70443C88AC5C72F80BFD9246 /* noctuagg_invalid.json in Resources */ = {isa = PBXBuildFile; fileRef = 9D83EF1D2F422023CB46ABFE /* noctuagg_invalid.json */; };
-		73317F2C1C59423693F4511B /* Pods_NoctuaSDKExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4E6C457A7155315755FB26 /* Pods_NoctuaSDKExample.framework */; };
+		726385D5142032371CFBCB4E /* Pods_NoctuaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5D905E9A19670A0C3761DB6 /* Pods_NoctuaSDKTests.framework */; };
 		850345BE6F782AED56B81F84 /* CurrencyQueryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB2F44930246D4EA0046468 /* CurrencyQueryServiceTests.swift */; };
-		87CDA3BF6081312A2E670595 /* Pods_NoctuaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B90E00E1690F558354C3B20E /* Pods_NoctuaSDKTests.framework */; };
 		8E70A278320838F3403B5DC4 /* AccountModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB36617E4C7187505EC82F6 /* AccountModelTests.swift */; };
 		9A65F2623575F8C63273A403 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */; };
 		9AE87070E719B29127351382 /* TrackingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A644C035078285E3C281E /* TrackingSection.swift */; };
@@ -44,6 +43,10 @@
 		CE680DF12EF54058009AFB20 /* NoctuaInternalSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF224E0FF3883E58120F11E4 /* NoctuaErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5360DE41D3567BB2C801A7C /* NoctuaErrorTests.swift */; };
 		D12149303480339B1E2D8D69 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DBBA69B5215FB9082E45DB /* TestHelpers.swift */; };
+		D4E5F6A7B8C9D0E1F2A3B4C5 /* StoreKit1ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* StoreKit1ServiceTests.swift */; };
+		E5F6A7B8C9D0E1F2A3B4C5D6 /* MockPaymentQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* MockPaymentQueue.swift */; };
+		F6A7B8C9D0E1F2A3B4C5D6E7 /* MockSKPaymentTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* MockSKPaymentTransaction.swift */; };
+		D25119BE80452416BBD02B51 /* Pods_NoctuaSDKExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8DC793FA6DDB617F1C9253F /* Pods_NoctuaSDKExample.framework */; };
 		E8C578FEDBBA952F99EF4742 /* AccountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28F7E910D9DBB1590E06C75 /* AccountSection.swift */; };
 		EE5F6A7B8C9D0E1F2A3B4C5D /* FirebaseSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B2C3D4E5F6A7B8C9D0E1F /* FirebaseSection.swift */; };
 		F9F58F8DCA1487E1D0DA0F8F /* SharedStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C2792A227EEE3DEA87F830 /* SharedStyles.swift */; };
@@ -78,28 +81,28 @@
 /* Begin PBXFileReference section */
 		0BCFE414F089C6272C8B9016 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		0C3737F12C60DD3700880FB6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		0E35E8338B8F781BAD6B34AF /* Pods-NoctuaSDKExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.debug.xcconfig"; sourceTree = "<group>"; };
 		1A95B2058782FF9CE2E2B3CE /* NoctuaSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoctuaSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E2A644C035078285E3C281E /* TrackingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingSection.swift; sourceTree = "<group>"; };
 		2763EFCD75B967592F03186F /* OtherSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSection.swift; sourceTree = "<group>"; };
+		2B60D516F2353BB29B88FE25 /* Pods-NoctuaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKTests.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKTests/Pods-NoctuaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		37CB17B39C857C40A8BF0210 /* MockStoreKitService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockStoreKitService.swift; sourceTree = "<group>"; };
 		4E785285A45C3AF0D8A2F7A4 /* SessionPresenterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionPresenterTests.swift; sourceTree = "<group>"; };
 		52C2792A227EEE3DEA87F830 /* SharedStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStyles.swift; sourceTree = "<group>"; };
 		53905BD88203F35152AB9AE7 /* noctuagg_valid.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; path = noctuagg_valid.json; sourceTree = "<group>"; };
 		59A6405144F1FDFADB685C2A /* AccountPresenterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccountPresenterTests.swift; sourceTree = "<group>"; };
 		5CB36617E4C7187505EC82F6 /* AccountModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccountModelTests.swift; sourceTree = "<group>"; };
-		6AF74B95E018F662FA626655 /* Pods-NoctuaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKTests.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKTests/Pods-NoctuaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
+		6D45EF21E547B3BCA2A0F09E /* Pods-NoctuaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKTests.release.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKTests/Pods-NoctuaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		6F3998C9EA6C95C3BF0D0281 /* MockAdjustSpecific.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockAdjustSpecific.swift; sourceTree = "<group>"; };
-		77BD5DCA3B5CC5AB19322DAC /* Pods-NoctuaSDKExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.release.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.release.xcconfig"; sourceTree = "<group>"; };
 		7B9E631D532AB7166ACBDA38 /* MockAccountRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockAccountRepository.swift; sourceTree = "<group>"; };
 		80DF0367C166B4C482D74369 /* StoreKitPresenterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StoreKitPresenterTests.swift; sourceTree = "<group>"; };
-		9ADFC5A490BFABA1B835A67F /* Pods-NoctuaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKTests.release.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKTests/Pods-NoctuaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		9D83EF1D2F422023CB46ABFE /* noctuagg_invalid.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; path = noctuagg_invalid.json; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* StoreKit1ServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StoreKit1ServiceTests.swift; sourceTree = "<group>"; };
 		A28F7E910D9DBB1590E06C75 /* AccountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSection.swift; sourceTree = "<group>"; };
 		AA1B2C3D4E5F6A7B8C9D0E1F /* FirebaseSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseSection.swift; sourceTree = "<group>"; };
 		AC7C67BD9E72ABBB73A4D7B1 /* MockFirebaseQueryService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockFirebaseQueryService.swift; sourceTree = "<group>"; };
 		AEE2FAFC2B922341AE8B1E58 /* MockTrackerService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockTrackerService.swift; sourceTree = "<group>"; };
 		B10EAD112CDF17CB00BE236F /* NoctuaSDKExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoctuaSDKExample.entitlements; sourceTree = "<group>"; };
+		B2C3D4E5F6A7B8C9D0E1F2A3 /* MockPaymentQueue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockPaymentQueue.swift; sourceTree = "<group>"; };
 		B135B7A52C5AF28B0091DCC8 /* NoctuaSDKExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoctuaSDKExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B135B7A82C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoctuaSDKExampleApp.swift; sourceTree = "<group>"; };
 		B135B7AA2C5AF28B0091DCC8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -110,23 +113,26 @@
 		B15F9B512C911AAD00006779 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B17408164C419F3C0F0A0E26 /* NoctuaSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoctuaSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B4AC4CBDB3E87964268B0E /* NoctuaConfigTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoctuaConfigTests.swift; sourceTree = "<group>"; };
-		B90E00E1690F558354C3B20E /* Pods_NoctuaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoctuaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B8DC793FA6DDB617F1C9253F /* Pods_NoctuaSDKExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoctuaSDKExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB2C3D4E5F6A7B8C9D0E1F2A /* SessionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSection.swift; sourceTree = "<group>"; };
 		C22081DF2EDBA5426CCB8590 /* NoctuaPublicAPITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoctuaPublicAPITests.swift; sourceTree = "<group>"; };
+		C3D4E5F6A7B8C9D0E1F2A3B4 /* MockSKPaymentTransaction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockSKPaymentTransaction.swift; sourceTree = "<group>"; };
 		C7B7187600DF3A0A6C022358 /* StoreKitModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StoreKitModelTests.swift; sourceTree = "<group>"; };
 		C92BCF9EF0F81E4BDF6E89E8 /* TrackerPresenterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackerPresenterTests.swift; sourceTree = "<group>"; };
 		CC3D4E5F6A7B8C9D0E1F2A3B /* LifecycleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifecycleSection.swift; sourceTree = "<group>"; };
 		CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCard.swift; sourceTree = "<group>"; };
-		CE4E6C457A7155315755FB26 /* Pods_NoctuaSDKExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoctuaSDKExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = NoctuaInternalSDK.xcframework; path = "../../../noctua-internal-native-sdk/sdk/ios-sdk/release/NoctuaInternalSDK.xcframework"; sourceTree = "<group>"; };
 		CFE82EF6275CAEECE3470286 /* NoctuaSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoctuaSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5D905E9A19670A0C3761DB6 /* Pods_NoctuaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoctuaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD4E5F6A7B8C9D0E1F2A3B4C /* EventStorageSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStorageSection.swift; sourceTree = "<group>"; };
 		E1DBBA69B5215FB9082E45DB /* TestHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		E936AD22D3FCA69A4F8DB02B /* NoctuaSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoctuaSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F172DEB83CA2B5F87FB9FC6F /* noctuagg_empty_clientid.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; path = noctuagg_empty_clientid.json; sourceTree = "<group>"; };
 		F1E1D4F40911E286EC42B17F /* MockNoctuaInternalService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockNoctuaInternalService.swift; sourceTree = "<group>"; };
+		F1FAF6C837EBA83DAA01BC99 /* Pods-NoctuaSDKExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.debug.xcconfig"; sourceTree = "<group>"; };
 		F5360DE41D3567BB2C801A7C /* NoctuaErrorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoctuaErrorTests.swift; sourceTree = "<group>"; };
 		F69581917A977A6307DB3A17 /* StoreKitSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitSection.swift; sourceTree = "<group>"; };
+		F6F74B1B6CDB776ED26A8686 /* Pods-NoctuaSDKExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKExample.release.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample.release.xcconfig"; sourceTree = "<group>"; };
 		FA308DAE2789BF57B3B7AE66 /* MockNoctuaLogger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockNoctuaLogger.swift; sourceTree = "<group>"; };
 		FCB2F44930246D4EA0046468 /* CurrencyQueryServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CurrencyQueryServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -137,7 +143,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				60D71C65CBEE4E1F1B3C365C /* Foundation.framework in Frameworks */,
-				87CDA3BF6081312A2E670595 /* Pods_NoctuaSDKTests.framework in Frameworks */,
+				726385D5142032371CFBCB4E /* Pods_NoctuaSDKTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,7 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE680DF02EF54058009AFB20 /* NoctuaInternalSDK.xcframework in Frameworks */,
-				73317F2C1C59423693F4511B /* Pods_NoctuaSDKExample.framework in Frameworks */,
+				D25119BE80452416BBD02B51 /* Pods_NoctuaSDKExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,6 +169,8 @@
 				6F3998C9EA6C95C3BF0D0281 /* MockAdjustSpecific.swift */,
 				AC7C67BD9E72ABBB73A4D7B1 /* MockFirebaseQueryService.swift */,
 				F1E1D4F40911E286EC42B17F /* MockNoctuaInternalService.swift */,
+				B2C3D4E5F6A7B8C9D0E1F2A3 /* MockPaymentQueue.swift */,
+				C3D4E5F6A7B8C9D0E1F2A3B4 /* MockSKPaymentTransaction.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -200,6 +208,18 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		662722CF398D0418A4A8B2D1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F1FAF6C837EBA83DAA01BC99 /* Pods-NoctuaSDKExample.debug.xcconfig */,
+				F6F74B1B6CDB776ED26A8686 /* Pods-NoctuaSDKExample.release.xcconfig */,
+				6D45EF21E547B3BCA2A0F09E /* Pods-NoctuaSDKTests.release.xcconfig */,
+				2B60D516F2353BB29B88FE25 /* Pods-NoctuaSDKTests.debug.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
+			sourceTree = "<group>";
+		};
 		89C4BAEAF0A6B047861D7A0D /* iOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -214,8 +234,8 @@
 				B135B7A72C5AF28B0091DCC8 /* NoctuaSDKExample */,
 				B135B7A62C5AF28B0091DCC8 /* Products */,
 				B135B7B62C5B1B400091DCC8 /* Frameworks */,
-				B15B7D338FAB7D8C76184E5D /* Pods */,
 				3BBED74489D3E57E6881DFB6 /* NoctuaSDKTests */,
+				662722CF398D0418A4A8B2D1 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -260,29 +280,18 @@
 			children = (
 				CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */,
 				B135B7B72C5B1B400091DCC8 /* NoctuaSDK.framework */,
-				CE4E6C457A7155315755FB26 /* Pods_NoctuaSDKExample.framework */,
 				89C4BAEAF0A6B047861D7A0D /* iOS */,
-				B90E00E1690F558354C3B20E /* Pods_NoctuaSDKTests.framework */,
+				B8DC793FA6DDB617F1C9253F /* Pods_NoctuaSDKExample.framework */,
+				D5D905E9A19670A0C3761DB6 /* Pods_NoctuaSDKTests.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		B15B7D338FAB7D8C76184E5D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				0E35E8338B8F781BAD6B34AF /* Pods-NoctuaSDKExample.debug.xcconfig */,
-				77BD5DCA3B5CC5AB19322DAC /* Pods-NoctuaSDKExample.release.xcconfig */,
-				9ADFC5A490BFABA1B835A67F /* Pods-NoctuaSDKTests.release.xcconfig */,
-				6AF74B95E018F662FA626655 /* Pods-NoctuaSDKTests.debug.xcconfig */,
-			);
-			name = Pods;
-			path = ../Pods;
 			sourceTree = "<group>";
 		};
 		B89E59E6C9A2873E840485CC /* Service */ = {
 			isa = PBXGroup;
 			children = (
 				FCB2F44930246D4EA0046468 /* CurrencyQueryServiceTests.swift */,
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* StoreKit1ServiceTests.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -333,7 +342,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5DD482D5D868466DA0A511BF /* Build configuration list for PBXNativeTarget "NoctuaSDKTests" */;
 			buildPhases = (
-				D79734D08D5711EC79753EC6 /* [CP] Check Pods Manifest.lock */,
+				A845E8B671AB78BFDB88C663 /* [CP] Check Pods Manifest.lock */,
 				62E09881A4C4D9EBAD1EA4C4 /* Sources */,
 				77759A69B4A812A0A5C187B2 /* Frameworks */,
 				0C3916A68B9A6EC3CC31A75D /* Resources */,
@@ -352,12 +361,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B135B7B32C5AF28D0091DCC8 /* Build configuration list for PBXNativeTarget "NoctuaSDKExample" */;
 			buildPhases = (
-				A04588D6791E28FD240D275F /* [CP] Check Pods Manifest.lock */,
+				3BA1F3D46B47DC9F5D787C0C /* [CP] Check Pods Manifest.lock */,
 				B135B7A12C5AF28B0091DCC8 /* Sources */,
 				B135B7A22C5AF28B0091DCC8 /* Frameworks */,
 				B135B7A32C5AF28B0091DCC8 /* Resources */,
 				CE680DF22EF54058009AFB20 /* Embed Frameworks */,
-				01261779FEFAAE28485AD2AA /* [CP] Embed Pods Frameworks */,
+				9761E0B5E289E49F4AF5D064 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -427,28 +436,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		01261779FEFAAE28485AD2AA /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A04588D6791E28FD240D275F /* [CP] Check Pods Manifest.lock */ = {
+		3BA1F3D46B47DC9F5D787C0C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -470,7 +458,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D79734D08D5711EC79753EC6 /* [CP] Check Pods Manifest.lock */ = {
+		9761E0B5E289E49F4AF5D064 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NoctuaSDKExample/Pods-NoctuaSDKExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A845E8B671AB78BFDB88C663 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -517,6 +522,9 @@
 				CF224E0FF3883E58120F11E4 /* NoctuaErrorTests.swift in Sources */,
 				850345BE6F782AED56B81F84 /* CurrencyQueryServiceTests.swift in Sources */,
 				3A13D78E31DACD7079F7D7DC /* NoctuaPublicAPITests.swift in Sources */,
+				D4E5F6A7B8C9D0E1F2A3B4C5 /* StoreKit1ServiceTests.swift in Sources */,
+				E5F6A7B8C9D0E1F2A3B4C5D6 /* MockPaymentQueue.swift in Sources */,
+				F6A7B8C9D0E1F2A3B4C5D6E7 /* MockSKPaymentTransaction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,7 +561,7 @@
 /* Begin XCBuildConfiguration section */
 		60CF9CAB89983A1A27ACCD4F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6AF74B95E018F662FA626655 /* Pods-NoctuaSDKTests.debug.xcconfig */;
+			baseConfigurationReference = 2B60D516F2353BB29B88FE25 /* Pods-NoctuaSDKTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -572,7 +580,7 @@
 		};
 		7EAFB5D1A2C09A4C831451AF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9ADFC5A490BFABA1B835A67F /* Pods-NoctuaSDKTests.release.xcconfig */;
+			baseConfigurationReference = 6D45EF21E547B3BCA2A0F09E /* Pods-NoctuaSDKTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -711,7 +719,7 @@
 		};
 		B135B7B42C5AF28D0091DCC8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0E35E8338B8F781BAD6B34AF /* Pods-NoctuaSDKExample.debug.xcconfig */;
+			baseConfigurationReference = F1FAF6C837EBA83DAA01BC99 /* Pods-NoctuaSDKExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -751,7 +759,7 @@
 		};
 		B135B7B52C5AF28D0091DCC8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 77BD5DCA3B5CC5AB19322DAC /* Pods-NoctuaSDKExample.release.xcconfig */;
+			baseConfigurationReference = F6F74B1B6CDB776ED26A8686 /* Pods-NoctuaSDKExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

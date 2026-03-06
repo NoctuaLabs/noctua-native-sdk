@@ -1,12 +1,12 @@
 import Foundation
 
 @objc public class Noctua: NSObject {
-    @objc public static func initNoctua(verifyPurchasesOnServer: Bool = false) throws {
+    @objc public static func initNoctua(verifyPurchasesOnServer: Bool = false, useStoreKit1: Bool = true) throws {
         if tracker == nil && storeKit == nil && account == nil && session == nil {
             let config = try loadConfig()
             let logger = IOSLogger(category: "Noctua")
 
-            let services = buildServices(config: config, logger: logger, verifyPurchasesOnServer: verifyPurchasesOnServer)
+            let services = buildServices(config: config, logger: logger, verifyPurchasesOnServer: verifyPurchasesOnServer, useStoreKit1: useStoreKit1)
 
             tracker = TrackerPresenter(
                 config: config,
@@ -285,7 +285,7 @@ import Foundation
     private static var session: SessionPresenter?
     private static var currencyQuery: CurrencyQueryService?
 
-    private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger, verifyPurchasesOnServer: Bool = false) -> (
+    private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger, verifyPurchasesOnServer: Bool = false, useStoreKit1: Bool = true) -> (
         trackers: [TrackerServiceProtocol],
         storeKitService: StoreKitServiceProtocol?,
         adjustSpecific: AdjustSpecificProtocol?,
@@ -301,15 +301,20 @@ import Foundation
         var adjustSpecific: AdjustSpecificProtocol? = nil
         var firebaseQuery: FirebaseQueryServiceProtocol? = nil
 
-        // StoreKit Service (StoreKit 2, requires iOS 15+)
+        // StoreKit Service
         let storeKitService: StoreKitServiceProtocol?
         if config.noctua?.iapDisabled == true {
             storeKitService = nil
             logger.info("StoreKit disabled by config (iapDisabled: true)")
         } else {
             let storeKitConfig = NoctuaStoreKitConfig(verifyPurchasesOnServer: verifyPurchasesOnServer)
-            storeKitService = StoreKitService(config: storeKitConfig, logger: logger)
-            logger.info("StoreKitService initialized (StoreKit 2)")
+            if useStoreKit1 {
+                storeKitService = StoreKit1Service(config: storeKitConfig, logger: logger)
+                logger.info("StoreKitService initialized (StoreKit 1)")
+            } else {
+                storeKitService = StoreKitService(config: storeKitConfig, logger: logger)
+                logger.info("StoreKitService initialized (StoreKit 2)")
+            }
         }
 
         // AdjustService
