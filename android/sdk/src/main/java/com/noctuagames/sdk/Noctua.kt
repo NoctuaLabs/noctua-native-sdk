@@ -12,6 +12,7 @@ import com.noctuagames.sdk.models.ProductType
 import com.noctuagames.sdk.models.NoctuaProductPurchaseStatus
 import com.noctuagames.sdk.models.NoctuaPurchaseResult
 import com.noctuagames.sdk.presenter.NoctuaPresenter
+import com.noctuagames.sdk.services.BillingEventListener
 
 /**
  * Public API entry point for the Noctua Native SDK.
@@ -386,6 +387,16 @@ object Noctua {
         onBillingError: ((BillingErrorCode, String) -> Unit)? = null
     ) = ensureInit {
         presenter.initializeBilling(onPurchaseCompleted, onPurchaseUpdated, onProductDetailsLoaded, onQueryPurchasesCompleted, onRestorePurchasesCompleted, onProductPurchaseStatusResult, onServerVerificationRequired, onBillingError)
+    }
+
+    /**
+     * Initializes billing with a typed [BillingEventListener] interface.
+     *
+     * Prefer this overload when calling from Unity/JNI to avoid Kotlin Function1 type erasure
+     * which causes custom object parameters to appear as java.lang.Object.
+     */
+    fun initializeBilling(listener: BillingEventListener) = ensureInit {
+        presenter.initializeBilling(listener)
     }
 
     /**
