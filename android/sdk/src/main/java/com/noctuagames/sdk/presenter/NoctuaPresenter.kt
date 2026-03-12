@@ -428,6 +428,16 @@ class NoctuaPresenter(
         })
     }
 
+    /**
+     * Initializes billing with a typed [BillingEventListener] interface.
+     *
+     * Prefer this overload when calling from Unity/JNI to avoid Kotlin Function1 type erasure
+     * which causes custom object parameters to appear as java.lang.Object.
+     */
+    fun initializeBilling(listener: BillingEventListener) {
+        billing.initialize(listener)
+    }
+
     fun registerProduct(productId: String, consumableType: ConsumableType) {
         billing.registerProduct(productId, consumableType)
     }
