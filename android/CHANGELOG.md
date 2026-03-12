@@ -1,3 +1,8 @@
+## [android-sdk-v0.27.1] - 2026-03-12
+
+### 🐛 Bug Fixes
+
+- Add BillingEventListener overload to avoid Function1 type erasure
 ## [android-sdk-v0.27.0] - 2026-02-27
 
 ### 🚀 Features
