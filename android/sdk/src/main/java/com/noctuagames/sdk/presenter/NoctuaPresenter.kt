@@ -25,6 +25,7 @@ import com.noctuagames.sdk.models.toJsonString
 import com.noctuagames.sdk.repositories.AccountRepository
 import com.noctuagames.sdk.services.AdjustService
 import com.noctuagames.sdk.services.BillingService
+import com.noctuagames.sdk.services.AppManagementService
 import com.noctuagames.sdk.services.BillingEventListener
 import com.noctuagames.sdk.services.FacebookService
 import com.noctuagames.sdk.services.FirebaseService
@@ -47,6 +48,7 @@ class NoctuaPresenter(
     private val facebook: FacebookService?
     private val billing: BillingService
     private val accounts: AccountRepository
+    private val appManagement: AppManagementService
 
     private var nativeInternalTrackerEnabled: Boolean = false
     private var noctuaAdjustAttribution: NoctuaAdjustAttribution? = null
@@ -77,6 +79,7 @@ class NoctuaPresenter(
         billing = createBilling()
 
         accounts = AccountRepository(appContext)
+        appManagement = AppManagementService(appContext)
 
         coroutineScope.launch {
             accounts.syncOtherAccounts()
@@ -488,6 +491,25 @@ class NoctuaPresenter(
     }
 
     fun isBillingReady(): Boolean = billing.isReady()
+
+    // ------------------------------------
+    // In-App Review & Updates
+    // ------------------------------------
+
+    fun requestInAppReview(activity: Activity, onResult: (Boolean) -> Unit) =
+        appManagement.requestInAppReview(activity, onResult)
+
+    fun checkForUpdate(onResult: (String) -> Unit) =
+        appManagement.checkForUpdate(onResult)
+
+    fun startImmediateUpdate(activity: Activity, onResult: (Int) -> Unit) =
+        appManagement.startImmediateUpdate(activity, onResult)
+
+    fun startFlexibleUpdate(activity: Activity, onProgress: (Float) -> Unit, onResult: (Int) -> Unit) =
+        appManagement.startFlexibleUpdate(activity, onProgress, onResult)
+
+    fun completeUpdate() =
+        appManagement.completeUpdate()
 
     // ------------------------------------
     // Private SDK Initialization
