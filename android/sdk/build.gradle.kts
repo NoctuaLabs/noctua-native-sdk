@@ -147,4 +147,8 @@ dependencies {
     // Google Play Billing Library 8.2.1
     implementation(libs.billing)
     implementation(libs.billing.ktx)
+
+    // Google Play In-App Review & In-App Updates
+    implementation(libs.play.app.review.ktx)
+    implementation(libs.play.app.update.ktx)
 }

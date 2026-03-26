@@ -514,6 +514,55 @@ object Noctua {
         ifInitialized { presenter.isBillingReady() } ?: false
 
     // ------------------------------------
+    // In-App Review & Updates
+    // ------------------------------------
+
+    /**
+     * Requests the in-app review flow.
+     *
+     * The OS decides whether to show the review dialog (rate-limited).
+     *
+     * @param activity The current activity.
+     * @param onResult Callback with true if the flow completed, false on failure.
+     */
+    fun requestInAppReview(activity: Activity, onResult: (Boolean) -> Unit) =
+        ensureInit { presenter.requestInAppReview(activity, onResult) }
+
+    /**
+     * Checks if an app update is available on Google Play.
+     *
+     * @param onResult Callback with JSON string containing update info.
+     */
+    fun checkForUpdate(onResult: (String) -> Unit) =
+        ensureInit { presenter.checkForUpdate(onResult) }
+
+    /**
+     * Starts an immediate (blocking) app update flow.
+     *
+     * @param activity The current activity.
+     * @param onResult Callback with result code (0=Success, 1=Cancelled, 2=Failed, 3=NotAvailable).
+     */
+    fun startImmediateUpdate(activity: Activity, onResult: (Int) -> Unit) =
+        ensureInit { presenter.startImmediateUpdate(activity, onResult) }
+
+    /**
+     * Starts a flexible (background) app update download.
+     *
+     * @param activity The current activity.
+     * @param onProgress Callback with download progress (0.0 to 1.0).
+     * @param onResult Callback with result code when download completes or fails.
+     */
+    fun startFlexibleUpdate(activity: Activity, onProgress: (Float) -> Unit, onResult: (Int) -> Unit) =
+        ensureInit { presenter.startFlexibleUpdate(activity, onProgress, onResult) }
+
+    /**
+     * Completes a flexible update by installing the downloaded APK.
+     * The app will restart after this call.
+     */
+    fun completeUpdate() =
+        ensureInit { presenter.completeUpdate() }
+
+    // ------------------------------------
     // Internal Helpers
     // ------------------------------------
 

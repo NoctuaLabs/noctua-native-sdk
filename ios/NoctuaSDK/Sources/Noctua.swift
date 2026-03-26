@@ -1,4 +1,6 @@
 import Foundation
+import StoreKit
+import UIKit
 
 @objc public class Noctua: NSObject {
     @objc public static func initNoctua(verifyPurchasesOnServer: Bool = false, useStoreKit1: Bool = true) throws {
@@ -251,6 +253,21 @@ import Foundation
             currencyQuery = CurrencyQueryService()
         }
         currencyQuery?.getActiveCurrency(productId: productId, completion: completion)
+    }
+
+    // MARK: - In-App Review
+
+    /// Requests the App Store review dialog.
+    /// The OS decides whether to show the prompt (rate-limited to ~3 per 365 days).
+    @objc public static func requestInAppReview() {
+        if #available(iOS 14.0, *) {
+            if let scene = UIApplication.shared.connectedScenes
+                .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                SKStoreReviewController.requestReview(in: scene)
+            }
+        } else {
+            SKStoreReviewController.requestReview()
+        }
     }
 
     // MARK: - Testing Support
