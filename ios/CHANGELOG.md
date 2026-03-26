@@ -1,3 +1,8 @@
+## [ios-sdk-v0.32.0] - 2026-03-26
+
+### 🚀 Features
+
+- Add in-app review and in-app updates support
 ## [ios-sdk-v0.31.0] - 2026-03-06
 
 ### 🚀 Features
