@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.noctuagames.app.ui.components.AccountSection
 import com.noctuagames.app.ui.components.AnalyticsSection
+import com.noctuagames.app.ui.components.AppManagementSection
 import com.noctuagames.app.ui.components.AttributionSection
 import com.noctuagames.app.ui.components.BillingSection
 import com.noctuagames.app.ui.components.ExperimentsSection
@@ -146,6 +148,10 @@ fun MainScreen(offset: Int, packageName: String, activity: MainActivity) {
     // State for Experiments
     var currentExperiment by remember { mutableStateOf<String?>(Noctua.getExperiment()) }
     var generalExperimentResult by remember { mutableStateOf<Pair<String, String>?>(null) }
+
+    // State for App Management (In-App Review & Updates)
+    var updateInfo by remember { mutableStateOf<String?>(null) }
+    var flexibleUpdateProgress by remember { mutableStateOf<Float?>(null) }
 
     // State for Session
     var currentSessionTag by remember { mutableStateOf(Noctua.getSessionTag()) }
@@ -318,6 +324,74 @@ fun MainScreen(offset: Int, packageName: String, activity: MainActivity) {
                             showSnackbar("SDK set to OFFLINE mode")
                             Log.d("MainActivity", "Noctua.onOffline() called")
                         }
+                    )
+                }
+            }
+
+            // App Management Section (In-App Review & Updates)
+            item {
+                SectionCard(
+                    title = "App Management",
+                    icon = Icons.Default.SystemUpdate,
+                    color = MaterialTheme.colorScheme.primary,
+                    expandedByDefault = false
+                ) {
+                    AppManagementSection(
+                        onRequestReview = {
+                            Noctua.requestInAppReview(activity) { success ->
+                                showSnackbar(if (success) "Review flow completed" else "Review flow failed")
+                                Log.d("MainActivity", "In-app review result: $success")
+                            }
+                        },
+                        onCheckForUpdate = {
+                            Noctua.checkForUpdate { json ->
+                                updateInfo = json
+                                showSnackbar("Update check complete")
+                                Log.d("MainActivity", "Update info: $json")
+                            }
+                        },
+                        onStartImmediateUpdate = {
+                            Noctua.startImmediateUpdate(activity) { resultCode ->
+                                val msg = when (resultCode) {
+                                    0 -> "Immediate update started"
+                                    1 -> "Update cancelled by user"
+                                    2 -> "Update failed"
+                                    3 -> "Update not available"
+                                    else -> "Unknown result: $resultCode"
+                                }
+                                showSnackbar(msg)
+                                Log.d("MainActivity", "Immediate update result: $resultCode")
+                            }
+                        },
+                        onStartFlexibleUpdate = {
+                            flexibleUpdateProgress = 0f
+                            Noctua.startFlexibleUpdate(
+                                activity,
+                                onProgress = { progress ->
+                                    flexibleUpdateProgress = progress
+                                    Log.d("MainActivity", "Flexible update progress: ${(progress * 100).toInt()}%")
+                                },
+                                onResult = { resultCode ->
+                                    val msg = when (resultCode) {
+                                        0 -> "Flexible update downloaded"
+                                        1 -> "Update cancelled by user"
+                                        2 -> "Update failed"
+                                        3 -> "Update not available"
+                                        else -> "Unknown result: $resultCode"
+                                    }
+                                    showSnackbar(msg)
+                                    Log.d("MainActivity", "Flexible update result: $resultCode")
+                                    if (resultCode != 0) flexibleUpdateProgress = null
+                                }
+                            )
+                        },
+                        onCompleteUpdate = {
+                            Noctua.completeUpdate()
+                            showSnackbar("Completing update...")
+                            Log.d("MainActivity", "completeUpdate() called")
+                        },
+                        updateInfo = updateInfo,
+                        flexibleUpdateProgress = flexibleUpdateProgress
                     )
                 }
             }
