@@ -1,8 +1,12 @@
-## [ios-sdk-v0.32.0] - 2026-03-26
+## [ios-sdk-v0.32.0] - 2026-03-27
 
 ### 🚀 Features
 
 - Add in-app review and in-app updates support
+
+### ⚙️ Miscellaneous Tasks
+
+- Update noctua-internal-native-sdk to v0.17.0 and add AppManagement UI
 ## [ios-sdk-v0.31.0] - 2026-03-06
 
 ### 🚀 Features
