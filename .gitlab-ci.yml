@@ -27,11 +27,11 @@ test-ios-sdk:
   script:
     - cd ios
     - LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pod install
-    - xcodebuild test
+    - set -o pipefail && xcodebuild test
         -workspace NoctuaSDKExample.xcworkspace
         -scheme NoctuaSDKTests
         -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
-        | tail -20
+        2>&1 | tail -20
 
 test-android-sdk:
   image: cimg/android:2024.07.1
@@ -173,10 +173,10 @@ bump-version-ios-sdk:
     - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
     - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/")
     - sed -r "s/(spec.version *= *)\".*\"/\1\"$(echo $NEW_VERSION)\"/" ../NoctuaSDK.podspec > ../NoctuaSDK.podspec.tmp && mv ../NoctuaSDK.podspec.tmp ../NoctuaSDK.podspec
-    - if [ -n "$(git diff --name-only HEAD -- ./NoctuaSDK.podspec)" ]; then
+    - if [ -n "$(git diff --name-only HEAD -- ../NoctuaSDK.podspec)" ]; then
         echo "Bumping version for next release";
-        git add NoctuaSDK.podspec;
-        git commit -m "bump version to $(cat version.txt) [skip ci]";
+        git add ../NoctuaSDK.podspec;
+        git commit -m "bump version to $NEW_VERSION [skip ci]";
         git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip;
         else
         echo "No version bump required";

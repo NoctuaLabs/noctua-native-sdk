@@ -10,6 +10,21 @@ struct OtherSection: View {
 
     var body: some View {
         VStack(spacing: 8) {
+            // In-App Review
+            Text("In-App Review")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.purple)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button(action: {
+                Noctua.requestInAppReview()
+                logger.debug("requestInAppReview() called")
+            }) {
+                actionButtonLabel("Request Review", color: .purple)
+            }
+
+            Divider().padding(.vertical, 4)
+
             Button(action: {
                 fatalError("Crash was triggered")
             }) {
