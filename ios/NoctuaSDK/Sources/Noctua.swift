@@ -255,6 +255,42 @@ import UIKit
         currencyQuery?.getActiveCurrency(productId: productId, completion: completion)
     }
 
+    // MARK: - Native Lifecycle Callback
+
+    /// Registers a callback invoked on app lifecycle transitions.
+    /// Callback receives "resume" on didBecomeActive, "pause" on willResignActive.
+    /// Pass nil to unregister and remove observers.
+    @objc public static func registerLifecycleCallback(callback: ((String) -> Void)?) {
+        // Remove previous observers
+        for observer in lifecycleObservers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        lifecycleObservers.removeAll()
+
+        lifecycleCallback = callback
+
+        guard let callback = callback else { return }
+
+        let resumeObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            callback("resume")
+        }
+
+        let pauseObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            callback("pause")
+        }
+
+        lifecycleObservers.append(resumeObserver)
+        lifecycleObservers.append(pauseObserver)
+    }
+
     // MARK: - In-App Review
 
     /// Requests the App Store review dialog.
@@ -301,6 +337,8 @@ import UIKit
     private static var account: AccountPresenter?
     private static var session: SessionPresenter?
     private static var currencyQuery: CurrencyQueryService?
+    private static var lifecycleCallback: ((String) -> Void)?
+    private static var lifecycleObservers: [NSObjectProtocol] = []
 
     private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger, verifyPurchasesOnServer: Bool = false, useStoreKit1: Bool = true) -> (
         trackers: [TrackerServiceProtocol],

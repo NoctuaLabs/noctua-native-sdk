@@ -74,6 +74,16 @@ object Noctua {
     /** Notifies SDK that device is offline. */
     fun onOffline() = ensureInit { presenter.onOffline() }
 
+    /**
+     * Registers a callback that is invoked on Activity lifecycle transitions.
+     * The callback receives "resume" when onResume fires and "pause" when onPause fires.
+     *
+     * @param callback Function receiving "resume" or "pause". Pass null to unregister.
+     */
+    fun registerLifecycleCallback(callback: ((String) -> Unit)?) = ensureInit {
+        presenter.registerLifecycleCallback(callback)
+    }
+
     // ------------------------------------
     // Tracking
     // ------------------------------------

@@ -54,6 +54,9 @@ class NoctuaPresenter(
     private var noctuaAdjustAttribution: NoctuaAdjustAttribution? = null
     private var adjustAttribution: String = ""
     
+    // Lifecycle callback
+    private var lifecycleCallback: ((String) -> Unit)? = null
+
     // Billing callbacks
     private var billingPurchaseCallback: ((NoctuaPurchaseResult) -> Unit)? = null
     private var billingProductDetailsCallback: ((List<NoctuaProductDetails>) -> Unit)? = null
@@ -110,6 +113,8 @@ class NoctuaPresenter(
         coroutineScope.launch {
             accounts.syncOtherAccounts()
         }
+
+        lifecycleCallback?.invoke("resume")
     }
 
     fun onPause() {
@@ -118,6 +123,8 @@ class NoctuaPresenter(
         if (nativeInternalTrackerEnabled) {
             NoctuaInternal.onInternalNoctuaApplicationPause(true)
         }
+
+        lifecycleCallback?.invoke("pause")
     }
 
     fun onDestroy() {
@@ -128,6 +135,10 @@ class NoctuaPresenter(
 
     fun onOnline() = adjust?.onOnline()
     fun onOffline() = adjust?.onOffline()
+
+    fun registerLifecycleCallback(callback: ((String) -> Unit)?) {
+        lifecycleCallback = callback
+    }
 
     // ------------------------------------
     // Tracking
