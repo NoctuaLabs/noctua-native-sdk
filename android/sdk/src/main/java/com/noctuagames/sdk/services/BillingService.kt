@@ -2,7 +2,7 @@ package com.noctuagames.sdk.services
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import com.android.billingclient.api.*
 import com.google.common.collect.ImmutableList
 import com.noctuagames.sdk.models.*
@@ -54,7 +54,7 @@ class BillingService(
 
     fun initialize(listener: BillingEventListener? = null) {
         if (isInitialized) {
-            Log.w(TAG, "BillingService already initialized")
+            NoctuaLog.w(TAG, "BillingService already initialized")
             return
         }
 
@@ -76,19 +76,19 @@ class BillingService(
         billingClient = builder.build()
         startConnection()
         isInitialized = true
-        Log.i(TAG, "BillingService initialized")
+        NoctuaLog.i(TAG, "BillingService initialized")
     }
 
     private fun startConnection() {
         billingClient?.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    Log.i(TAG, "Billing client connected successfully")
+                    NoctuaLog.i(TAG, "Billing client connected successfully")
                     _connectionState.value = true
                     // Query existing purchases on connection
                     queryExistingPurchases()
                 } else {
-                    Log.e(TAG, "Billing setup failed: ${billingResult.debugMessage}")
+                    NoctuaLog.e(TAG, "Billing setup failed: ${billingResult.debugMessage}")
                     _connectionState.value = false
                     eventListener?.onBillingError(
                         BillingErrorCode.fromCode(billingResult.responseCode),
@@ -98,7 +98,7 @@ class BillingService(
             }
 
             override fun onBillingServiceDisconnected() {
-                Log.w(TAG, "Billing service disconnected")
+                NoctuaLog.w(TAG, "Billing service disconnected")
                 _connectionState.value = false
                 // Auto-reconnection is handled by BillingClient if enabled
             }
@@ -116,12 +116,12 @@ class BillingService(
         ioScope.cancel()
         billingClient?.endConnection()
         isInitialized = false
-        Log.i(TAG, "BillingService disposed")
+        NoctuaLog.i(TAG, "BillingService disposed")
     }
 
     fun registerProduct(productId: String, consumableType: ConsumableType) {
         productTypeMap[productId] = consumableType
-        Log.d(TAG, "Registered product: $productId as $consumableType")
+        NoctuaLog.d(TAG, "Registered product: $productId as $consumableType")
     }
 
     fun queryProductDetails(productIds: List<String>, productType: ProductType = ProductType.INAPP) {
@@ -153,10 +153,10 @@ class BillingService(
                     parseProductDetails(details)
                 }
 
-                Log.d(TAG, "Loaded ${results.size} product details")
+                NoctuaLog.d(TAG, "Loaded ${results.size} product details")
                 eventListener?.onProductDetailsLoaded(results)
             } else {
-                Log.e(TAG, "Failed to query product details: ${billingResult.debugMessage}")
+                NoctuaLog.e(TAG, "Failed to query product details: ${billingResult.debugMessage}")
                 eventListener?.onBillingError(
                     BillingErrorCode.fromCode(billingResult.responseCode),
                     billingResult.debugMessage
@@ -230,7 +230,7 @@ class BillingService(
 
         val result = billingClient?.launchBillingFlow(activity, billingFlowParams)
         if (result?.responseCode != BillingClient.BillingResponseCode.OK) {
-            Log.e(TAG, "Failed to launch billing flow: ${result?.debugMessage}")
+            NoctuaLog.e(TAG, "Failed to launch billing flow: ${result?.debugMessage}")
             eventListener?.onBillingError(
                 BillingErrorCode.fromCode(result?.responseCode ?: BillingClient.BillingResponseCode.ERROR),
                 result?.debugMessage ?: "Unknown error"
@@ -259,10 +259,10 @@ class BillingService(
                     parsePurchase(purchase)
                 }
 
-                Log.d(TAG, "Queried ${results.size} purchases")
+                NoctuaLog.d(TAG, "Queried ${results.size} purchases")
                 eventListener?.onQueryPurchasesCompleted(results)
             } else {
-                Log.e(TAG, "Failed to query purchases: ${billingResult.debugMessage}")
+                NoctuaLog.e(TAG, "Failed to query purchases: ${billingResult.debugMessage}")
                 eventListener?.onBillingError(
                     BillingErrorCode.fromCode(billingResult.responseCode),
                     billingResult.debugMessage
@@ -289,9 +289,9 @@ class BillingService(
         billingClient?.acknowledgePurchase(params) { billingResult ->
             val success = billingResult.responseCode == BillingClient.BillingResponseCode.OK
             if (success) {
-                Log.d(TAG, "Purchase acknowledged: $purchaseToken")
+                NoctuaLog.d(TAG, "Purchase acknowledged: $purchaseToken")
             } else {
-                Log.e(TAG, "Failed to acknowledge purchase: ${billingResult.debugMessage}")
+                NoctuaLog.e(TAG, "Failed to acknowledge purchase: ${billingResult.debugMessage}")
             }
             callback?.invoke(success)
         }
@@ -310,9 +310,9 @@ class BillingService(
         billingClient?.consumeAsync(params) { billingResult, _ ->
             val success = billingResult.responseCode == BillingClient.BillingResponseCode.OK
             if (success) {
-                Log.d(TAG, "Purchase consumed: $purchaseToken")
+                NoctuaLog.d(TAG, "Purchase consumed: $purchaseToken")
             } else {
-                Log.e(TAG, "Failed to consume purchase: ${billingResult.debugMessage}")
+                NoctuaLog.e(TAG, "Failed to consume purchase: ${billingResult.debugMessage}")
             }
             callback?.invoke(success)
         }
@@ -336,7 +336,7 @@ class BillingService(
         fun onQueryDone() {
             queriesCompleted++
             if (queriesCompleted >= totalQueries) {
-                Log.d(TAG, "Restore purchases completed: ${allPurchases.size} purchases found")
+                NoctuaLog.d(TAG, "Restore purchases completed: ${allPurchases.size} purchases found")
 
                 // Process unacknowledged purchases
                 for (purchase in allPurchases) {
@@ -366,7 +366,7 @@ class BillingService(
                 val results = purchasesList.map { parsePurchase(it) }
                 synchronized(allPurchases) { allPurchases.addAll(results) }
             } else {
-                Log.e(TAG, "Failed to query INAPP purchases for restore: ${billingResult.debugMessage}")
+                NoctuaLog.e(TAG, "Failed to query INAPP purchases for restore: ${billingResult.debugMessage}")
             }
             onQueryDone()
         }
@@ -381,7 +381,7 @@ class BillingService(
                 val results = purchasesList.map { parsePurchase(it) }
                 synchronized(allPurchases) { allPurchases.addAll(results) }
             } else {
-                Log.e(TAG, "Failed to query SUBS purchases for restore: ${billingResult.debugMessage}")
+                NoctuaLog.e(TAG, "Failed to query SUBS purchases for restore: ${billingResult.debugMessage}")
             }
             onQueryDone()
         }
@@ -427,7 +427,7 @@ class BillingService(
                     )
                 }
 
-                Log.d(TAG, "Product purchase status for $productId: isPurchased=${status.isPurchased}")
+                NoctuaLog.d(TAG, "Product purchase status for $productId: isPurchased=${status.isPurchased}")
                 eventListener?.onProductPurchaseStatusResult(status)
             }
         }
@@ -520,7 +520,7 @@ class BillingService(
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
                 for (purchase in purchases) {
                     val result = parsePurchase(purchase)
-                    Log.d(TAG, "Purchase updated: ${result.productId}, state: ${result.purchaseState}")
+                    NoctuaLog.d(TAG, "Purchase updated: ${result.productId}, state: ${result.purchaseState}")
 
                     // Auto-acknowledge or consume based on product type
                     handlePurchase(result, purchase)
@@ -528,7 +528,7 @@ class BillingService(
                     eventListener?.onPurchaseUpdated(result)
                 }
             } else {
-                Log.e(TAG, "Purchase update failed: ${billingResult.debugMessage}")
+                NoctuaLog.e(TAG, "Purchase update failed: ${billingResult.debugMessage}")
                 eventListener?.onBillingError(errorCode, billingResult.debugMessage)
 
                 // Notify about failed purchase
@@ -565,7 +565,7 @@ class BillingService(
         callback: ((Boolean) -> Unit)? = null
     ) {
         if (!verified) {
-            Log.w(TAG, "Server verification failed for token: ${purchaseToken.take(20)}...")
+            NoctuaLog.w(TAG, "Server verification failed for token: ${purchaseToken.take(20)}...")
             callback?.invoke(false)
             return
         }
@@ -582,7 +582,7 @@ class BillingService(
             }
             ConsumableType.NON_CONSUMABLE, ConsumableType.SUBSCRIPTION -> {
                 // Server already acknowledged via Google Play Developer API, nothing to do client-side
-                Log.d(TAG, "Purchase acknowledged by server, no client-side action needed")
+                NoctuaLog.d(TAG, "Purchase acknowledged by server, no client-side action needed")
                 callback?.invoke(true)
             }
         }
@@ -595,7 +595,7 @@ class BillingService(
         if (result.isPurchased() && !result.isAcknowledged) {
             if (config.verifyPurchasesOnServer) {
                 // Delegate to integrator for server verification
-                Log.d(TAG, "Server verification required for $productId (type: $consumableType)")
+                NoctuaLog.d(TAG, "Server verification required for $productId (type: $consumableType)")
                 eventListener?.onServerVerificationRequired(result, consumableType)
             } else {
                 // Process directly without server verification

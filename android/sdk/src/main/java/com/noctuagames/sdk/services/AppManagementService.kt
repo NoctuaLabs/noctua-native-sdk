@@ -2,7 +2,7 @@ package com.noctuagames.sdk.services
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
@@ -37,7 +37,7 @@ class AppManagementService(private val appContext: Context) {
                     onResult(true)
                 }
             } else {
-                Log.w(TAG, "Failed to request review flow: ${task.exception?.message}")
+                NoctuaLog.w(TAG, "Failed to request review flow: ${task.exception?.message}")
                 onResult(false)
             }
         }
@@ -71,7 +71,7 @@ class AppManagementService(private val appContext: Context) {
             onResult(json)
         }
         appUpdateInfoTask.addOnFailureListener { e ->
-            Log.w(TAG, "Failed to check for update: ${e.message}")
+            NoctuaLog.w(TAG, "Failed to check for update: ${e.message}")
             onResult("{\"IsUpdateAvailable\":false}")
         }
     }
@@ -93,16 +93,16 @@ class AppManagementService(private val appContext: Context) {
                     // For simplicity, we report success here since the flow was launched.
                     onResult(RESULT_SUCCESS)
                 } catch (e: Exception) {
-                    Log.e(TAG, "Failed to start immediate update: ${e.message}")
+                    NoctuaLog.e(TAG, "Failed to start immediate update: ${e.message}")
                     onResult(RESULT_FAILED)
                 }
             } else {
-                Log.w(TAG, "Immediate update not available")
+                NoctuaLog.w(TAG, "Immediate update not available")
                 onResult(RESULT_NOT_AVAILABLE)
             }
         }
         appUpdateInfoTask.addOnFailureListener { e ->
-            Log.e(TAG, "Failed to get update info for immediate update: ${e.message}")
+            NoctuaLog.e(TAG, "Failed to get update info for immediate update: ${e.message}")
             onResult(RESULT_FAILED)
         }
     }
@@ -159,17 +159,17 @@ class AppManagementService(private val appContext: Context) {
                         REQUEST_CODE_FLEXIBLE_UPDATE
                     )
                 } catch (e: Exception) {
-                    Log.e(TAG, "Failed to start flexible update: ${e.message}")
+                    NoctuaLog.e(TAG, "Failed to start flexible update: ${e.message}")
                     onResult(RESULT_FAILED)
                     unregisterListener()
                 }
             } else {
-                Log.w(TAG, "Flexible update not available")
+                NoctuaLog.w(TAG, "Flexible update not available")
                 onResult(RESULT_NOT_AVAILABLE)
             }
         }
         appUpdateInfoTask.addOnFailureListener { e ->
-            Log.e(TAG, "Failed to get update info for flexible update: ${e.message}")
+            NoctuaLog.e(TAG, "Failed to get update info for flexible update: ${e.message}")
             onResult(RESULT_FAILED)
         }
     }

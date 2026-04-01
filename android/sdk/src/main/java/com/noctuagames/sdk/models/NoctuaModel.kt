@@ -1,6 +1,7 @@
 package com.noctuagames.sdk.models
 
 data class NoctuaServiceConfig(
+    val sandboxEnabled: Boolean?,
     val nativeInternalTrackerEnabled: Boolean?
 )
 data class NoctuaConfig(

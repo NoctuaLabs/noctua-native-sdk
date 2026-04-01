@@ -1,7 +1,7 @@
 package com.noctuagames.sdk.services
 
 import android.content.Context
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustAdRevenue
 import com.adjust.sdk.AdjustConfig
@@ -46,8 +46,9 @@ internal class AdjustService(
             onAdjustAttributionChanged(adjustAttribution.toNoctuaAdjustAttribution())
         }
 
+        NoctuaLog.d(TAG, "Adjust config: appToken=${config.appToken.take(6)}..., environment=$environment, eventMap keys=${config.eventMap?.keys}")
         Adjust.initSdk(adjustConfig)
-        Log.i(TAG, "Adjust SDK initialized successfully")
+        NoctuaLog.i(TAG, "Adjust SDK initialized successfully")
     }
 
     fun getAdjustCurrentAttributionJson(onResult: (String) -> Unit) {
@@ -117,12 +118,12 @@ internal class AdjustService(
         }
 
         if (config.eventMap.isNullOrEmpty()) {
-            Log.e(TAG, "Event map is not set")
+            NoctuaLog.e(TAG, "Event map is not set")
             return
         }
 
         if (!config.eventMap.containsKey(eventName)) {
-            Log.e(TAG, "$eventName event token is not available in the event map")
+            NoctuaLog.e(TAG, "$eventName event token is not available in the event map")
             return
         }
 
@@ -141,12 +142,12 @@ internal class AdjustService(
         }
 
         if (config.eventMap.isNullOrEmpty()) {
-            Log.e(TAG, "Event map is not set")
+            NoctuaLog.e(TAG, "Event map is not set")
             return
         }
 
         if (!config.eventMap.containsKey(eventName)) {
-            Log.e(TAG, "$eventName event token is not available in the event map")
+            NoctuaLog.e(TAG, "$eventName event token is not available in the event map")
             return
         }
 

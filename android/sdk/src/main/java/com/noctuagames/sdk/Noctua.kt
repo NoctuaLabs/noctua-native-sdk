@@ -2,7 +2,7 @@ package com.noctuagames.sdk
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import com.noctuagames.sdk.models.Account
 import com.noctuagames.sdk.models.BillingErrorCode
 import com.noctuagames.sdk.models.ConsumableType
@@ -581,7 +581,7 @@ object Noctua {
      */
     private fun ensureInit(block: () -> Unit) {
         if (!::presenter.isInitialized) {
-            Log.e(TAG, "Noctua is not initialized. Call init() first.")
+            NoctuaLog.e(TAG, "Noctua is not initialized. Call init() first.")
             return
         }
         block()
@@ -592,7 +592,7 @@ object Noctua {
      */
     private fun <T> ifInitialized(block: () -> T): T? {
         if (!::presenter.isInitialized) {
-            Log.e(TAG, "Noctua is not initialized. Call init() first.")
+            NoctuaLog.e(TAG, "Noctua is not initialized. Call init() first.")
             return null
         }
         return block()

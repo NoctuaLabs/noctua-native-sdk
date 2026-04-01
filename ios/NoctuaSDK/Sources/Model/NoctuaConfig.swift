@@ -10,6 +10,7 @@ struct NoctuaConfig: Decodable {
 }
 
 struct NoctuaServiceConfig: Decodable {
+    let sandboxEnabled: Bool?
     let nativeInternalTrackerEnabled: Bool?
     let iapDisabled: Bool?
 }

@@ -25,13 +25,13 @@ class ConfigModelTest {
 
     @Test
     fun `NoctuaServiceConfig stores nativeInternalTrackerEnabled`() {
-        val serviceConfig = NoctuaServiceConfig(nativeInternalTrackerEnabled = true)
+        val serviceConfig = NoctuaServiceConfig(sandboxEnabled = null, nativeInternalTrackerEnabled = true)
         assertTrue(serviceConfig.nativeInternalTrackerEnabled!!)
 
-        val disabledConfig = NoctuaServiceConfig(nativeInternalTrackerEnabled = false)
+        val disabledConfig = NoctuaServiceConfig(sandboxEnabled = null, nativeInternalTrackerEnabled = false)
         assertFalse(disabledConfig.nativeInternalTrackerEnabled!!)
 
-        val nullConfig = NoctuaServiceConfig(nativeInternalTrackerEnabled = null)
+        val nullConfig = NoctuaServiceConfig(sandboxEnabled = null, nativeInternalTrackerEnabled = null)
         assertNull(nullConfig.nativeInternalTrackerEnabled)
     }
 
@@ -106,7 +106,7 @@ class ConfigModelTest {
             facebook = FacebookServiceConfig(
                 android = FacebookServiceAndroidConfig(enableDebug = true)
             ),
-            noctua = NoctuaServiceConfig(nativeInternalTrackerEnabled = true)
+            noctua = NoctuaServiceConfig(sandboxEnabled = null, nativeInternalTrackerEnabled = true)
         )
         assertNotNull(config.adjust?.android)
         assertNotNull(config.firebase?.android)

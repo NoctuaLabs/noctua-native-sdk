@@ -123,7 +123,7 @@ class NoctuaPresenterTest {
     @Test
     fun `nativeInternalTrackerEnabled defaults to false when value is null`() {
         val config = NoctuaConfig(clientId = "test", gameId = null, adjust = null, firebase = null, facebook = null,
-            noctua = NoctuaServiceConfig(nativeInternalTrackerEnabled = null))
+            noctua = NoctuaServiceConfig(sandboxEnabled = null, nativeInternalTrackerEnabled = null))
         val enabled = config.noctua?.nativeInternalTrackerEnabled ?: false
         assertFalse(enabled)
     }
@@ -131,7 +131,7 @@ class NoctuaPresenterTest {
     @Test
     fun `nativeInternalTrackerEnabled is true when set`() {
         val config = NoctuaConfig(clientId = "test", gameId = null, adjust = null, firebase = null, facebook = null,
-            noctua = NoctuaServiceConfig(nativeInternalTrackerEnabled = true))
+            noctua = NoctuaServiceConfig(sandboxEnabled = null, nativeInternalTrackerEnabled = true))
         val enabled = config.noctua?.nativeInternalTrackerEnabled ?: false
         assertTrue(enabled)
     }
