@@ -1,3 +1,9 @@
+## [android-sdk-v0.29.0] - 2026-04-02
+
+### 🚀 Features
+
+- Add registerLifecycleCallback for native engagement tracking
+- Add conditional NoctuaLog wrapper and detailed SDK logging
 ## [android-sdk-v0.28.0] - 2026-03-27
 
 ### 🚀 Features
