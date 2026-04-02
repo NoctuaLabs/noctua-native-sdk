@@ -1,3 +1,9 @@
+## [ios-sdk-v0.33.0] - 2026-04-02
+
+### 🚀 Features
+
+- Add registerLifecycleCallback for native engagement tracking
+- Add conditional NoctuaLog wrapper and detailed SDK logging
 ## [ios-sdk-v0.32.0] - 2026-03-27
 
 ### 🚀 Features
