@@ -2,7 +2,7 @@ package com.noctuagames.sdk.services
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsConstants
@@ -37,7 +37,8 @@ class FacebookService(private val config: FacebookServiceAndroidConfig, context:
 
         eventsLogger = AppEventsLogger.newLogger(context)
 
-        Log.i(TAG, "FacebookService initialized")
+        NoctuaLog.d(TAG, "Facebook config: enableDebug=${config.enableDebug}, autoLog=${config.autoLogAppEventsEnabled}, advertiserIdCollection=${config.advertiserIdCollectionEnabled}")
+        NoctuaLog.i(TAG, "FacebookService initialized")
     }
 
     fun trackAdRevenue(
@@ -55,7 +56,7 @@ class FacebookService(private val config: FacebookServiceAndroidConfig, context:
 
         eventsLogger.logEvent("ad_revenue", bundle)
 
-        Log.d(
+        NoctuaLog.d(
             TAG,
             "Ad revenue tracked: " +
                     "source: $source, " +
@@ -80,7 +81,7 @@ class FacebookService(private val config: FacebookServiceAndroidConfig, context:
             }
         )
 
-        Log.d(
+        NoctuaLog.d(
             TAG,
             "Purchase tracked: " +
                     "orderId: $orderId, " +
@@ -100,7 +101,7 @@ class FacebookService(private val config: FacebookServiceAndroidConfig, context:
 
         eventsLogger.logEvent(eventName, Bundle().apply { putExtras(payload) })
 
-        Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
+        NoctuaLog.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
     }
 
     fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: Map<String, Any> = emptyMap()) {
@@ -115,6 +116,6 @@ class FacebookService(private val config: FacebookServiceAndroidConfig, context:
 
         eventsLogger.logEvent("fb_$eventName", valueToSum = revenue, bundle)
 
-        Log.d(TAG, "'$eventName' (custom) tracked: payload: $bundle")
+        NoctuaLog.d(TAG, "'$eventName' (custom) tracked: payload: $bundle")
     }
 }

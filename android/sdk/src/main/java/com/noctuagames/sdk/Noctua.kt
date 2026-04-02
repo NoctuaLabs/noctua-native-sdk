@@ -2,7 +2,7 @@ package com.noctuagames.sdk
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import com.noctuagames.sdk.models.Account
 import com.noctuagames.sdk.models.BillingErrorCode
 import com.noctuagames.sdk.models.ConsumableType
@@ -73,6 +73,16 @@ object Noctua {
 
     /** Notifies SDK that device is offline. */
     fun onOffline() = ensureInit { presenter.onOffline() }
+
+    /**
+     * Registers a callback that is invoked on Activity lifecycle transitions.
+     * The callback receives "resume" when onResume fires and "pause" when onPause fires.
+     *
+     * @param callback Function receiving "resume" or "pause". Pass null to unregister.
+     */
+    fun registerLifecycleCallback(callback: ((String) -> Unit)?) = ensureInit {
+        presenter.registerLifecycleCallback(callback)
+    }
 
     // ------------------------------------
     // Tracking
@@ -571,7 +581,7 @@ object Noctua {
      */
     private fun ensureInit(block: () -> Unit) {
         if (!::presenter.isInitialized) {
-            Log.e(TAG, "Noctua is not initialized. Call init() first.")
+            NoctuaLog.e(TAG, "Noctua is not initialized. Call init() first.")
             return
         }
         block()
@@ -582,7 +592,7 @@ object Noctua {
      */
     private fun <T> ifInitialized(block: () -> T): T? {
         if (!::presenter.isInitialized) {
-            Log.e(TAG, "Noctua is not initialized. Call init() first.")
+            NoctuaLog.e(TAG, "Noctua is not initialized. Call init() first.")
             return null
         }
         return block()

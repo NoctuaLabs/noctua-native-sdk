@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import com.noctuagames.sdk.models.Account
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,7 +21,7 @@ class AccountRepository(private val context: Context) {
     private val otherApps: List<String> = getOtherApps(context)
 
     suspend fun syncOtherAccounts() {
-        Log.i(TAG, "${context.packageName} otherApps: $otherApps")
+        NoctuaLog.i(TAG, "${context.packageName} otherApps: $otherApps")
 
         for (otherApp in otherApps) {
             val otherAuthority = "$otherApp.noctuaaccountprovider"
@@ -35,17 +35,17 @@ class AccountRepository(private val context: Context) {
                     cursor = contentResolver.query(uri, null, null, null, null)
                 }
                 catch (e: Exception) {
-                    Log.w(TAG, "${e.javaClass.simpleName}: ${e.message}")
+                    NoctuaLog.w(TAG, "${e.javaClass.simpleName}: ${e.message}")
 
                     if (e.message?.contains("Permission Denial") == true) {
-                        Log.w(TAG, "Permission denied for $uri")
+                        NoctuaLog.w(TAG, "Permission denied for $uri")
                     }
 
                     return@withContext
                 }
 
                 if (cursor == null) {
-                    Log.w(TAG, "Failed to query $uri")
+                    NoctuaLog.w(TAG, "Failed to query $uri")
                 }
 
                 cursor?.use {
@@ -55,14 +55,14 @@ class AccountRepository(private val context: Context) {
                 }
             }
 
-            Log.d(TAG, "found ${accounts.size} accounts in $otherAuthority")
+            NoctuaLog.d(TAG, "found ${accounts.size} accounts in $otherAuthority")
 
             if (accounts.isNotEmpty()) {
                 otherAccounts[otherAuthority] = accounts
             }
         }
 
-        Log.d(TAG, "${context.packageName} otherAccounts: ${otherAccounts.keys}")
+        NoctuaLog.d(TAG, "${context.packageName} otherAccounts: ${otherAccounts.keys}")
     }
 
     fun put(account: Account) {
@@ -79,11 +79,11 @@ class AccountRepository(private val context: Context) {
             }
         }
 
-        Log.d(TAG, "getAll ${accounts.size} accounts in $authority")
+        NoctuaLog.d(TAG, "getAll ${accounts.size} accounts in $authority")
 
         otherAccounts.values.flatten().let { accounts.addAll(it) }
 
-        Log.d(TAG, "getAll ${accounts.size} accounts in $authority and ${otherAccounts.keys}")
+        NoctuaLog.d(TAG, "getAll ${accounts.size} accounts in $authority and ${otherAccounts.keys}")
 
         return accounts
     }

@@ -1,7 +1,7 @@
 package com.noctuagames.sdk.services
 
 import android.content.Context
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import android.os.Bundle
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -33,7 +33,8 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         fetchRemoteConfig()
-        Log.i(TAG, "Firebase Analytics initialized successfully")
+        NoctuaLog.d(TAG, "Firebase Remote Config fetch interval: 3600s")
+        NoctuaLog.i(TAG, "Firebase Analytics initialized successfully")
     }
 
     fun fetchRemoteConfig() {
@@ -41,9 +42,9 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val updated = task.result
-                    Log.d(TAG, "Firebase Remote Config params updated: $updated")
+                    NoctuaLog.d(TAG, "Firebase Remote Config params updated: $updated")
                 } else {
-                    Log.e(TAG, "Failed to fetch and activate Firebase RemoteConfig", task.exception)
+                    NoctuaLog.e(TAG, "Failed to fetch and activate Firebase RemoteConfig", task.exception)
                 }
             }
     }
@@ -92,7 +93,7 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
 
         analytics.logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, bundle)
 
-        Log.d(
+        NoctuaLog.d(
             TAG,
             "'ad_revenue' tracked: " +
                     "source: $source, " +
@@ -117,7 +118,7 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
 
         analytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
-        Log.d(
+        NoctuaLog.d(
             TAG,
             "'${FirebaseAnalytics.Event.PURCHASE}' tracked: " +
                     "currency: $currency, " +
@@ -137,7 +138,7 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
 
         analytics.logEvent(eventName, Bundle().apply { putExtras(payload) })
 
-        Log.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
+        NoctuaLog.d(TAG, "'$eventName' (custom) tracked: payload: $payload")
     }
 
     fun trackCustomEventWithRevenue(eventName: String, revenue: Double, currency: String, payload: Map<String, Any> = emptyMap()) {
@@ -153,7 +154,7 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
 
         analytics.logEvent("gf_$eventName", bundle)
 
-        Log.d(TAG, "'$eventName' (custom) tracked: payload: $bundle")
+        NoctuaLog.d(TAG, "'$eventName' (custom) tracked: payload: $bundle")
     }
 
     fun getFirebaseRemoteConfigString(key: String): String {

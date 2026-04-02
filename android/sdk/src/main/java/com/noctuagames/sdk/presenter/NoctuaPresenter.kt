@@ -5,7 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
+import com.noctuagames.sdk.utils.NoctuaLog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.noctuagames.labs.sdk.NoctuaInternal
@@ -54,6 +54,9 @@ class NoctuaPresenter(
     private var noctuaAdjustAttribution: NoctuaAdjustAttribution? = null
     private var adjustAttribution: String = ""
     
+    // Lifecycle callback
+    private var lifecycleCallback: ((String) -> Unit)? = null
+
     // Billing callbacks
     private var billingPurchaseCallback: ((NoctuaPurchaseResult) -> Unit)? = null
     private var billingProductDetailsCallback: ((List<NoctuaProductDetails>) -> Unit)? = null
@@ -64,28 +67,47 @@ class NoctuaPresenter(
 
     init {
         AppContext.set(appContext)
+
+        NoctuaLog.i(TAG, "Loading config from noctuagg.json")
         val config = loadConfig(appContext)
 
         if (config.clientId.isNullOrEmpty()) {
             throw IllegalArgumentException("clientId is not set")
         }
 
+        NoctuaLog.sandboxEnabled = config.noctua?.sandboxEnabled ?: true
+        NoctuaLog.d(TAG, "Config loaded: clientId=${config.clientId}, gameId=${config.gameId}")
+        NoctuaLog.d(TAG, "Noctua config: sandboxEnabled=${config.noctua?.sandboxEnabled}, nativeInternalTrackerEnabled=${config.noctua?.nativeInternalTrackerEnabled}")
+        NoctuaLog.d(TAG, "Service configs: adjust=${config.adjust?.android != null}, firebase=${config.firebase?.android != null}, facebook=${config.facebook?.android != null}")
+
         nativeInternalTrackerEnabled =
             config.noctua?.nativeInternalTrackerEnabled ?: false
 
+        NoctuaLog.i(TAG, "Creating AdjustService...")
         adjust = createAdjust(config)
+        NoctuaLog.i(TAG, "AdjustService: ${if (adjust != null) "OK" else "SKIPPED (no config)"}")
+
+        NoctuaLog.i(TAG, "Creating FirebaseService...")
         firebase = createFirebase(config)
+        NoctuaLog.i(TAG, "FirebaseService: ${if (firebase != null) "OK" else "SKIPPED (no config)"}")
+
+        NoctuaLog.i(TAG, "Creating FacebookService...")
         facebook = createFacebook(config)
+        NoctuaLog.i(TAG, "FacebookService: ${if (facebook != null) "OK" else "SKIPPED"}")
+
+        NoctuaLog.i(TAG, "Creating BillingService...")
         billing = createBilling()
+        NoctuaLog.i(TAG, "BillingService: OK")
 
         accounts = AccountRepository(appContext)
         appManagement = AppManagementService(appContext)
 
+        NoctuaLog.i(TAG, "AccountRepository initialized, starting sync...")
         coroutineScope.launch {
             accounts.syncOtherAccounts()
         }
 
-        Log.i(TAG, "NoctuaPresenter initialized")
+        NoctuaLog.i(TAG, "NoctuaPresenter initialized")
     }
 
     // ------------------------------------
@@ -101,6 +123,7 @@ class NoctuaPresenter(
     // ------------------------------------
 
     fun onResume() {
+        NoctuaLog.d(TAG, "onResume: adjust=${adjust != null}, nativeTracker=$nativeInternalTrackerEnabled, lifecycleCallback=${lifecycleCallback != null}")
         adjust?.onResume()
 
         if (nativeInternalTrackerEnabled) {
@@ -110,17 +133,23 @@ class NoctuaPresenter(
         coroutineScope.launch {
             accounts.syncOtherAccounts()
         }
+
+        lifecycleCallback?.invoke("resume")
     }
 
     fun onPause() {
+        NoctuaLog.d(TAG, "onPause: adjust=${adjust != null}, nativeTracker=$nativeInternalTrackerEnabled, lifecycleCallback=${lifecycleCallback != null}")
         adjust?.onPause()
 
         if (nativeInternalTrackerEnabled) {
             NoctuaInternal.onInternalNoctuaApplicationPause(true)
         }
+
+        lifecycleCallback?.invoke("pause")
     }
 
     fun onDestroy() {
+        NoctuaLog.d(TAG, "onDestroy: nativeTracker=$nativeInternalTrackerEnabled")
         if (nativeInternalTrackerEnabled) {
             NoctuaInternal.onInternalNoctuaDispose()
         }
@@ -128,6 +157,10 @@ class NoctuaPresenter(
 
     fun onOnline() = adjust?.onOnline()
     fun onOffline() = adjust?.onOffline()
+
+    fun registerLifecycleCallback(callback: ((String) -> Unit)?) {
+        lifecycleCallback = callback
+    }
 
     // ------------------------------------
     // Tracking
@@ -140,7 +173,7 @@ class NoctuaPresenter(
         extraPayload: MutableMap<String, Any>
     ) {
         if (source.isEmpty() || revenue <= 0 || currency.isEmpty()) {
-            Log.e(TAG, "Invalid ad revenue parameters")
+            NoctuaLog.e(TAG, "Invalid ad revenue parameters")
             return
         }
 
@@ -156,7 +189,7 @@ class NoctuaPresenter(
         extraPayload: MutableMap<String, Any>
     ) {
         if (orderId.isEmpty() || amount <= 0 || currency.isEmpty()) {
-            Log.e(TAG, "Invalid purchase parameters")
+            NoctuaLog.e(TAG, "Invalid purchase parameters")
             return
         }
 
@@ -266,7 +299,7 @@ class NoctuaPresenter(
 
     fun askNotificationPermission(activity: Activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            Log.d(TAG, "Notification permission auto-granted (< Android 13)")
+            NoctuaLog.d(TAG, "Notification permission auto-granted (< Android 13)")
             return
         }
 
@@ -276,7 +309,7 @@ class NoctuaPresenter(
         )
 
         if (permission == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Notification permission already granted")
+            NoctuaLog.d(TAG, "Notification permission already granted")
             return
         }
 
@@ -425,7 +458,7 @@ class NoctuaPresenter(
             }
 
             override fun onBillingError(error: BillingErrorCode, message: String) {
-                Log.e(TAG, "Billing error: $error - $message")
+                NoctuaLog.e(TAG, "Billing error: $error - $message")
                 onBillingError?.invoke(error, message)
             }
         })
@@ -528,7 +561,7 @@ class NoctuaPresenter(
                 }
             }
         } catch (e: Exception) {
-            Log.w(TAG, "Adjust init failed: ${e.message}")
+            NoctuaLog.w(TAG, "Adjust init failed: ${e.message}")
             null
         }
 
@@ -538,7 +571,7 @@ class NoctuaPresenter(
                 FirebaseService(it, appContext)
             }
         } catch (e: Exception) {
-            Log.w(TAG, "Firebase init failed: ${e.message}")
+            NoctuaLog.w(TAG, "Firebase init failed: ${e.message}")
             null
         }
 
@@ -548,7 +581,7 @@ class NoctuaPresenter(
                 FacebookService(it, appContext)
             }
         } catch (e: Exception) {
-            Log.w(TAG, "Facebook init failed: ${e.message}")
+            NoctuaLog.w(TAG, "Facebook init failed: ${e.message}")
             null
         }
 }
