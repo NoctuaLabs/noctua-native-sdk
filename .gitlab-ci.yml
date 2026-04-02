@@ -117,9 +117,12 @@ release-android-sdk:
     - git add version.txt
     - git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --bump > CHANGELOG.md
     - git add CHANGELOG.md
+    - REMOTE_URL="https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git"
     - git commit -m "Release $NEW_VERSION_TAG"
     - git tag -a $NEW_VERSION_TAG -m "Release $NEW_VERSION_TAG"
-    - git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
+    - git fetch "$REMOTE_URL" $CI_COMMIT_BRANCH
+    - git rebase FETCH_HEAD
+    - git push "$REMOTE_URL" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
 
 publish-android-sdk:
   image: cimg/android:2024.07.1
@@ -215,10 +218,13 @@ release-ios-sdk:
     - git add ../NoctuaSDK.podspec
     - git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bump > CHANGELOG.md
     - git add CHANGELOG.md
+    - REMOTE_URL="https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git"
     - git commit -m "Release $NEW_VERSION_TAG"
     - git tag -a $NEW_VERSION_TAG -m "Release $NEW_VERSION_TAG"
-    - git push "https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
-    
+    - git fetch "$REMOTE_URL" $CI_COMMIT_BRANCH
+    - git rebase FETCH_HEAD
+    - git push "$REMOTE_URL" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
+
 publish-ios-sdk:
   stage: publish
   tags:
