@@ -1,3 +1,8 @@
+## [ios-sdk-v0.34.0] - 2026-04-20
+
+### 🚀 Features
+
+- *(inspector)* Tracker emission bus + Firebase/Facebook log tailers
 ## [ios-sdk-v0.33.0] - 2026-04-02
 
 ### 🚀 Features
