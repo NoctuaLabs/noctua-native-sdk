@@ -19,10 +19,12 @@
 		41A011E97EB202C1962E87D5 /* noctuagg_valid.json in Resources */ = {isa = PBXBuildFile; fileRef = 53905BD88203F35152AB9AE7 /* noctuagg_valid.json */; };
 		498B145B83AB9D1985D68228 /* StoreKitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69581917A977A6307DB3A17 /* StoreKitSection.swift */; };
 		54661D70E24233555C250BB7 /* StoreKitModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B7187600DF3A0A6C022358 /* StoreKitModelTests.swift */; };
+		59A45E7E89038C604F919F08 /* NoctuaInspectorBusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D71D7C1DAD4D3692A116128 /* NoctuaInspectorBusTests.swift */; };
 		60D71C65CBEE4E1F1B3C365C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BCFE414F089C6272C8B9016 /* Foundation.framework */; };
 		70443C88AC5C72F80BFD9246 /* noctuagg_invalid.json in Resources */ = {isa = PBXBuildFile; fileRef = 9D83EF1D2F422023CB46ABFE /* noctuagg_invalid.json */; };
 		726385D5142032371CFBCB4E /* Pods_NoctuaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5D905E9A19670A0C3761DB6 /* Pods_NoctuaSDKTests.framework */; };
 		850345BE6F782AED56B81F84 /* CurrencyQueryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB2F44930246D4EA0046468 /* CurrencyQueryServiceTests.swift */; };
+		86972F8AC12185976E84628D /* FirebaseLogTailerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58ACF8EE75DAF4C241DB4966 /* FirebaseLogTailerTests.swift */; };
 		8E70A278320838F3403B5DC4 /* AccountModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB36617E4C7187505EC82F6 /* AccountModelTests.swift */; };
 		9A65F2623575F8C63273A403 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD51ABE80E18EC7C8A3BC00A /* SectionCard.swift */; };
 		9AE87070E719B29127351382 /* TrackingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A644C035078285E3C281E /* TrackingSection.swift */; };
@@ -43,12 +45,12 @@
 		CE680DF12EF54058009AFB20 /* NoctuaInternalSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE680DEF2EF54058009AFB20 /* NoctuaInternalSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF224E0FF3883E58120F11E4 /* NoctuaErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5360DE41D3567BB2C801A7C /* NoctuaErrorTests.swift */; };
 		D12149303480339B1E2D8D69 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DBBA69B5215FB9082E45DB /* TestHelpers.swift */; };
+		D25119BE80452416BBD02B51 /* Pods_NoctuaSDKExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8DC793FA6DDB617F1C9253F /* Pods_NoctuaSDKExample.framework */; };
 		D4E5F6A7B8C9D0E1F2A3B4C5 /* StoreKit1ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* StoreKit1ServiceTests.swift */; };
 		E5F6A7B8C9D0E1F2A3B4C5D6 /* MockPaymentQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* MockPaymentQueue.swift */; };
-		F6A7B8C9D0E1F2A3B4C5D6E7 /* MockSKPaymentTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* MockSKPaymentTransaction.swift */; };
-		D25119BE80452416BBD02B51 /* Pods_NoctuaSDKExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8DC793FA6DDB617F1C9253F /* Pods_NoctuaSDKExample.framework */; };
 		E8C578FEDBBA952F99EF4742 /* AccountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28F7E910D9DBB1590E06C75 /* AccountSection.swift */; };
 		EE5F6A7B8C9D0E1F2A3B4C5D /* FirebaseSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B2C3D4E5F6A7B8C9D0E1F /* FirebaseSection.swift */; };
+		F6A7B8C9D0E1F2A3B4C5D6E7 /* MockSKPaymentTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* MockSKPaymentTransaction.swift */; };
 		F9F58F8DCA1487E1D0DA0F8F /* SharedStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C2792A227EEE3DEA87F830 /* SharedStyles.swift */; };
 		FEFBCC2571EB652A30D89EBF /* AccountPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A6405144F1FDFADB685C2A /* AccountPresenterTests.swift */; };
 		FF6A7B8C9D0E1F2A3B4C5D6E /* SessionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2C3D4E5F6A7B8C9D0E1F2A /* SessionSection.swift */; };
@@ -85,10 +87,12 @@
 		1E2A644C035078285E3C281E /* TrackingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingSection.swift; sourceTree = "<group>"; };
 		2763EFCD75B967592F03186F /* OtherSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSection.swift; sourceTree = "<group>"; };
 		2B60D516F2353BB29B88FE25 /* Pods-NoctuaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKTests.debug.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKTests/Pods-NoctuaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
+		2D71D7C1DAD4D3692A116128 /* NoctuaInspectorBusTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoctuaInspectorBusTests.swift; sourceTree = "<group>"; };
 		37CB17B39C857C40A8BF0210 /* MockStoreKitService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockStoreKitService.swift; sourceTree = "<group>"; };
 		4E785285A45C3AF0D8A2F7A4 /* SessionPresenterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionPresenterTests.swift; sourceTree = "<group>"; };
 		52C2792A227EEE3DEA87F830 /* SharedStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStyles.swift; sourceTree = "<group>"; };
 		53905BD88203F35152AB9AE7 /* noctuagg_valid.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; path = noctuagg_valid.json; sourceTree = "<group>"; };
+		58ACF8EE75DAF4C241DB4966 /* FirebaseLogTailerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FirebaseLogTailerTests.swift; sourceTree = "<group>"; };
 		59A6405144F1FDFADB685C2A /* AccountPresenterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccountPresenterTests.swift; sourceTree = "<group>"; };
 		5CB36617E4C7187505EC82F6 /* AccountModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccountModelTests.swift; sourceTree = "<group>"; };
 		6D45EF21E547B3BCA2A0F09E /* Pods-NoctuaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoctuaSDKTests.release.xcconfig"; path = "Target Support Files/Pods-NoctuaSDKTests/Pods-NoctuaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -102,7 +106,6 @@
 		AC7C67BD9E72ABBB73A4D7B1 /* MockFirebaseQueryService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockFirebaseQueryService.swift; sourceTree = "<group>"; };
 		AEE2FAFC2B922341AE8B1E58 /* MockTrackerService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockTrackerService.swift; sourceTree = "<group>"; };
 		B10EAD112CDF17CB00BE236F /* NoctuaSDKExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoctuaSDKExample.entitlements; sourceTree = "<group>"; };
-		B2C3D4E5F6A7B8C9D0E1F2A3 /* MockPaymentQueue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockPaymentQueue.swift; sourceTree = "<group>"; };
 		B135B7A52C5AF28B0091DCC8 /* NoctuaSDKExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoctuaSDKExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B135B7A82C5AF28B0091DCC8 /* NoctuaSDKExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoctuaSDKExampleApp.swift; sourceTree = "<group>"; };
 		B135B7AA2C5AF28B0091DCC8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -112,6 +115,7 @@
 		B135B7BE2C5B3A8D0091DCC8 /* noctuagg.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = noctuagg.json; sourceTree = "<group>"; };
 		B15F9B512C911AAD00006779 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B17408164C419F3C0F0A0E26 /* NoctuaSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoctuaSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2C3D4E5F6A7B8C9D0E1F2A3 /* MockPaymentQueue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockPaymentQueue.swift; sourceTree = "<group>"; };
 		B3B4AC4CBDB3E87964268B0E /* NoctuaConfigTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoctuaConfigTests.swift; sourceTree = "<group>"; };
 		B8DC793FA6DDB617F1C9253F /* Pods_NoctuaSDKExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoctuaSDKExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB2C3D4E5F6A7B8C9D0E1F2A /* SessionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSection.swift; sourceTree = "<group>"; };
@@ -175,6 +179,16 @@
 			path = Mocks;
 			sourceTree = "<group>";
 		};
+		2DF5BE11BBF02AA1918BAC63 /* Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				2D71D7C1DAD4D3692A116128 /* NoctuaInspectorBusTests.swift */,
+				58ACF8EE75DAF4C241DB4966 /* FirebaseLogTailerTests.swift */,
+			);
+			name = Inspector;
+			path = Inspector;
+			sourceTree = "<group>";
+		};
 		2E56AAE58D5E08E32112DFFF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -195,6 +209,7 @@
 				B89E59E6C9A2873E840485CC /* Service */,
 				2E56AAE58D5E08E32112DFFF /* Resources */,
 				C22081DF2EDBA5426CCB8590 /* NoctuaPublicAPITests.swift */,
+				2DF5BE11BBF02AA1918BAC63 /* Inspector */,
 			);
 			name = NoctuaSDKTests;
 			path = ../NoctuaSDKTests;
@@ -525,6 +540,8 @@
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* StoreKit1ServiceTests.swift in Sources */,
 				E5F6A7B8C9D0E1F2A3B4C5D6 /* MockPaymentQueue.swift in Sources */,
 				F6A7B8C9D0E1F2A3B4C5D6E7 /* MockSKPaymentTransaction.swift in Sources */,
+				59A45E7E89038C604F919F08 /* NoctuaInspectorBusTests.swift in Sources */,
+				86972F8AC12185976E84628D /* FirebaseLogTailerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

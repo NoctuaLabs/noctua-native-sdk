@@ -4,6 +4,7 @@ import AdjustSdk
 #endif
 
 class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
+    let providerName: String = "Adjust"
     let config: AdjustServiceIosConfig
     private let logger: NoctuaLogger
 

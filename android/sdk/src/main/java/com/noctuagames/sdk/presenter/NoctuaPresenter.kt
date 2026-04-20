@@ -107,6 +107,15 @@ class NoctuaPresenter(
             accounts.syncOtherAccounts()
         }
 
+        // Inspector (dev-only; gated on sandboxEnabled — zero work in prod).
+        // Self-gates inside the bus/tailer as well, so safe even if Unity binds
+        // a callback before this line.
+        if (config.noctua?.sandboxEnabled == true) {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.setEnabled(true)
+            com.noctuagames.sdk.inspector.LogTailer.start()
+            NoctuaLog.i(TAG, "Inspector bus enabled (sandboxEnabled=true); log tailer started")
+        }
+
         NoctuaLog.i(TAG, "NoctuaPresenter initialized")
     }
 
@@ -177,9 +186,26 @@ class NoctuaPresenter(
             return
         }
 
-        adjust?.trackAdRevenue(source, revenue, currency, extraPayload)
-        firebase?.trackAdRevenue(source, revenue, currency, extraPayload)
-        facebook?.trackAdRevenue(source, revenue, currency, extraPayload)
+        val payload = mapOf<String, Any?>(
+            "source" to source,
+            "revenue" to revenue,
+            "currency" to currency,
+            "extraPayload" to extraPayload
+        )
+        adjust?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Adjust", "ad_revenue", payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            it.trackAdRevenue(source, revenue, currency, extraPayload)
+        }
+        firebase?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Firebase", "ad_revenue", payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            com.noctuagames.sdk.inspector.LogTailer.registerPending("Firebase", "ad_revenue")
+            it.trackAdRevenue(source, revenue, currency, extraPayload)
+        }
+        facebook?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Facebook", "ad_revenue", payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            com.noctuagames.sdk.inspector.LogTailer.registerPending("Facebook", "ad_revenue")
+            it.trackAdRevenue(source, revenue, currency, extraPayload)
+        }
     }
 
     fun trackPurchase(
@@ -193,18 +219,46 @@ class NoctuaPresenter(
             return
         }
 
-        adjust?.trackPurchase(orderId, amount, currency, extraPayload)
-        firebase?.trackPurchase(orderId, amount, currency, extraPayload)
-        facebook?.trackPurchase(orderId, amount, currency, extraPayload)
+        val payload = mapOf<String, Any?>(
+            "orderId" to orderId,
+            "amount" to amount,
+            "currency" to currency,
+            "extraPayload" to extraPayload
+        )
+        adjust?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Adjust", "purchase", payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            it.trackPurchase(orderId, amount, currency, extraPayload)
+        }
+        firebase?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Firebase", "purchase", payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            com.noctuagames.sdk.inspector.LogTailer.registerPending("Firebase", "purchase")
+            it.trackPurchase(orderId, amount, currency, extraPayload)
+        }
+        facebook?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Facebook", "purchase", payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            com.noctuagames.sdk.inspector.LogTailer.registerPending("Facebook", "purchase")
+            it.trackPurchase(orderId, amount, currency, extraPayload)
+        }
     }
 
     fun trackCustomEvent(
         eventName: String,
         payload: MutableMap<String, Any>
     ) {
-        adjust?.trackCustomEvent(eventName, payload)
-        firebase?.trackCustomEvent(eventName, payload)
-        facebook?.trackCustomEvent(eventName, payload)
+        adjust?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Adjust", eventName, payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            it.trackCustomEvent(eventName, payload)
+        }
+        firebase?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Firebase", eventName, payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            com.noctuagames.sdk.inspector.LogTailer.registerPending("Firebase", eventName)
+            it.trackCustomEvent(eventName, payload)
+        }
+        facebook?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Facebook", eventName, payload, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            com.noctuagames.sdk.inspector.LogTailer.registerPending("Facebook", eventName)
+            it.trackCustomEvent(eventName, payload)
+        }
 
         if (nativeInternalTrackerEnabled) {
             NoctuaInternal.trackCustomEvent(eventName, payload)
@@ -217,9 +271,21 @@ class NoctuaPresenter(
         currency: String,
         payload: MutableMap<String, Any>
     ) {
-        adjust?.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
-        firebase?.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
-        facebook?.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
+        val enriched: Map<String, Any?> = payload + mapOf("revenue" to revenue, "currency" to currency)
+        adjust?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Adjust", eventName, enriched, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            it.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
+        }
+        firebase?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Firebase", eventName, enriched, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            com.noctuagames.sdk.inspector.LogTailer.registerPending("Firebase", eventName)
+            it.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
+        }
+        facebook?.let {
+            com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit("Facebook", eventName, enriched, phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.QUEUED)
+            com.noctuagames.sdk.inspector.LogTailer.registerPending("Facebook", eventName)
+            it.trackCustomEventWithRevenue(eventName, revenue, currency, payload)
+        }
     }
 
     // ------------------------------------

@@ -28,6 +28,8 @@ class MockTrackerService: TrackerServiceProtocol {
         let payload: [String: Any]
     }
 
+    var providerName: String = "Mock"
+
     var adRevenueCalls: [AdRevenueCall] = []
     var purchaseCalls: [PurchaseCall] = []
     var customEventCalls: [CustomEventCall] = []
