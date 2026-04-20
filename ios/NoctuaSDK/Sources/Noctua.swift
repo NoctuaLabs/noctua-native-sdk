@@ -47,6 +47,13 @@ import UIKit
             )
             logger.info("SessionPresenter initialized")
 
+            // Inspector (dev-only; gated on sandboxEnabled — zero work in prod)
+            if config.noctua?.sandboxEnabled == true {
+                NoctuaInspectorBus.shared.setEnabled(true)
+                FirebaseLogTailer.shared.start()
+                logger.info("Inspector bus enabled (sandboxEnabled=true); Firebase log tailer started")
+            }
+
             logger.info("Noctua SDK initialization complete")
         }
     }

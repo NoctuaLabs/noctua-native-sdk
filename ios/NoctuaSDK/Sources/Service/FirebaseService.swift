@@ -12,6 +12,7 @@ import FirebaseRemoteConfig
 #endif
 
 class FirebaseService: TrackerServiceProtocol, FirebaseQueryServiceProtocol {
+    let providerName: String = "Firebase"
     let config: FirebaseServiceIosConfig
     private let logger: NoctuaLogger
 #if canImport(FirebaseRemoteConfig)

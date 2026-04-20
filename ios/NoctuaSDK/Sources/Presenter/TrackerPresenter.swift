@@ -34,7 +34,20 @@ class TrackerPresenter {
             return
         }
 
+        let payload: [String: Any] = [
+            "source": source,
+            "revenue": revenue,
+            "currency": currency,
+            "extraPayload": extraPayload
+        ]
+
         for tracker in trackers {
+            NoctuaInspectorBus.shared.emit(
+                provider: tracker.providerName,
+                eventName: "ad_revenue",
+                payload: payload,
+                phase: .queued
+            )
             tracker.trackAdRevenue(source: source, revenue: revenue, currency: currency, extraPayload: extraPayload)
         }
     }
@@ -55,13 +68,35 @@ class TrackerPresenter {
             return
         }
 
+        let payload: [String: Any] = [
+            "orderId": orderId,
+            "amount": amount,
+            "currency": currency,
+            "extraPayload": extraPayload
+        ]
+
         for tracker in trackers {
+            NoctuaInspectorBus.shared.emit(
+                provider: tracker.providerName,
+                eventName: "purchase",
+                payload: payload,
+                phase: .queued
+            )
             tracker.trackPurchase(orderId: orderId, amount: amount, currency: currency, extraPayload: extraPayload)
         }
     }
 
     func trackCustomEvent(_ eventName: String, payload: [String: Any]) {
         for tracker in trackers {
+            NoctuaInspectorBus.shared.emit(
+                provider: tracker.providerName,
+                eventName: eventName,
+                payload: payload,
+                phase: .queued
+            )
+            if tracker.providerName == "Firebase" {
+                FirebaseLogTailer.shared.registerPending(eventName: eventName)
+            }
             tracker.trackCustomEvent(eventName, payload: payload)
         }
 
@@ -71,7 +106,17 @@ class TrackerPresenter {
     }
 
     func trackCustomEventWithRevenue(_ eventName: String, revenue: Double, currency: String, payload: [String: Any]) {
+        var enriched = payload
+        enriched["revenue"] = revenue
+        enriched["currency"] = currency
+
         for tracker in trackers {
+            NoctuaInspectorBus.shared.emit(
+                provider: tracker.providerName,
+                eventName: eventName,
+                payload: enriched,
+                phase: .queued
+            )
             tracker.trackCustomEventWithRevenue(eventName, revenue: revenue, currency: currency, payload: payload)
         }
     }

@@ -9,6 +9,7 @@ import FBSDKCoreKit
 #endif
 
 class FacebookService: TrackerServiceProtocol {
+    let providerName: String = "Facebook"
     let config: FacebookServiceIosConfig
     private let logger: NoctuaLogger
 
