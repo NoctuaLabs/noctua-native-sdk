@@ -1,3 +1,8 @@
+## [android-sdk-v0.30.0] - 2026-04-20
+
+### 🚀 Features
+
+- *(inspector)* Tracker emission bus + Firebase/Facebook log tailers
 ## [android-sdk-v0.29.0] - 2026-04-02
 
 ### 🚀 Features
