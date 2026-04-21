@@ -1,3 +1,8 @@
+## [ios-sdk-v0.35.0] - 2026-04-21
+
+### 🚀 Features
+
+- *(inspector)* Adjust + Facebook log-tailing with token capture
 ## [ios-sdk-v0.34.0] - 2026-04-20
 
 ### 🚀 Features
