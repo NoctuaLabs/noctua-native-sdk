@@ -94,8 +94,16 @@ class TrackerPresenter {
                 payload: payload,
                 phase: .queued
             )
-            if tracker.providerName == "Firebase" {
-                FirebaseLogTailer.shared.registerPending(eventName: eventName)
+            // Register pending for every provider with a log-tailer so the
+            // tailer can correlate the next `Emitted` / `Acknowledged` line
+            // back to this specific dispatch.
+            if tracker.providerName == "Firebase" ||
+               tracker.providerName == "Facebook" ||
+               tracker.providerName == "Adjust" {
+                FirebaseLogTailer.shared.registerPending(
+                    provider: tracker.providerName,
+                    eventName: eventName
+                )
             }
             tracker.trackCustomEvent(eventName, payload: payload)
         }

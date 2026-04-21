@@ -127,7 +127,19 @@ internal class AdjustService(
             return
         }
 
-        val adjustEvent = AdjustEvent(config.eventMap?.get(eventName) ?: "")
+        val token = config.eventMap?.get(eventName) ?: ""
+
+        // Surface the Adjust callback token to the Inspector as soon as the
+        // service looks it up. The row's expanded view then shows both the
+        // game-facing event name and the Adjust token side-by-side — easier
+        // to correlate with Adjust dashboards.
+        com.noctuagames.sdk.inspector.NoctuaInspectorBus.emit(
+            "Adjust", eventName, payload,
+            extraParams = mapOf("adjustToken" to token),
+            phase = com.noctuagames.sdk.inspector.NoctuaTrackerEventPhase.SENDING
+        )
+
+        val adjustEvent = AdjustEvent(token)
 
         for ((key, value) in payload) {
             adjustEvent.addCallbackParameter(key, value.toString())
