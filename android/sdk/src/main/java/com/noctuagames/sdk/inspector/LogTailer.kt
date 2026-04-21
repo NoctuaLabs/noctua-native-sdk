@@ -48,10 +48,30 @@ object LogTailer {
         Regex("""[Ll]ogging event(?: \(FE\))?: ([A-Za-z_][A-Za-z0-9_]*)""")
     private val firebaseUploadingRegex = Regex("""[Uu]ploading data""")
     private val firebaseSuccessfulUploadRegex = Regex("""[Ss]uccessful upload""")
+    // FBSDK Android logs event recording in a few formats depending on version:
+    //   "Event raw JSON: {"_eventName":"fb_login", ...}"                           (AppEventsLoggerImpl.kt)
+    //   "Recording event @ <ts>: { "_eventName" = "fb_login"; ... }"               (NSLog-style ported)
+    //   "'fb_login' (custom) tracked: [...]"                                       (Swift-debug style)
+    // Match all three so newer / older SDKs both resolve.
     private val facebookRawJsonRegex =
-        Regex(""""_eventName":"([^"]+)"""")
-    private val facebookFlushSuccessRegex = Regex("""Flush result: SUCCESS""")
-    private val facebookFlushErrorRegex = Regex("""Flush result: SERVER_ERROR""")
+        Regex(""""_eventName"\s*[:=]\s*"([^"]+)"""")
+    private val facebookSwiftTrackedRegex =
+        Regex("""'([A-Za-z_][A-Za-z0-9_]*)'\s*\(custom\)\s*tracked""")
+    private val facebookFlushSuccessRegex = Regex("""Flush result: SUCCESS|[Ff]lushed.*Result:\s*Success""")
+    private val facebookFlushErrorRegex = Regex("""Flush result: SERVER_ERROR|[Ff]lushed.*Result:\s*SERVER_ERROR""")
+
+    // Adjust: SDK emits verbose lines tagged `Adjust` on logcat. The native
+    // `[Adjust]d:` prefix shown on iOS NSLog is unreadable from Unity, so
+    // we rely on Android's logcat. Relevant format:
+    //   "Got JSON response with message: Event tracked 'xyz'"
+    //   "Event failure callback called!"
+    // The Adjust event callback token matches the "callbackId" in our
+    // AdjustService.eventMap — if the game mapped event name → token, we
+    // can't reverse the mapping here, so pending correlation is best-effort:
+    // mark ALL in-flight Adjust events as Acknowledged on each success line,
+    // mirroring how the Firebase "Successful upload" broadcast works.
+    private val adjustEventTrackedRegex = Regex("""Event tracked '([^']+)'""")
+    private val adjustEventFailureRegex = Regex("""Event failure callback called""")
 
     /** Called by NoctuaPresenter before forwarding to Firebase/Facebook. */
     @JvmStatic
@@ -97,6 +117,7 @@ object LogTailer {
         val cmd = arrayOf(
             "logcat", "-d", "-v", "threadtime",
             "--pid=${Process.myPid()}",
+            "Adjust:V",
             "FA:V", "FA-SVC:V",
             "FacebookSDK.AppEvents:V",
             "FacebookSDK.AppEventsManager:V",
@@ -149,11 +170,27 @@ object LogTailer {
             }
         }
 
-        // Facebook SDK tag `FacebookSDK.AppEvents*`
-        if (line.contains("FacebookSDK.AppEvents")) {
-            val match = facebookRawJsonRegex.find(line)
-            if (match != null) {
-                val name = match.groupValues[1]
+        // Facebook SDK — tag `FacebookSDK.AppEvents*` on Android SDK,
+        // OR the newer Swift-debug "(custom) tracked" line surfaced by
+        // ported code; OR the NSLog-style "Recording event" dump. Accept
+        // any of these because the underlying `_eventName` extraction still
+        // works with the shared regexes.
+        if (line.contains("FacebookSDK.AppEvents") ||
+            line.contains("FBSDKLog:") ||
+            line.contains("FBSDKAppEvents") ||
+            line.contains("(custom) tracked")
+        ) {
+            val json = facebookRawJsonRegex.find(line)
+            if (json != null) {
+                val name = json.groupValues[1]
+                if (consumePending("Facebook", name)) {
+                    NoctuaInspectorBus.emit("Facebook", name, phase = NoctuaTrackerEventPhase.EMITTED)
+                }
+                return
+            }
+            val swift = facebookSwiftTrackedRegex.find(line)
+            if (swift != null) {
+                val name = swift.groupValues[1]
                 if (consumePending("Facebook", name)) {
                     NoctuaInspectorBus.emit("Facebook", name, phase = NoctuaTrackerEventPhase.EMITTED)
                 }
@@ -167,6 +204,33 @@ object LogTailer {
             if (facebookFlushErrorRegex.containsMatchIn(line)) {
                 broadcast("Facebook", NoctuaTrackerEventPhase.FAILED)
                 clearProvider("Facebook")
+                return
+            }
+        }
+
+        // Adjust tag (exact match — Adjust's own Log.d uses `TAG = "Adjust"`).
+        if (line.contains(" Adjust:") ||
+            line.contains("/Adjust:") ||
+            line.startsWith("Adjust:")
+        ) {
+            val tracked = adjustEventTrackedRegex.find(line)
+            if (tracked != null) {
+                // Adjust logs the callback TOKEN (e.g. "1qhqus"), not the
+                // game-facing event name — broadcast Acknowledged to every
+                // pending Adjust emission and attach the parsed token as
+                // extraParams so the Inspector row shows both name+token.
+                val token = tracked.groupValues[1]
+                broadcast(
+                    "Adjust",
+                    NoctuaTrackerEventPhase.ACKNOWLEDGED,
+                    extraParams = mapOf("adjustToken" to token)
+                )
+                clearProvider("Adjust")
+                return
+            }
+            if (adjustEventFailureRegex.containsMatchIn(line)) {
+                broadcast("Adjust", NoctuaTrackerEventPhase.FAILED)
+                clearProvider("Adjust")
                 return
             }
         }
@@ -185,13 +249,17 @@ object LogTailer {
         }
     }
 
-    private fun broadcast(provider: String, phase: NoctuaTrackerEventPhase) {
+    private fun broadcast(
+        provider: String,
+        phase: NoctuaTrackerEventPhase,
+        extraParams: Map<String, Any?> = emptyMap()
+    ) {
         val snapshot: List<String> = synchronized(pendingLock) {
             pending.keys.filter { it.startsWith("$provider:") }.toList()
         }
         for (k in snapshot) {
             val eventName = k.substringAfter("$provider:")
-            NoctuaInspectorBus.emit(provider, eventName, phase = phase)
+            NoctuaInspectorBus.emit(provider, eventName, extraParams = extraParams, phase = phase)
         }
     }
 

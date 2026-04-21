@@ -112,6 +112,18 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
             return
         }
 
+        // Surface the Adjust callback token to the Inspector as soon as the
+        // service looks it up. The row's expanded view now shows both the
+        // game-facing event name and the Adjust token side-by-side, which
+        // makes correlating with Adjust dashboards much easier.
+        NoctuaInspectorBus.shared.emit(
+            provider: "Adjust",
+            eventName: eventName,
+            payload: payload,
+            extraParams: ["adjustToken": eventToken],
+            phase: .sending
+        )
+
         let event = ADJEvent(eventToken: eventToken)!
 
         for (key, value) in payload {
