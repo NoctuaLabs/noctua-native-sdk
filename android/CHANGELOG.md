@@ -1,3 +1,8 @@
+## [android-sdk-v0.31.0] - 2026-04-21
+
+### 🚀 Features
+
+- *(inspector)* Adjust + Facebook log-tailing with token capture
 ## [android-sdk-v0.30.0] - 2026-04-20
 
 ### 🚀 Features
