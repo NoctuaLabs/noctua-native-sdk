@@ -7,6 +7,7 @@
 
 ### 🐛 Bug Fixes
 
+- *(iap)* `StoreKit1Service.getProductPurchaseStatus` now returns `true` for previously-purchased non-consumables. The old implementation only checked the in-flight `pendingTransactions` queue, which is wiped by `finishTransaction` during the original purchase — leaving every non-consumable bought in a previous session permanently reported as `isPurchased=false`. Fixed by falling through to `Transaction.currentEntitlements` (StoreKit 2, available alongside SK1 since iOS 15) when no in-flight match is found.
 - *(inspector)* Firebase Analytics 12.x log format — regex now captures the event name from the new `Logging event: origin, name, params: app, <name>, {...}` shape (previously matched the literal `origin` field).
 - *(inspector)* Adjust on iOS — Adjust SDK uses `NSLog(@"[Adjust]d: ...")` which routes through the app's default subsystem, not `com.adjust.sdk`. Added `looksLikeAdjust(_:)` content-match so its lines are picked up.
 
