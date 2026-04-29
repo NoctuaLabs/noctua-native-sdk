@@ -89,6 +89,18 @@ object NoctuaInspector {
         return metricsScratch
     }
 
+    // ----- Maintenance (Inspector "Memory" tab Action Panel) -----
+
+    /**
+     * Wipes the WebView cache and app `cacheDir`. Called from the Unity
+     * Inspector behind a confirm dialog. Falls back to no-op if the
+     * application context is missing.
+     */
+    @JvmStatic
+    fun clearNativeHttpCache() {
+        NativeHttpCacheCleaner.clear(appContextRef)
+    }
+
     /** Test seam — clears all callbacks + context. Not used in production. */
     @JvmStatic
     fun reset() {

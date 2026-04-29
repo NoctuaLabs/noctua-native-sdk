@@ -107,6 +107,17 @@ public func noctuaSnapshotDeviceMetrics(
     return 0
 }
 
+// ===================================================================
+// Inspector Memory tab — destructive maintenance.
+// Wipes URLCache + WKWebsiteDataStore. Sandbox-only — Unity gates the
+// invocation behind the Memory tab's Action Panel confirm dialog.
+// ===================================================================
+
+@_cdecl("noctuaClearNativeHttpCache")
+public func noctuaClearNativeHttpCache() {
+    NativeHttpCacheCleaner.clear()
+}
+
 /// Obj-C-callable façade for the same controls, for cases where Swift or
 /// ObjC callers want a typed API instead of the C-ABI pointer.
 @objc public class NoctuaInspector: NSObject {
