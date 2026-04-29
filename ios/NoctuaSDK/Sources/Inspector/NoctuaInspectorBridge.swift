@@ -118,6 +118,42 @@ public func noctuaClearNativeHttpCache() {
     NativeHttpCacheCleaner.clear()
 }
 
+// ===================================================================
+// Inspector Build sanity panel — read-only metadata.
+// String returns are heap-allocated UTF-8 C strings; Unity's P/Invoke
+// owns the lifetime via Marshal.PtrToStringAnsi (which copies). Each
+// call leaks a small amount of memory until the OS reclaims at exit;
+// the panel polls at most a handful of times per session, so the
+// trade-off (vs. the buffer-juggling required to round-trip a Swift
+// String through `inout` UnsafeMutablePointer<UInt8>) is acceptable.
+// ===================================================================
+
+@_cdecl("noctuaGetNativeSdkVersion")
+public func noctuaGetNativeSdkVersion() -> UnsafePointer<CChar>? {
+    return strdupCString(BuildInfoProvider.nativeSdkVersion)
+}
+
+@_cdecl("noctuaGetFirebaseProjectId")
+public func noctuaGetFirebaseProjectId() -> UnsafePointer<CChar>? {
+    return strdupCString(BuildInfoProvider.firebaseProjectId())
+}
+
+@_cdecl("noctuaGetSkAdNetworksCount")
+public func noctuaGetSkAdNetworksCount() -> Int32 {
+    return BuildInfoProvider.skAdNetworksCount()
+}
+
+/// Allocates a UTF-8 C-string copy via `strdup`. Caller (Unity)
+/// reads it via `Marshal.PtrToStringAnsi`, which copies into a
+/// managed string — the malloc'd buffer is leaked. Acceptable
+/// because the Build panel is sandbox-only and called handful of
+/// times per session.
+private func strdupCString(_ s: String) -> UnsafePointer<CChar>? {
+    return s.withCString { ptr in
+        UnsafePointer(strdup(ptr))
+    }
+}
+
 /// Obj-C-callable façade for the same controls, for cases where Swift or
 /// ObjC callers want a typed API instead of the C-ABI pointer.
 @objc public class NoctuaInspector: NSObject {

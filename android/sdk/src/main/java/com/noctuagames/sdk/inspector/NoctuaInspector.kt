@@ -101,6 +101,17 @@ object NoctuaInspector {
         NativeHttpCacheCleaner.clear(appContextRef)
     }
 
+    // ----- Build sanity panel (read-only metadata) -----
+
+    @JvmStatic
+    fun getNativeSdkVersion(): String = BuildInfoProvider.NATIVE_SDK_VERSION
+
+    @JvmStatic
+    fun getFirebaseProjectId(): String = BuildInfoProvider.firebaseProjectId()
+
+    @JvmStatic
+    fun getPermissionsCount(): Int = BuildInfoProvider.permissionsCount(appContextRef)
+
     /** Test seam — clears all callbacks + context. Not used in production. */
     @JvmStatic
     fun reset() {
