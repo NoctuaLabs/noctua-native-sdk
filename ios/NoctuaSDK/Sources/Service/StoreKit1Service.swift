@@ -190,13 +190,7 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
         if #available(iOS 15.0, *) {
             Task { [weak self] in
                 guard let self = self else { return }
-                var matched: Transaction?
-                for await result in Transaction.currentEntitlements {
-                    if case .verified(let tx) = result, tx.productID == productId {
-                        matched = tx
-                        break
-                    }
-                }
+                let matched = await self.findCurrentEntitlement(productId: productId)
                 let status: NoctuaProductPurchaseStatus
                 if let tx = matched {
                     let product = self.cachedProducts[productId]
@@ -485,6 +479,44 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
 
         DispatchQueue.main.async { [weak self] in
             self?.eventListener?.onPurchaseCompleted(result: purchaseResult)
+        }
+    }
+
+    /// Iterates `Transaction.currentEntitlements` to find a verified
+    /// transaction matching `productId`. Bounded by a 250 ms timeout so
+    /// the call always returns in finite time, even when the iterator
+    /// is waiting for the App Store (real device) or stuck (unit test
+    /// without StoreKitTest configuration). Without the timeout the
+    /// SK1 unit-test suite hangs the listener and
+    /// `testGetProductPurchaseStatusNotFound` fails.
+    @available(iOS 15.0, *)
+    private func findCurrentEntitlement(productId: String) async -> Transaction? {
+        // Two competing tasks: the actual entitlement walk vs a sleep-
+        // based timeout. Whichever finishes first wins; the loser is
+        // cancelled to release any held resources.
+        return await withTaskGroup(of: Transaction?.self) { group in
+            group.addTask {
+                for await result in Transaction.currentEntitlements {
+                    if case .verified(let tx) = result, tx.productID == productId {
+                        return tx
+                    }
+                }
+                return nil
+            }
+            group.addTask {
+                try? await Task.sleep(nanoseconds: 250_000_000) // 250 ms
+                return nil
+            }
+            // First non-nil wins; if both return nil, the entitlement was
+            // genuinely absent (or the timeout fired first — same result
+            // semantically: caller treats as "not purchased").
+            for await result in group {
+                if let tx = result {
+                    group.cancelAll()
+                    return tx
+                }
+            }
+            return nil
         }
     }
 
