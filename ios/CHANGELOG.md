@@ -1,3 +1,15 @@
+## [ios-sdk-v0.36.0] - 2026-04-29
+
+### 🚀 Features
+
+- *(inspector)* Verbose log stream — `NoctuaInspectorBus.emitLog` channel + `noctuaSetLogStreamCallback` / `noctuaSetLogStreamEnabled` C-ABI exports. `FirebaseLogTailer` all-logs mode piggybacks on the existing 500ms poll, emitting every `OSLogEntryLog` through the bus.
+- *(inspector)* Device-metrics snapshot — new `DeviceMetricsProvider` reads `task_vm_info.phys_footprint`, `os_proc_available_memory` (iOS 15+), and `ProcessInfo.thermalState`. Exposed via `noctuaSnapshotDeviceMetrics` (5 out-pointers).
+
+### 🐛 Bug Fixes
+
+- *(inspector)* Firebase Analytics 12.x log format — regex now captures the event name from the new `Logging event: origin, name, params: app, <name>, {...}` shape (previously matched the literal `origin` field).
+- *(inspector)* Adjust on iOS — Adjust SDK uses `NSLog(@"[Adjust]d: ...")` which routes through the app's default subsystem, not `com.adjust.sdk`. Added `looksLikeAdjust(_:)` content-match so its lines are picked up.
+
 ## [ios-sdk-v0.35.0] - 2026-04-21
 
 ### 🚀 Features
