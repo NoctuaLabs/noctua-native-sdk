@@ -125,7 +125,10 @@ object LogTailer {
     // ====================================================================
 
     private var allLogsJob: Job? = null
-    private var allLogsProcess: Process? = null
+    // Fully qualified — `import android.os.Process` at the top resolves
+    // `Process` to the OS-process helper class which is NOT a Runtime
+    // process handle. Use the JVM type explicitly here.
+    private var allLogsProcess: java.lang.Process? = null
 
     // Logcat threadtime line regex: "MM-dd HH:mm:ss.SSS pid tid level tag: msg"
     // Capturing: timestamp, level char (V/D/I/W/E/F/A), tag, message.
@@ -145,7 +148,7 @@ object LogTailer {
                 val proc = Runtime.getRuntime().exec(cmd)
                 allLogsProcess = proc
                 BufferedReader(InputStreamReader(proc.inputStream)).use { reader ->
-                    var line: String?
+                    var line: String? = null
                     while (isActive && reader.readLine().also { line = it } != null) {
                         val raw = line ?: continue
                         if (!NoctuaInspectorBus.isLogStreamEnabled()) break
