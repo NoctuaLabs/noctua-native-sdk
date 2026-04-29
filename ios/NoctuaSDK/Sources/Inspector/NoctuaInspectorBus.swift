@@ -22,6 +22,17 @@ public typealias NoctuaTrackerEmissionCallback =
      _ extraParamsJson: String,
      _ phase: NoctuaTrackerEventPhase) -> Void
 
+/// Verbose-log stream callback signature for the Inspector "Logs" tab.
+///   (level [2..6 logcat priority], source, tag, message, timestampMillisUtc)
+/// Volumes can be high on iOS too (`os_log` is verbose) — the bus filters
+/// at the gate before paying serialisation cost.
+public typealias NoctuaLogStreamCallback =
+    (_ level: Int32,
+     _ source: String,
+     _ tag: String,
+     _ message: String,
+     _ timestampMillisUtc: Int64) -> Void
+
 /// Central pub/sub for tracker emissions. Fire-and-forget — never throws,
 /// never calls back on its own queue, always dispatches on the callback setter's
 /// responsibility to handle threading. Holds a single callback so we don't
@@ -33,6 +44,12 @@ public final class NoctuaInspectorBus {
     private let queue = DispatchQueue(label: "com.noctuagames.sdk.inspector.bus", attributes: .concurrent)
     private var _callback: NoctuaTrackerEmissionCallback?
     private var _enabled: Bool = false
+
+    // Log-stream channel — separate from tracker emissions because volume
+    // is orders of magnitude higher (os_log lines vs analytics events).
+    // Stays dormant by default; flipped on by the Unity Inspector Logs tab.
+    private var _logCallback: NoctuaLogStreamCallback?
+    private var _logStreamEnabled: Bool = false
 
     private init() {}
 
@@ -72,6 +89,40 @@ public final class NoctuaInspectorBus {
         let payloadJson = Self.serialize(payload)
         let extraJson = Self.serialize(extraParams)
         callback(provider, eventName, payloadJson, extraJson, phase)
+    }
+
+    // ----- Log-stream channel -----
+
+    public func setLogCallback(_ callback: NoctuaLogStreamCallback?) {
+        queue.async(flags: .barrier) { [weak self] in
+            self?._logCallback = callback
+        }
+    }
+
+    public func setLogStreamEnabled(_ enabled: Bool) {
+        queue.async(flags: .barrier) { [weak self] in
+            self?._logStreamEnabled = enabled
+        }
+    }
+
+    public var isLogStreamEnabled: Bool {
+        get { queue.sync { _logStreamEnabled } }
+    }
+
+    /// Emits one log line. No-op when the bus is off, the log channel is
+    /// off, or no callback is registered. Cheap enough to call on every
+    /// log entry.
+    public func emitLog(level: Int32,
+                        source: String,
+                        tag: String,
+                        message: String,
+                        timestampMillisUtc: Int64) {
+        let cb: NoctuaLogStreamCallback? = queue.sync {
+            guard _enabled, _logStreamEnabled else { return nil }
+            return _logCallback
+        }
+        guard let callback = cb else { return }
+        callback(level, source, tag, message, timestampMillisUtc)
     }
 
     private static func serialize(_ dict: [String: Any]) -> String {

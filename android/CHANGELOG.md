@@ -1,3 +1,13 @@
+## [android-sdk-v0.32.0] - 2026-04-29
+
+### 🚀 Features
+
+- *(inspector)* Verbose log stream — `NoctuaInspectorBus.emitLog` channel + `LogStreamCallback` SAM. `LogTailer.startAllLogsMode` spawns a streaming `logcat --pid=<self> -v threadtime` coroutine that parses every line and emits via the bus, with source disambiguation (Firebase / Adjust / Facebook / Noctua / Android).
+- *(inspector)* Device-metrics snapshot — new `DeviceMetricsProvider` reads `Debug.MemoryInfo.totalPss`, `ActivityManager.MemoryInfo` (system available + lowMemory), and `PowerManager.currentThermalStatus` (API 29+). Exposed via `NoctuaInspector.snapshotDeviceMetricsTuple` (returns shared `long[5]` to avoid GC churn at 1Hz).
+- *(inspector)* `FirebaseService` tag added to logcat filter — Noctua's Firebase wrapper logs `'<eventName>' (custom) tracked: payload: {...}` are now picked up as `EMITTED` (or standalone `ACKNOWLEDGED`) on the Trackers tab.
+- *(inspector)* Clear native HTTP cache action — new `NativeHttpCacheCleaner` runs `WebView.clearCache(true)` on the main thread and recursively wipes the app's `cacheDir`. Exposed via `NoctuaInspector.clearNativeHttpCache()`.
+- *(inspector)* Build-info provider — new `BuildInfoProvider.kt` reads `FirebaseApp.options.projectId` (when Firebase initialized) and `PackageManager.getPackageInfo` requested-permissions count (with API 33+ `PackageInfoFlags` variant). Exposed via `NoctuaInspector.{getNativeSdkVersion, getFirebaseProjectId, getPermissionsCount}` static methods. Powers the Unity Inspector's Build sanity panel.
+
 ## [android-sdk-v0.31.0] - 2026-04-21
 
 ### 🚀 Features

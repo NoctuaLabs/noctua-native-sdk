@@ -1,3 +1,18 @@
+## [ios-sdk-v0.36.0] - 2026-04-29
+
+### 🚀 Features
+
+- *(inspector)* Verbose log stream — `NoctuaInspectorBus.emitLog` channel + `noctuaSetLogStreamCallback` / `noctuaSetLogStreamEnabled` C-ABI exports. `FirebaseLogTailer` all-logs mode piggybacks on the existing 500ms poll, emitting every `OSLogEntryLog` through the bus.
+- *(inspector)* Device-metrics snapshot — new `DeviceMetricsProvider` reads `task_vm_info.phys_footprint`, `os_proc_available_memory` (iOS 15+), and `ProcessInfo.thermalState`. Exposed via `noctuaSnapshotDeviceMetrics` (5 out-pointers).
+- *(inspector)* Clear native HTTP cache action — new `NativeHttpCacheCleaner` wipes `URLCache.shared` synchronously and the WKWebView disk + memory caches via `WKWebsiteDataStore` (cookies preserved). Exposed via `noctuaClearNativeHttpCache` C-ABI export.
+- *(inspector)* Build-info provider — new `BuildInfoProvider.swift` reads `Bundle.main` for `GoogleService-Info.plist` (Firebase project ID) and `Info.plist` `SKAdNetworkItems` count. Exposed via 3 C-ABI exports (`noctuaGetNativeSdkVersion`, `noctuaGetFirebaseProjectId`, `noctuaGetSkAdNetworksCount`). Powers the Unity Inspector's Build sanity panel.
+
+### 🐛 Bug Fixes
+
+- *(iap)* `StoreKit1Service.getProductPurchaseStatus` now returns `true` for previously-purchased non-consumables. The old implementation only checked the in-flight `pendingTransactions` queue, which is wiped by `finishTransaction` during the original purchase — leaving every non-consumable bought in a previous session permanently reported as `isPurchased=false`. Fixed by falling through to `Transaction.currentEntitlements` (StoreKit 2, available alongside SK1 since iOS 15) when no in-flight match is found.
+- *(inspector)* Firebase Analytics 12.x log format — regex now captures the event name from the new `Logging event: origin, name, params: app, <name>, {...}` shape (previously matched the literal `origin` field).
+- *(inspector)* Adjust on iOS — Adjust SDK uses `NSLog(@"[Adjust]d: ...")` which routes through the app's default subsystem, not `com.adjust.sdk`. Added `looksLikeAdjust(_:)` content-match so its lines are picked up.
+
 ## [ios-sdk-v0.35.0] - 2026-04-21
 
 ### 🚀 Features

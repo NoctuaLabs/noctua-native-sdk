@@ -137,31 +137,31 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - NoctuaSDK (0.33.0):
-    - NoctuaSDK/Core (= 0.33.0)
-  - NoctuaSDK/Adjust (0.33.0):
+  - NoctuaSDK (0.36.0):
+    - NoctuaSDK/Core (= 0.36.0)
+  - NoctuaSDK/Adjust (0.36.0):
     - Adjust (~> 5.4.4)
     - Adjust/AdjustGoogleOdm
-  - NoctuaSDK/Core (0.33.0)
-  - NoctuaSDK/FacebookSDK (0.33.0):
-    - NoctuaSDK/FacebookSDK/FBAEMKit (= 0.33.0)
-    - NoctuaSDK/FacebookSDK/FBSDKCoreKit (= 0.33.0)
-    - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (= 0.33.0)
-  - NoctuaSDK/FacebookSDK/FBAEMKit (0.33.0):
+  - NoctuaSDK/Core (0.36.0)
+  - NoctuaSDK/FacebookSDK (0.36.0):
+    - NoctuaSDK/FacebookSDK/FBAEMKit (= 0.36.0)
+    - NoctuaSDK/FacebookSDK/FBSDKCoreKit (= 0.36.0)
+    - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (= 0.36.0)
+  - NoctuaSDK/FacebookSDK/FBAEMKit (0.36.0):
     - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics
-  - NoctuaSDK/FacebookSDK/FBSDKCoreKit (0.33.0):
+  - NoctuaSDK/FacebookSDK/FBSDKCoreKit (0.36.0):
     - NoctuaSDK/FacebookSDK/FBAEMKit
     - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics
-  - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (0.33.0)
-  - NoctuaSDK/FirebaseAnalytics (0.33.0):
+  - NoctuaSDK/FacebookSDK/FBSDKCoreKit_Basics (0.36.0)
+  - NoctuaSDK/FirebaseAnalytics (0.36.0):
     - FirebaseAnalytics (~> 12.2.0)
-  - NoctuaSDK/FirebaseCrashlytics (0.33.0):
+  - NoctuaSDK/FirebaseCrashlytics (0.36.0):
     - FirebaseCrashlytics (~> 12.2.0)
-  - NoctuaSDK/FirebaseMessaging (0.33.0):
+  - NoctuaSDK/FirebaseMessaging (0.36.0):
     - FirebaseMessaging (~> 12.2.0)
-  - NoctuaSDK/FirebaseRemoteConfig (0.33.0):
+  - NoctuaSDK/FirebaseRemoteConfig (0.36.0):
     - FirebaseRemoteConfig (~> 12.2.0)
-  - NoctuaSDK/NoctuaInternalSDK (0.33.0)
+  - NoctuaSDK/NoctuaInternalSDK (0.36.0)
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
@@ -224,7 +224,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  NoctuaSDK: 298d06aa0ab278e5b03a1713171a434476d44efa
+  NoctuaSDK: 58e941261d3b304c59f97f7744160e491b86ac0b
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
 

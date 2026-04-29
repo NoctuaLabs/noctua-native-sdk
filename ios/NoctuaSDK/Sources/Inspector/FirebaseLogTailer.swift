@@ -39,8 +39,14 @@ public final class FirebaseLogTailer {
         "com.adjust.sdk",
     ]
 
+    // Firebase Analytics emits `Logging event` in two known shapes:
+    //   * Pre-12.x:  "Logging event (FE): event_name, params: {...}"
+    //   * 12.x+:     "Logging event: origin, name, params: app, event_name, {...}"
+    // The 12.x format adds the literal field-list "origin, name, params:"
+    // followed by the actual values. The non-greedy alternative captures
+    // the event name in either format. Verified against 12.2.0 logs.
     private static let loggingEventRegex: NSRegularExpression? = try? NSRegularExpression(
-        pattern: #"[Ll]ogging event(?: \(FE\))?: ([A-Za-z_][A-Za-z0-9_]*)"#,
+        pattern: #"[Ll]ogging event(?: \(FE\))?:\s+(?:origin,\s*name,\s*params:\s*\S+?,\s*)?([A-Za-z_][A-Za-z0-9_]*)"#,
         options: []
     )
     private static let uploadingRegex: NSRegularExpression? = try? NSRegularExpression(
@@ -140,6 +146,65 @@ public final class FirebaseLogTailer {
         }
     }
 
+    // MARK: - All-logs mode (Inspector "Logs" tab)
+    //
+    // Distinct from the tracker tag-filter poll above. When enabled, the
+    // existing 500ms `poll()` tick also pumps every visited `OSLogEntryLog`
+    // through `NoctuaInspectorBus.emitLog(...)`. We piggyback on the
+    // existing timer instead of running a second one — `OSLogStore`
+    // internally caches results across positions, so a second iterator
+    // would double the work for no gain.
+    //
+    // Toggled by Unity via `noctuaSetLogStreamEnabled`.
+
+    private var allLogsEnabled = false
+
+    public func startAllLogsMode() {
+        queue.async(flags: .barrier) { [weak self] in
+            self?.allLogsEnabled = true
+        }
+    }
+
+    public func stopAllLogsMode() {
+        queue.async(flags: .barrier) { [weak self] in
+            self?.allLogsEnabled = false
+        }
+    }
+
+    /// Maps `OSLogEntryLog.level` to the SDK's normalized level scale
+    /// (matches logcat priority numbering 2..6).
+    private static func mapOsLogLevel(_ level: OSLogEntryLog.Level) -> Int32 {
+        switch level {
+        case .debug:      return 3
+        case .info:       return 4
+        case .notice:     return 4
+        case .error:      return 6
+        case .fault:      return 6
+        case .undefined:  return 4
+        @unknown default: return 4
+        }
+    }
+
+    /// Source disambiguation — matches the Android side
+    /// `LogTailer.kt:emitLine` so the Unity Logs tab filter chips work
+    /// identically across platforms.
+    private static func sourceFor(subsystem: String, message: String) -> String {
+        if subsystem.hasPrefix("com.google.firebase") ||
+           subsystem.hasPrefix("com.google.analytics") {
+            return "Firebase"
+        }
+        if subsystem.hasPrefix("com.adjust.sdk") || message.contains("[Adjust]") {
+            return "Adjust"
+        }
+        if message.contains("FBSDKLog:") || message.contains("FBSDKAppEvents") {
+            return "Facebook"
+        }
+        if subsystem.hasPrefix("com.noctuagames") {
+            return "Noctua"
+        }
+        return "iOS"
+    }
+
     // MARK: - Polling
 
     @available(iOS 15.0, *)
@@ -163,6 +228,7 @@ public final class FirebaseLogTailer {
         }
 
         var latest = lastSeenPosition
+        let allLogsOn = self.allLogsEnabled
         for entry in entries {
             if entry.date > latest { latest = entry.date }
             let msg = entry.composedMessage
@@ -172,6 +238,20 @@ public final class FirebaseLogTailer {
                 // FBSDK uses NSLog (subsystem = app default), so we match
                 // on the distinctive "FBSDKLog:" prefix instead.
                 processLine(msg, provider: "Facebook", at: entry.date)
+            } else if Self.looksLikeAdjust(msg) {
+                // Adjust v4/v5 NSLog → default subsystem; same workaround.
+                processLine(msg, provider: "Adjust", at: entry.date)
+            }
+            // All-logs streaming for the Inspector "Logs" tab — emit every
+            // entry regardless of subsystem. Bus self-gates on its own flag,
+            // so this is cheap when off (one atomic bool check inside).
+            if allLogsOn {
+                let lvl = Self.mapOsLogLevel(entry.level)
+                let src = Self.sourceFor(subsystem: entry.subsystem, message: msg)
+                let tag = entry.category
+                let tsMs = Int64(entry.date.timeIntervalSince1970 * 1000)
+                NoctuaInspectorBus.shared.emitLog(
+                    level: lvl, source: src, tag: tag, message: msg, timestampMillisUtc: tsMs)
             }
         }
         lastSeenPosition = latest
@@ -192,6 +272,15 @@ public final class FirebaseLogTailer {
     private static func looksLikeFacebook(_ msg: String) -> Bool {
         return msg.contains("FBSDKLog:") || msg.contains("FBSDKAppEvents:") ||
                msg.contains("(custom) tracked")
+    }
+
+    /// Adjust SDK on iOS routes through `NSLog(@"[Adjust]d: ...")` which
+    /// the OS unified-logging facility files under the app's *default*
+    /// subsystem — NOT `com.adjust.sdk`. Subsystem-only matching therefore
+    /// misses every line; we content-match the distinctive `[Adjust]`
+    /// prefix instead. Same workaround we already use for Facebook.
+    private static func looksLikeAdjust(_ msg: String) -> Bool {
+        return msg.contains("[Adjust]")
     }
 
     /// Overload kept for the Obj-C / DEBUG test seam.

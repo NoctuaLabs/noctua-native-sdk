@@ -484,9 +484,15 @@ class StoreKit1ServiceTests: XCTestCase {
         sut.initialize(listener: mockListener)
         sut.getProductPurchaseStatus(productId: "com.test.nonexistent")
 
-        // Wait for async dispatch
+        // Wait long enough for the StoreKit 2 entitlement-fallback path
+        // to either yield or hit its 250 ms timeout, then hop to
+        // MainActor and fire the listener. The fallback was added in
+        // the SK1 fix for previously-purchased non-consumables — see
+        // findCurrentEntitlement — and only matters here because the
+        // unit-test environment has no StoreKitTest config so the
+        // async iterator never yields naturally.
         let exp = expectation(description: "async")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { exp.fulfill() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { exp.fulfill() }
         wait(for: [exp], timeout: 1.0)
 
         XCTAssertEqual(mockListener.productPurchaseStatusResults.count, 1)
