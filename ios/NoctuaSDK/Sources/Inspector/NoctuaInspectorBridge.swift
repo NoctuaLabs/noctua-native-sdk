@@ -41,6 +41,72 @@ public func noctuaInspectorSetEnabled(_ enabled: Int32) {
     NoctuaInspectorBus.shared.setEnabled(enabled != 0)
 }
 
+// ===================================================================
+// Inspector Logs tab — verbose log stream bridge.
+// ===================================================================
+
+/// C-ABI signature for the verbose-log stream callback.
+///   level (logcat priority 2..6), source, tag, message, timestampMillisUtc
+public typealias NoctuaCLogStreamCallback = @convention(c) (
+    Int32,                  // level
+    UnsafePointer<CChar>?,  // source
+    UnsafePointer<CChar>?,  // tag
+    UnsafePointer<CChar>?,  // message
+    Int64                   // timestampMillisUtc
+) -> Void
+
+@_cdecl("noctuaSetLogStreamCallback")
+public func noctuaSetLogStreamCallback(_ cb: NoctuaCLogStreamCallback?) {
+    guard let cb = cb else {
+        NoctuaInspectorBus.shared.setLogCallback(nil)
+        return
+    }
+    NoctuaInspectorBus.shared.setLogCallback { level, source, tag, message, ts in
+        source.withCString { s in
+            tag.withCString { t in
+                message.withCString { m in
+                    cb(level, s, t, m, ts)
+                }
+            }
+        }
+    }
+}
+
+@_cdecl("noctuaSetLogStreamEnabled")
+public func noctuaSetLogStreamEnabled(_ enabled: Int32) {
+    let on = enabled != 0
+    NoctuaInspectorBus.shared.setLogStreamEnabled(on)
+    if on { FirebaseLogTailer.shared.startAllLogsMode() }
+    else  { FirebaseLogTailer.shared.stopAllLogsMode() }
+}
+
+// ===================================================================
+// Inspector Memory tab — device metrics snapshot bridge.
+// ===================================================================
+
+/// Five-out-pointer device metrics snapshot — Unity P/Invoke binds to
+/// this. Caller must pass non-null pointers; returns 0 on success, -1
+/// on any internal failure (out values left untouched in that case).
+///
+/// We expose primitives rather than a struct so the C calling convention
+/// stays trivially predictable across Unity IL2CPP versions.
+@_cdecl("noctuaSnapshotDeviceMetrics")
+public func noctuaSnapshotDeviceMetrics(
+    _ outPhysFootprint: UnsafeMutablePointer<Int64>?,
+    _ outAvailable: UnsafeMutablePointer<Int64>?,
+    _ outSystemTotal: UnsafeMutablePointer<Int64>?,
+    _ outLowMemory: UnsafeMutablePointer<Int32>?,   // 1/0
+    _ outThermal: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    let s = DeviceMetricsProvider.snapshot()
+    outPhysFootprint?.pointee = s.physFootprintBytes
+    outAvailable?.pointee = s.availableBytes
+    outSystemTotal?.pointee = s.systemTotalBytes
+    outLowMemory?.pointee = s.lowMemory ? 1 : 0
+    outThermal?.pointee = s.thermal
+    return 0
+}
+
 /// Obj-C-callable façade for the same controls, for cases where Swift or
 /// ObjC callers want a typed API instead of the C-ABI pointer.
 @objc public class NoctuaInspector: NSObject {

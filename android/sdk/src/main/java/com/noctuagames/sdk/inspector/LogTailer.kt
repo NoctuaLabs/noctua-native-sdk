@@ -110,15 +110,116 @@ object LogTailer {
         synchronized(pendingLock) { pending.clear() }
     }
 
+    // ====================================================================
+    // All-logs mode — Inspector "Logs" tab streaming.
+    //
+    // Distinct from the tracker tag-filter loop above. When enabled, a
+    // dedicated coroutine spawns a streaming `logcat -v threadtime
+    // --pid=<self>` (no `-d`, no `-c`) and emits every parsed line via
+    // `NoctuaInspectorBus.emitLog(...)`. Coexists with the tag-filter
+    // poll: the kernel logcat buffer is shared, so both readers see the
+    // same lines. Brief gaps may occur when the tag-filter poll runs
+    // `logcat -c` between iterations — acceptable for a dev tool.
+    //
+    // Toggled by Unity via `NoctuaInspector.setLogStreamEnabled(bool)`.
+    // ====================================================================
+
+    private var allLogsJob: Job? = null
+    private var allLogsProcess: Process? = null
+
+    // Logcat threadtime line regex: "MM-dd HH:mm:ss.SSS pid tid level tag: msg"
+    // Capturing: timestamp, level char (V/D/I/W/E/F/A), tag, message.
+    private val logcatLineRegex =
+        Regex("""^(\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d{3})\s+\d+\s+\d+\s+([VDIWEFA])\s+([^:]+?)\s*:\s*(.*)$""")
+
+    @JvmStatic
+    fun startAllLogsMode() {
+        if (allLogsJob?.isActive == true) return
+        allLogsJob = scope.launch {
+            NoctuaLog.i(TAG, "All-logs streaming started (pid=${Process.myPid()})")
+            try {
+                val cmd = arrayOf(
+                    "logcat", "-v", "threadtime",
+                    "--pid=${Process.myPid()}"
+                )
+                val proc = Runtime.getRuntime().exec(cmd)
+                allLogsProcess = proc
+                BufferedReader(InputStreamReader(proc.inputStream)).use { reader ->
+                    var line: String?
+                    while (isActive && reader.readLine().also { line = it } != null) {
+                        val raw = line ?: continue
+                        if (!NoctuaInspectorBus.isLogStreamEnabled()) break
+                        emitLine(raw)
+                    }
+                }
+            } catch (t: Throwable) {
+                NoctuaLog.w(TAG, "All-logs reader failed: ${t.message}")
+            } finally {
+                try { allLogsProcess?.destroy() } catch (_: Throwable) {}
+                allLogsProcess = null
+            }
+        }
+    }
+
+    @JvmStatic
+    fun stopAllLogsMode() {
+        try { allLogsProcess?.destroy() } catch (_: Throwable) {}
+        allLogsProcess = null
+        allLogsJob?.cancel()
+        allLogsJob = null
+    }
+
+    /** Parses a single threadtime-format logcat line and emits it through
+     *  the Inspector bus. Misformatted lines are emitted with level=Info,
+     *  tag="" — better than dropping them. */
+    private fun emitLine(line: String) {
+        val now = System.currentTimeMillis()
+        val m = logcatLineRegex.find(line)
+        if (m == null) {
+            NoctuaInspectorBus.emitLog(4 /*Info*/, "Android", "", line, now)
+            return
+        }
+        val levelChar = m.groupValues[2]
+        val tag = m.groupValues[3].trim()
+        val msg = m.groupValues[4]
+        val level = when (levelChar) {
+            "V" -> 2
+            "D" -> 3
+            "I" -> 4
+            "W" -> 5
+            "E", "F", "A" -> 6
+            else -> 4
+        }
+        // Source disambiguation — surfacing where the line came from helps
+        // the Logs tab filter chips. Native SDK sources we already special-
+        // case in the tag-filter poll get the same labels here for
+        // consistency; everything else falls under "Android".
+        val source = when {
+            tag.startsWith("FA")                        -> "Firebase"
+            tag.startsWith("Adjust")                    -> "Adjust"
+            tag.startsWith("FacebookSDK") ||
+            tag.startsWith("FBSDK")                     -> "Facebook"
+            tag.startsWith("Noctua") ||
+            tag == "FirebaseService"                    -> "Noctua"
+            else -> "Android"
+        }
+        NoctuaInspectorBus.emitLog(level, source, tag, msg, now)
+    }
+
     // MARK: - Internals
 
     private fun pollOnce() {
         // Own-process only. Tag filters keep output small; `*:S` silences others.
+        // FirebaseService is the Noctua native wrapper class that logs
+        // `'eventName' (custom) tracked: payload: {...}` — adding it lets
+        // the Inspector show "Acknowledged" for game-side custom events
+        // even when Firebase Analytics' own verbose logging is off.
         val cmd = arrayOf(
             "logcat", "-d", "-v", "threadtime",
             "--pid=${Process.myPid()}",
             "Adjust:V",
             "FA:V", "FA-SVC:V",
+            "FirebaseService:V",
             "FacebookSDK.AppEvents:V",
             "FacebookSDK.AppEventsManager:V",
             "*:S"
@@ -166,6 +267,28 @@ object LogTailer {
             if (firebaseSuccessfulUploadRegex.containsMatchIn(line)) {
                 broadcast("Firebase", NoctuaTrackerEventPhase.ACKNOWLEDGED)
                 clearProvider("Firebase")
+                return
+            }
+        }
+
+        // Noctua's Firebase wrapper (FirebaseService.kt) emits each call as
+        // "'<eventName>' (custom) tracked: payload: {...}". Reuse the
+        // Facebook swift-tracked regex — the format is identical. This
+        // gives the Inspector a deterministic "tracked" signal even when
+        // FA verbose logging is off.
+        if (line.contains(" FirebaseService:") ||
+            line.contains("/FirebaseService:") ||
+            line.startsWith("FirebaseService:")
+        ) {
+            val swift = facebookSwiftTrackedRegex.find(line)
+            if (swift != null) {
+                val name = swift.groupValues[1]
+                if (consumePending("Firebase", name)) {
+                    NoctuaInspectorBus.emit("Firebase", name, phase = NoctuaTrackerEventPhase.EMITTED)
+                } else {
+                    // No prior Queued — surface anyway as standalone Acknowledged.
+                    NoctuaInspectorBus.emit("Firebase", name, phase = NoctuaTrackerEventPhase.ACKNOWLEDGED)
+                }
                 return
             }
         }
