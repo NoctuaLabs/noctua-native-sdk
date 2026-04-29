@@ -145,17 +145,19 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
     }
 
     func getProductPurchaseStatus(productId: String) {
-        // Check pending transactions for this product
+        // Step 1 — check the SK1 in-flight queue first. This catches a
+        // freshly-purchased product BEFORE `completePurchaseProcessing`
+        // calls `finishTransaction`, which is the only window where SK1
+        // remembers the transaction at all.
         let matchingTransaction = pendingTransactions.values.first {
             $0.payment.productIdentifier == productId &&
             ($0.transactionState == .purchased || $0.transactionState == .restored)
         }
 
-        let status: NoctuaProductPurchaseStatus
         if let transaction = matchingTransaction {
             let product = cachedProducts[productId]
             let isSubscription = product?.subscriptionPeriod != nil
-            status = NoctuaProductPurchaseStatus(
+            let status = NoctuaProductPurchaseStatus(
                 productId: productId,
                 isPurchased: true,
                 isAcknowledged: true,
@@ -168,14 +170,68 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
                 originalJson: getAppStoreReceipt(),
                 transactionJson: "" // SK1 has no per-transaction JWS
             )
-        } else {
-            status = NoctuaProductPurchaseStatus(
-                productId: productId,
-                isPurchased: false
-            )
+            logger.debug("Product purchase status for \(productId): isPurchased=true (SK1, in-flight)")
+            DispatchQueue.main.async { [weak self] in
+                self?.eventListener?.onProductPurchaseStatusResult(status: status)
+            }
+            return
         }
 
-        logger.debug("Product purchase status for \(productId): isPurchased=\(status.isPurchased) (SK1)")
+        // Step 2 — fall through to StoreKit 2's `Transaction.currentEntitlements`,
+        // the only Apple API that reports persistent ownership for non-
+        // consumables and active subscriptions. SK2 entitlements are
+        // populated alongside SK1 transactions on iOS 15+ — Apple keeps
+        // both representations in sync, so this works even when the
+        // payment flow itself is SK1.
+        //
+        // Without this fallback, every previously-purchased non-consumable
+        // returns `false` because `pendingTransactions` is wiped by
+        // `finishTransaction` during the original purchase.
+        if #available(iOS 15.0, *) {
+            Task { [weak self] in
+                guard let self = self else { return }
+                var matched: Transaction?
+                for await result in Transaction.currentEntitlements {
+                    if case .verified(let tx) = result, tx.productID == productId {
+                        matched = tx
+                        break
+                    }
+                }
+                let status: NoctuaProductPurchaseStatus
+                if let tx = matched {
+                    let product = self.cachedProducts[productId]
+                    let isSubscription = product?.subscriptionPeriod != nil
+                    status = NoctuaProductPurchaseStatus(
+                        productId: productId,
+                        isPurchased: true,
+                        isAcknowledged: true,
+                        isAutoRenewing: isSubscription && tx.revocationDate == nil,
+                        purchaseState: .purchased,
+                        purchaseToken: String(tx.id),
+                        purchaseTime: Int64(tx.purchaseDate.timeIntervalSince1970 * 1000),
+                        expiryTime: Int64((tx.expirationDate?.timeIntervalSince1970 ?? 0) * 1000),
+                        orderId: String(tx.originalID),
+                        originalJson: self.getAppStoreReceipt(),
+                        transactionJson: tx.jsonRepresentation.base64EncodedString()
+                    )
+                    self.logger.debug("Product purchase status for \(productId): isPurchased=true (SK1, SK2-entitlement fallback)")
+                } else {
+                    status = NoctuaProductPurchaseStatus(productId: productId, isPurchased: false)
+                    self.logger.debug("Product purchase status for \(productId): isPurchased=false (SK1, no SK2 entitlement)")
+                }
+                await MainActor.run {
+                    self.eventListener?.onProductPurchaseStatusResult(status: status)
+                }
+            }
+            return
+        }
+
+        // Step 3 — pre-iOS-15 fallback. SK2 not available; the best we can
+        // do is return false. Real fix would be receipt-based validation,
+        // but iOS 14 share is now negligible and Apple has effectively
+        // sunset receipt parsing in favour of SK2.
+        let status = NoctuaProductPurchaseStatus(productId: productId, isPurchased: false)
+        logger.debug("Product purchase status for \(productId): isPurchased=false (SK1, pre-iOS-15)")
         DispatchQueue.main.async { [weak self] in
             self?.eventListener?.onProductPurchaseStatusResult(status: status)
         }
