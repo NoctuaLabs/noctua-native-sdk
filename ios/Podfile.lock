@@ -1,11 +1,11 @@
 PODS:
-  - Adjust (5.4.6):
-    - Adjust/Adjust (= 5.4.6)
-  - Adjust/Adjust (5.4.6):
-    - AdjustSignature (= 3.61.0)
-  - Adjust/AdjustGoogleOdm (5.4.6):
+  - Adjust (5.6.2):
+    - Adjust/Adjust (= 5.6.2)
+  - Adjust/Adjust (5.6.2):
+    - AdjustSignature (= 3.67.0)
+  - Adjust/AdjustGoogleOdm (5.6.2):
     - Adjust/Adjust
-  - AdjustSignature (3.61.0)
+  - AdjustSignature (3.67.0)
   - FirebaseABTesting (12.2.0):
     - FirebaseCore (~> 12.2.0)
   - FirebaseAnalytics (12.2.0):
@@ -140,7 +140,7 @@ PODS:
   - NoctuaSDK (0.36.0):
     - NoctuaSDK/Core (= 0.36.0)
   - NoctuaSDK/Adjust (0.36.0):
-    - Adjust (~> 5.4.4)
+    - Adjust (~> 5.6.2)
     - Adjust/AdjustGoogleOdm
   - NoctuaSDK/Core (0.36.0)
   - NoctuaSDK/FacebookSDK (0.36.0):
@@ -205,8 +205,8 @@ EXTERNAL SOURCES:
     :path: ".."
 
 SPEC CHECKSUMS:
-  Adjust: 293c828a88a2c280471797edb3e895c80652a786
-  AdjustSignature: 94b6b7f7150edbbebc4320eeaddaac881f6e8e2d
+  Adjust: 62ea53a252534df416676e7ac2f1558d60e6e39e
+  AdjustSignature: 9498705a4ac67b719e31828be4d74fbb8656950c
   FirebaseABTesting: 32f3fc079d72c9b93e000b60877c4e4f62ef7031
   FirebaseAnalytics: e04e23bc070e3014aa5cf4980f9df7ce5cd79ec8
   FirebaseCore: 311c48a147ad4a0ab7febbaed89e8025c67510cd
@@ -224,7 +224,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  NoctuaSDK: 58e941261d3b304c59f97f7744160e491b86ac0b
+  NoctuaSDK: 9ab02e13af0af0025c9daf9a0bf9a300655d3d94
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
 
