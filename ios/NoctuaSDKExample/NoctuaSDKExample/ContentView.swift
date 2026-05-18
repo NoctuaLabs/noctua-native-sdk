@@ -17,6 +17,7 @@ let defaultTestProducts: [(String, ConsumableType)] = [
     ("noctua.sub.3", .subscription),
     ("noctua.sdktest.ios.pack1", .consumable),
     ("noctua.unitysdktest.noads.banner", .nonConsumable),
+    ("noctua.noads", .nonConsumable),
 ]
 
 struct ContentView: View {
