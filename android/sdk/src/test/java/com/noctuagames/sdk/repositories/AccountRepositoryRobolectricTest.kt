@@ -5,7 +5,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.core.context.stopKoin
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -22,7 +21,6 @@ class AccountRepositoryRobolectricTest {
 
     @Before
     fun setUp() {
-        try { stopKoin() } catch (_: Exception) {}
         val context = RuntimeEnvironment.getApplication()
         repository = AccountRepository(context)
     }

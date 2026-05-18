@@ -2,10 +2,8 @@ package com.noctuagames.sdk.models
 
 import org.json.JSONObject
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.core.context.stopKoin
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -16,11 +14,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class AdjustModelRobolectricTest {
-
-    @Before
-    fun setUp() {
-        try { stopKoin() } catch (_: Exception) {}
-    }
 
     @Test
     fun `toJsonString with default values produces valid JSON`() {
