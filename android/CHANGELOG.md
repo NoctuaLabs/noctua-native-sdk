@@ -5,11 +5,13 @@
 - *(android)* Remove queries block causing manifest merger conflict
 - *(android)* Remove koin imports and stopKoin calls from Robolectric tests
 - *(android)* Restore koin-core test dep and stopKoin teardown for Robolectric tests
+- *(android)* Use reflection to stop Koin between Robolectric tests
 
 ### ⚙️ Miscellaneous Tasks
 
 - *(android)* Bump adjust to 5.7.0, koin to 4.2.1, drop okhttp
 - *(android)* Remove koin-core dependency
+- *(android)* Revert adjust-android-huawei-referrer to 5.0.0
 ## [android-sdk-v0.32.0] - 2026-04-29
 
 ### 🚀 Features
