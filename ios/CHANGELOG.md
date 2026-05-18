@@ -1,3 +1,12 @@
+## [ios-sdk-v0.37.0] - 2026-05-18
+
+### 🚀 Features
+
+- *(ios)* Add noctua.noads non-consumable to example test products
+
+### ⚙️ Miscellaneous Tasks
+
+- *(ios)* Bump Adjust dependency to ~5.6.2
 ## [ios-sdk-v0.36.0] - 2026-04-29
 
 ### 🚀 Features
