@@ -1,3 +1,8 @@
+## [android-sdk-v0.32.2] - 2026-05-18
+
+### ⚙️ Miscellaneous Tasks
+
+- *(android)* Bump version to 0.33.0
 ## [android-sdk-v0.32.1] - 2026-05-18
 
 ### 🐛 Bug Fixes
