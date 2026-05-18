@@ -1,6 +1,6 @@
 [versions]
 adjustAndroid = "5.7.0"
-adjustAndroidHuaweiReferrer = "5.7.0"
+adjustAndroidHuaweiReferrer = "5.0.0"
 agp = "8.7.0"
 billing = "8.2.1"
 billingKtx = "8.2.1"
