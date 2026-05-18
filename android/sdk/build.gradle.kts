@@ -122,7 +122,6 @@ dependencies {
     implementation(libs.adjust.android)
     implementation(libs.adjust.android.huawei.referrer)
     implementation(libs.gson)
-    implementation(libs.okhttp)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.firebase.analytics)
