@@ -7,7 +7,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.core.context.stopKoin
 import org.mockito.MockedStatic
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
@@ -31,7 +30,11 @@ class NoctuaPresenterRobolectricTest {
     @Before
     fun setUp() {
         // Stop any existing Koin instance to prevent KoinApplicationAlreadyStartedException
-        try { stopKoin() } catch (_: Exception) {}
+        try {
+            val clazz = Class.forName("org.koin.core.context.GlobalContext")
+            val instance = clazz.getDeclaredField("INSTANCE").get(null)
+            clazz.getMethod("stopKoin").invoke(instance)
+        } catch (_: Exception) {}
 
         // Mock AppContext.set() to prevent native library loading
         appContextMock = Mockito.mockStatic(AppContext::class.java)
