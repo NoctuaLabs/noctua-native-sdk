@@ -189,6 +189,36 @@ class NoctuaPresenterRobolectricTest {
         assertEquals("", result)
     }
 
+    // --- Adjust device info (adjust is null — returns null/empty) ---
+
+    @Test
+    fun `getAdjustAdid returns null when adjust is null`() {
+        var result = "not_set"
+        presenter.getAdjustAdid { result = it ?: "null" }
+        assertEquals("null", result)
+    }
+
+    @Test
+    fun `getAdjustGoogleAdId returns null when adjust is null`() {
+        var result = "not_set"
+        presenter.getAdjustGoogleAdId { result = it ?: "null" }
+        assertEquals("null", result)
+    }
+
+    @Test
+    fun `getAdjustAmazonAdId returns null when adjust is null`() {
+        var result = "not_set"
+        presenter.getAdjustAmazonAdId { result = it ?: "null" }
+        assertEquals("null", result)
+    }
+
+    @Test
+    fun `getAdjustSdkVersion returns null when adjust is null`() {
+        var result = "not_set"
+        presenter.getAdjustSdkVersion { result = it ?: "null" }
+        assertEquals("null", result)
+    }
+
     // --- Lifecycle ---
 
     @Test

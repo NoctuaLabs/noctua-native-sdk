@@ -359,6 +359,22 @@ class NoctuaPresenter(
         } ?: onResult("")
     }
 
+    fun getAdjustAdid(onResult: (String?) -> Unit) {
+        adjust?.getAdjustAdid(onResult) ?: onResult(null)
+    }
+
+    fun getAdjustGoogleAdId(onResult: (String?) -> Unit) {
+        adjust?.getAdjustGoogleAdId(onResult) ?: onResult(null)
+    }
+
+    fun getAdjustAmazonAdId(onResult: (String?) -> Unit) {
+        adjust?.getAdjustAmazonAdId(onResult) ?: onResult(null)
+    }
+
+    fun getAdjustSdkVersion(onResult: (String?) -> Unit) {
+        adjust?.getAdjustSdkVersion(onResult) ?: onResult(null)
+    }
+
     // ------------------------------------
     // Notification Permission
     // ------------------------------------

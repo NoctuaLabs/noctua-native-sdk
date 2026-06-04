@@ -167,4 +167,22 @@ class SessionPresenter {
             completion([:])
         }
     }
+
+    // MARK: - Device Info
+
+    func getAdjustAdid(completion: @escaping (String?) -> Void) {
+        adjustSpecific?.getAdjustAdid(completion: completion) ?? completion(nil)
+    }
+
+    func getAdjustIdfa(completion: @escaping (String?) -> Void) {
+        adjustSpecific?.getAdjustIdfa(completion: completion) ?? completion(nil)
+    }
+
+    func getAdjustIdfv(completion: @escaping (String?) -> Void) {
+        adjustSpecific?.getAdjustIdfv(completion: completion) ?? completion(nil)
+    }
+
+    func getAdjustSdkVersion(completion: @escaping (String?) -> Void) {
+        adjustSpecific?.getAdjustSdkVersion(completion: completion) ?? completion(nil)
+    }
 }

@@ -15,7 +15,7 @@ import kotlin.collections.iterator
 
 internal class AdjustService(
     private val config: AdjustServiceAndroidConfig,
-    context: Context,
+    private val context: Context,
     onAdjustAttributionChanged: (NoctuaAdjustAttribution) -> Unit
 ) {
     private val TAG = this::class.simpleName
@@ -61,6 +61,22 @@ internal class AdjustService(
             val jsonString = adjustAttribution.toNoctuaAdjustAttribution().toJsonString()
             onResult(jsonString)
         }
+    }
+
+    fun getAdjustAdid(onResult: (String?) -> Unit) {
+        Adjust.getAdid { adid -> onResult(adid) }
+    }
+
+    fun getAdjustGoogleAdId(onResult: (String?) -> Unit) {
+        Adjust.getGoogleAdId(context) { googleAdId -> onResult(googleAdId) }
+    }
+
+    fun getAdjustAmazonAdId(onResult: (String?) -> Unit) {
+        Adjust.getAmazonAdId(context) { amazonAdId -> onResult(amazonAdId) }
+    }
+
+    fun getAdjustSdkVersion(onResult: (String?) -> Unit) {
+        Adjust.getSdkVersion { version -> onResult(version) }
     }
 
     fun onResume() {

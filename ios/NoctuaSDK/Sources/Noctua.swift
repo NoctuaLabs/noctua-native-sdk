@@ -264,6 +264,22 @@ import UIKit
         }
     }
 
+    @objc public static func getAdjustAdid(completion: @escaping (String?) -> Void) {
+        session?.getAdjustAdid(completion: completion) ?? completion(nil)
+    }
+
+    @objc public static func getAdjustIdfa(completion: @escaping (String?) -> Void) {
+        session?.getAdjustIdfa(completion: completion) ?? completion(nil)
+    }
+
+    @objc public static func getAdjustIdfv(completion: @escaping (String?) -> Void) {
+        session?.getAdjustIdfv(completion: completion) ?? completion(nil)
+    }
+
+    @objc public static func getAdjustSdkVersion(completion: @escaping (String?) -> Void) {
+        session?.getAdjustSdkVersion(completion: completion) ?? completion(nil)
+    }
+
     // MARK: - Currency Query (Delegated IAP)
 
     /// Queries the App Store for a product's currency code using SKProductsRequest.
