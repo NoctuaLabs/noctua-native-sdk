@@ -7,7 +7,8 @@
 #   improve:          → PATCH  (0.0.x)  — non-bug improvements (perf, refactor, UX tweaks)
 #   correct:          → PATCH  (0.0.x)  — corrections that are not bugs (config, naming, copy)
 #   feat! / BREAKING  → MAJOR  (x.0.0)
-#   chore/docs/etc.   → no bump
+#   chore:            → PATCH  (0.0.x)  — dep bumps and tooling (shown in changelog)
+#   docs/test/ci/etc. → no bump, hidden from changelog
 
 [changelog]
 header = """
@@ -53,8 +54,8 @@ commit_parsers = [
   { message = "^correct", group = "Improvements" },
   { message = "^perf", group = "Improvements" },
   { message = "^refactor", group = "Improvements" },
-  { message = "^docs", group = "Documentation" },
-  { message = "^test", group = "Testing" },
+  { message = "^docs", skip = true },
+  { message = "^test", skip = true },
   { message = "^chore\\(release\\)", skip = true },
   { message = "^chore", group = "Miscellaneous" },
   { message = "^ci", skip = true },

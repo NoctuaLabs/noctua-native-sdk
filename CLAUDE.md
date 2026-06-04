@@ -223,19 +223,23 @@ Source glob: `ios/NoctuaSDK/Sources/**/*.{h,m,swift}` — new source files auto-
 
 Commits follow [Conventional Commits](https://www.conventionalcommits.org). The type controls both the **semver bump** and the **changelog section**.
 
-| Type | Semver | Changelog section | Use when |
+| Type | Semver bump | Changelog section | Use when |
 |---|---|---|---|
-| `feat:` | MINOR | Features | Adding new public API, new capability |
-| `fix:` | PATCH | Bug Fixes | Fixing a defect — something was broken and now works correctly |
-| `improve:` | PATCH | Improvements | Non-bug enhancement: UX tweak, better error message, cleaner flow |
-| `correct:` | PATCH | Improvements | Correction that isn't a bug: wrong config value, misleading name, bad default |
-| `perf:` | PATCH | Improvements | Performance optimisation |
-| `refactor:` | PATCH | Improvements | Code restructure with no behaviour change |
-| `docs:` | none | Documentation | Docs, comments, CHANGELOG |
-| `test:` | none | Testing | Adding or fixing tests |
-| `chore:` | none | Miscellaneous | Dependency bumps, build tooling, CI config |
-| `ci:` | none | *(hidden)* | CI-only changes |
-| `feat!:` / `BREAKING CHANGE:` | MAJOR | Features | Removes or changes existing public API in a breaking way |
+| `feat:` | **MINOR** | Features | Adding new public API, new capability |
+| `fix:` | **PATCH** | Bug Fixes | Fixing a defect — something was broken and now works correctly |
+| `improve:` | **PATCH** | Improvements | Non-bug enhancement: UX tweak, better error message, cleaner flow |
+| `correct:` | **PATCH** | Improvements | Correction that isn't a bug: wrong config value, misleading name, bad default |
+| `perf:` | **PATCH** | Improvements | Performance optimisation |
+| `refactor:` | **PATCH** | Improvements | Code restructure with no behaviour change |
+| `chore:` | **PATCH** | Miscellaneous | Dependency bumps, build tooling (user-visible, so it bumps) |
+| `feat!:` / `BREAKING CHANGE:` | **MAJOR** | Features | Removes or changes existing public API in a breaking way |
+| `docs:` | none | *(hidden)* | Docs and comments — internal only, no release needed |
+| `test:` | none | *(hidden)* | Adding or fixing tests — internal only, no release needed |
+| `ci:` | none | *(hidden)* | CI pipeline changes only |
+| `style:` | none | *(hidden)* | Formatting, whitespace only |
+| `build:` | none | *(hidden)* | Build system changes only |
+
+> **Rule:** anything visible to SDK consumers bumps a version. Anything purely internal (docs, tests, CI) does not.
 
 ### Decision guide — `fix` vs `improve` vs `correct`
 
