@@ -276,6 +276,67 @@ fix(android/ios): ...   ← both platforms
 chore(ci): ...
 ```
 
+### Squashing Commits
+
+**Squash before pushing when commits are noisy or don't tell a coherent story.**
+`git-cliff` reads every commit on `main` to build the changelog and decide the version bump — messy commits pollute both.
+
+#### When to squash
+
+| Situation | Action |
+|---|---|
+| WIP / checkpoint commits (`wip: halfway done`, `tmp: debug log`) | Always squash |
+| Multiple small fixups to the same change (`fix typo`, `fix build`, `oops`) | Squash into the parent |
+| A feature spread across many tiny commits with no individual value | Squash into one `feat:` |
+| Each commit is a meaningful, self-contained unit of work | Keep as-is |
+
+#### How to squash
+
+**Interactive rebase** (preferred — full control):
+```bash
+# Squash last N commits
+git rebase -i HEAD~N
+
+# In the editor: change 'pick' to 's' (squash) or 'f' (fixup, discard message)
+# 'squash' merges commit + keeps message for editing
+# 'fixup'  merges commit + discards its message silently
+```
+
+**Soft reset** (quick — when squashing everything on a branch into one):
+```bash
+git reset --soft main
+git commit -m "feat(android): add device info getters"
+```
+
+#### Rule of thumb for this repo
+
+> **One logical change = one commit on `main`.**
+> If your branch has 8 commits but they all implement the same feature, squash to 1–2 before merging.
+> If they are genuinely independent changes (separate fixes, separate features), keep them separate.
+
+#### Examples
+
+**Before (noisy — squash these):**
+```
+wip: start adjust device info
+fix build error
+oops forgot to add file
+add test
+fix test
+```
+
+**After (clean — one meaningful commit):**
+```
+feat(android/ios): add Adjust device info getters (ADID, IDFA, IDFV, SDK version)
+```
+
+**Before (keep these — each is independent):**
+```
+fix(android): crash when attribution fires before SDK init
+feat(ios): expose Adjust IDFV getter
+chore: bump Adjust SDK to 5.7.0
+```
+
 ## Unity SDK Integration
 
 The native iOS SDK is consumed by the Unity SDK via CocoaPods and a C bridge:
