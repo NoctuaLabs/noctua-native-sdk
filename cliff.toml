@@ -4,6 +4,7 @@
 # Semver bump rules (conventional commits):
 #   feat:             → MINOR  (0.x.0)
 #   fix:              → PATCH  (0.0.x)
+#   improve:          → PATCH  (0.0.x)
 #   feat! / BREAKING  → MAJOR  (x.0.0)
 #   chore/docs/etc.   → no bump
 
@@ -47,8 +48,9 @@ split_commits = false
 commit_parsers = [
   { message = "^feat", group = "Features" },
   { message = "^fix", group = "Bug Fixes" },
-  { message = "^perf", group = "Performance" },
-  { message = "^refactor", group = "Refactoring" },
+  { message = "^improve", group = "Improvements" },
+  { message = "^perf", group = "Improvements" },
+  { message = "^refactor", group = "Improvements" },
   { message = "^docs", group = "Documentation" },
   { message = "^test", group = "Testing" },
   { message = "^chore\\(release\\)", skip = true },
