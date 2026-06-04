@@ -1,8 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-Versions follow [Semantic Versioning](https://semver.org/): MAJOR.MINOR.PATCH —
-breaking changes bump MAJOR, new features bump MINOR, bug fixes and improvements bump PATCH.
+Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
