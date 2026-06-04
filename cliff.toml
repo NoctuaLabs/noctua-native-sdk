@@ -25,9 +25,10 @@ body = """
 ## [Unreleased]
 {% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
-### {{ group | striptags | trim | upper_first }}
+### {{ group | striptags | trim }}
 {% for commit in commits %}
 - {% if commit.breaking %}**BREAKING** {% endif %}\
+  {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
   {{ commit.message | upper_first }}\
   {% if commit.github.username %} by @{{ commit.github.username }}{% endif %}\
   {% if commit.github.pr_number %} in [#{{ commit.github.pr_number }}]({{ commit.github.pr_url }}){% endif %}\
@@ -60,22 +61,22 @@ commit_parsers = [
   { message = "^feat\\(ci\\)", skip = true },
   { message = "^feat\\(cd\\)", skip = true },
   # User-facing types
-  { message = "^feat", group = "Features" },
-  { message = "^fix", group = "Bug Fixes" },
-  { message = "^improve", group = "Improvements" },
-  { message = "^correct", group = "Improvements" },
-  { message = "^perf", group = "Improvements" },
-  { message = "^refactor", group = "Improvements" },
+  { message = "^feat", group = "🚀 Features" },
+  { message = "^fix", group = "🐛 Bug Fixes" },
+  { message = "^improve", group = "✨ Improvements" },
+  { message = "^correct", group = "✨ Improvements" },
+  { message = "^perf", group = "✨ Improvements" },
+  { message = "^refactor", group = "✨ Improvements" },
   # Internal types — no changelog, no bump
   { message = "^docs", skip = true },
   { message = "^test", skip = true },
   { message = "^chore\\(release\\)", skip = true },
-  { message = "^chore", group = "Miscellaneous" },
+  { message = "^chore", group = "⚙️ Miscellaneous" },
   { message = "^ci", skip = true },
   { message = "^style", skip = true },
   { message = "^build", skip = true },
   { message = "^bump", skip = true },
-  { body = ".*security", group = "Security" },
+  { body = ".*security", group = "🔒 Security" },
 ]
 
 # Protect breaking changes from being skipped due to their group.

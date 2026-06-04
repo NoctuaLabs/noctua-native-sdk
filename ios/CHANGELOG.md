@@ -5,132 +5,136 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Features
+### ✨ Improvements
+
+- *(ci)* Simplify changelog header — remove semver rule explanation
+
+### 🚀 Features
 
 - Add Adjust device info getters to iOS and Android SDK
 
 ## [ios-sdk-v0.37.0] - 2026-05-18
 
-### Features
+### ⚙️ Miscellaneous
 
-- Add noctua.noads non-consumable to example test products
+- *(ios)* Bump Adjust dependency to ~5.6.2
 
-### Miscellaneous
+### 🚀 Features
 
-- Bump Adjust dependency to ~5.6.2
+- *(ios)* Add noctua.noads non-consumable to example test products
 
 ## [ios-sdk-v0.36.0] - 2026-04-29
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
-- SK1 getProductPurchaseStatus returns false for owned non-consumables
-- Bound SK1 SK2-entitlement fallback to 250ms; update test wait
+- *(iap)* SK1 getProductPurchaseStatus returns false for owned non-consumables
+- *(iap)* Bound SK1 SK2-entitlement fallback to 250ms; update test wait
 
-### Features
+### 🚀 Features
 
-- Add log-stream + device-metrics bridges
-- Clear-native-http-cache action
-- Build-info provider for the Build sanity panel
+- *(inspector)* Add log-stream + device-metrics bridges
+- *(inspector)* Clear-native-http-cache action
+- *(inspector)* Build-info provider for the Build sanity panel
 
 ## [ios-sdk-v0.35.0] - 2026-04-21
 
-### Features
+### 🚀 Features
 
-- Adjust + Facebook log-tailing with token capture
+- *(inspector)* Adjust + Facebook log-tailing with token capture
 
 ## [ios-sdk-v0.34.0] - 2026-04-20
 
-### Features
+### 🚀 Features
 
-- Tracker emission bus + Firebase/Facebook log tailers
+- *(inspector)* Tracker emission bus + Firebase/Facebook log tailers
 
 ## [ios-sdk-v0.33.0] - 2026-04-02
 
-### Features
+### 🚀 Features
 
 - Add registerLifecycleCallback for native engagement tracking
 - Add conditional NoctuaLog wrapper and detailed SDK logging
 
 ## [ios-sdk-v0.32.0] - 2026-03-27
 
-### Features
-
-- Add in-app review and in-app updates support
-
-### Miscellaneous
+### ⚙️ Miscellaneous
 
 - Update noctua-internal-native-sdk to v0.17.0 and add AppManagement UI
 
+### 🚀 Features
+
+- Add in-app review and in-app updates support
+
 ## [ios-sdk-v0.31.0] - 2026-03-06
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Superclass must appear first in MockSKProductsResponse inheritance
 
-### Features
+### 🚀 Features
 
 - Add StoreKit 1 support with SK1/SK2 switching
 
 ## [ios-sdk-v0.30.1] - 2026-03-05
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Use appStoreReceiptURL for receipt data instead of jsonRepresentation
 
 ## [ios-sdk-v0.30.0] - 2026-02-27
 
-### Features
+### ⚙️ Miscellaneous
 
-- Add comprehensive unit tests for NoctuaSDK (159 tests, 88% testable coverage)
+- *(ios)* Re-enable IAP in example app config (iapDisabled: false)
+
+### 🚀 Features
+
+- *(ios)* Add comprehensive unit tests for NoctuaSDK (159 tests, 88% testable coverage)
 - Add expiryTime field to purchase status models (iOS populated, Android=0)
-
-### Miscellaneous
-
-- Re-enable IAP in example app config (iapDisabled: false)
 
 ## [ios-sdk-v0.29.0] - 2026-02-19
 
-### Features
+### 🚀 Features
 
-- Add verifyPurchasesOnServer param, fix Firebase custom event params, enable iapDisabled in example
+- *(ios)* Add verifyPurchasesOnServer param, fix Firebase custom event params, enable iapDisabled in example
 
 ## [ios-sdk-v0.28.0] - 2026-02-19
 
-### Bug Fixes
+### ✨ Improvements
 
-- Dispatch getActiveCurrency callbacks on main thread
+- *(ios)* Restructure SDK to MVP architecture
 
-### Features
+### 🐛 Bug Fixes
 
-- Add StoreKit 2 billing with legacy fallback and split example app into components
+- *(ios)* Dispatch getActiveCurrency callbacks on main thread
+
+### 🚀 Features
+
+- *(ios)* Add StoreKit 2 billing with legacy fallback and split example app into components
 - Add per-row event storage methods and sample app demo
-- Implement all missing SDK APIs in sample app
-- Merge main-icm dependency upgrades into MVP architecture
-- Add getActiveCurrency API and iapDisabled config flag
-
-### Improvements
-
-- Restructure SDK to MVP architecture
+- *(ios)* Implement all missing SDK APIs in sample app
+- *(ios)* Merge main-icm dependency upgrades into MVP architecture
+- *(ios)* Add getActiveCurrency API and iapDisabled config flag
 
 ## [ios-sdk-v0.27.0] - 2026-02-02
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Add guard to fix the pipeline
 
 ## [ios-sdk-v0.26.0] - 2026-01-28
 
-### Features
+### 🚀 Features
 
 - Add adjust attribution ios
 
 ## [ios-sdk-v0.25.0] - 2026-01-15
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Error pipeline
 
-### Features
+### 🚀 Features
 
 - Implement all function noctua native internal sdk
 - Add guard if the sdk is not installed
@@ -138,22 +142,22 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [ios-sdk-v0.24.0] - 2025-11-28
 
-### Bug Fixes
+### misc
+
+- Bump podspec version to 0.24.0.
+
+### 🐛 Bug Fixes
 
 - Error cannot find remoteConfig on pipeline
 
-### Features
+### 🚀 Features
 
 - Prevent crash while adjust eventMap is null iOS
 - Implement Firebase Remote Config on iOS.
 
-### Misc
-
-- Bump podspec version to 0.24.0.
-
 ## [ios-sdk-v0.22.0] - 2025-10-27
 
-### Features
+### 🚀 Features
 
 - Update firebase ios sdk to version 11.14.0
 - Bump version manually to 0.21.2
@@ -161,154 +165,154 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [ios-sdk-v0.19.0] - 2025-09-17
 
-### Features
+### 🚀 Features
 
 - Add guard for get firebase session id and installation id
 
 ## [ios-sdk-v0.18.0] - 2025-09-16
 
-### Features
+### 🚀 Features
 
 - Add get firebase installation id and session id
 
 ## [ios-sdk-v0.17.0] - 2025-08-26
 
-### Features
+### 🚀 Features
 
 - Remove adjust revenue parameter
 - Add check product purchased ios
 
 ## [ios-sdk-v0.16.1] - 2025-08-13
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Firebase ad impression - ios
 - Remove built in event ad_revenue for firebase
 
 ## [ios-sdk-v0.16.0] - 2025-08-01
 
-### Features
+### 🚀 Features
 
 - Custom event with revenue
 
 ## [ios-sdk-v0.14.1] - 2025-05-07
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Refactor configuration convention.
 
 ## [ios-sdk-v0.14.0] - 2025-04-30
 
-### Features
+### 🚀 Features
 
 - Add log IAP is disabled by config
 
 ## [ios-sdk-v0.13.3] - 2025-04-30
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Handle modularization iap
 
 ## [ios-sdk-v0.13.2] - 2025-04-29
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Warning from Xcode linter.
 
 ## [ios-sdk-v0.13.1] - 2025-04-29
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Unwrap before check for empty.
 
 ## [ios-sdk-v0.13.0] - 2025-04-29
 
-### Features
+### 🚀 Features
 
 - Add feature flag to disable config in IOS.
 
 ## [ios-sdk-v0.12.1] - 2025-04-21
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Update version 0.12.1
 
 ## [ios-sdk-v0.12.0] - 2025-04-18
 
-### Features
+### 🚀 Features
 
 - Add onOnline and onOffline method to control Adjust offline mode .
 
 ## [ios-sdk-v0.11.0] - 2025-04-18
 
-### Features
+### 🚀 Features
 
 - Add onOnline and onOffline method to control Adjust offline mode .
 
 ## [ios-sdk-v0.10.0] - 2025-04-18
 
-### Features
+### 🚀 Features
 
 - Add onOnline and onOffline method to control Adjust offline mode .
 
 ## [ios-sdk-v0.9.0] - 2025-04-18
 
-### Features
+### 🚀 Features
 
 - Add onOnline and onOffline method to control Adjust offline mode.
 
 ## [ios-sdk-v0.8.0] - 2025-04-18
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Add missing onOffline wrapper.
 
-### Features
+### 🚀 Features
 
 - Add onOnline and onOffline to support Adjust offline mode.
 - Add onOnline and onOffline method to control Adjust offline mode.
 
 ## [ios-sdk-v0.7.1] - 2025-01-14
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Update related firebase version to 11.6.0
 
 ## [ios-sdk-v0.7.0] - 2024-12-22
 
-### Features
+### 🚀 Features
 
 - Enable FCM from sample app
 - Add handler push notification message
 
 ## [ios-sdk-v0.6.0] - 2024-12-20
 
-### Features
+### 🚀 Features
 
 - Add support for firebase messaging
 
 ## [ios-sdk-v0.5.7] - 2024-12-04
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Add more null check guard for Adjust tracker.
 
 ## [ios-sdk-v0.5.6] - 2024-12-04
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Guard Adjust event map with null check.
 
 ## [ios-sdk-v0.5.5] - 2024-11-29
 
-### Bug Fixes
+### ✨ Improvements
+
+- Refactor logic code environment check
+
+### 🐛 Bug Fixes
 
 - Reverse logic code environment mode adjust ios
 - Change Purchase to purchase adjust ios
-
-### Improvements
-
-- Refactor logic code environment check
 
 ## [ios-sdk-v0.5.4] - 2024-11-27
 
@@ -322,235 +326,235 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [ios-sdk-v0.5.3] - 2024-11-20
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Use update instead of delete + add in AccountRepository
 
 ## [ios-sdk-v0.5.2] - 2024-11-11
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Split rawData and lastUpdated with correct separator index
 
 ## [ios-sdk-v0.5.1] - 2024-11-11
 
-### Miscellaneous
+### ⚙️ Miscellaneous
 
 - Fix CI GH release
 
 ## [ios-sdk-v0.5.0] - 2024-11-10
 
-### Features
+### 🚀 Features
 
 - Save accounts in shared keychain
 
 ## [ios-sdk-v0.4.0] - 2024-11-08
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Rename Crashlytics to FirebaseCrashlytics
 
-### Features
+### 🚀 Features
 
 - IOS firebase crashlytics
 
 ## [ios-sdk-v0.3.0] - 2024-11-05
 
-### Features
+### 🚀 Features
 
 - Add dynamic event suffix to facebook and firebase
 
 ## [ios-sdk-v0.2.5] - 2024-11-05
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Another attempt to fix version DSL in podspec
 
 ## [ios-sdk-v0.2.4] - 2024-11-04
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Fix CI version DSL error so that it can be pushed
 
 ## [ios-sdk-v0.2.3] - 2024-11-04
 
-### Bug Fixes
-
-- Fix CI so at least it work when releasing
-
-### Miscellaneous
+### ⚙️ Miscellaneous
 
 - Add gitlab-ci for ios
 
+### 🐛 Bug Fixes
+
+- Fix CI so at least it work when releasing
+
 ## [ios-sdk-v0.2.2] - 2024-11-04
 
-### Improvements
+### ✨ Improvements
 
 - Removes unused internal tracker in iOS
 
 ## [ios-sdk-v0.2.0] - 2024-10-03
 
-### Improvements
+### ✨ Improvements
 
 - **BREAKING** Change FacebookSDK to static framework
 
 ## [ios-sdk-v0.1.26] - 2024-10-02
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Remove static_framework definition so that SDK can be linked either dynamically or statically
 
 ## [ios-sdk-v0.1.25] - 2024-10-01
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Set Firebase analytics collection enabled
 
 ## [ios-sdk-v0.1.24] - 2024-10-01
 
-### Bug Fixes
-
-- Always configure firebase
-
-### Features
-
-- Disable custom event on iOS
-
-### Miscellaneous
+### ⚙️ Miscellaneous
 
 - Bump version
 
+### 🐛 Bug Fixes
+
+- Always configure firebase
+
+### 🚀 Features
+
+- Disable custom event on iOS
+
 ## [ios-sdk-v0.1.22] - 2024-09-17
 
-### Bug Fixes
-
-- Initialize Facebook SDK
-
-### Improvements
+### ✨ Improvements
 
 - Add logging and change parameters to tracker
 
+### 🐛 Bug Fixes
+
+- Initialize Facebook SDK
+
 ## [ios-sdk-v0.1.21] - 2024-09-12
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Avoid configuring Firebase twice
 
 ## [ios-sdk-v0.1.20] - 2024-09-12
 
-### Bug Fixes
+### ⚙️ Miscellaneous
+
+- Bump version to 0.1.20
+
+### 🐛 Bug Fixes
 
 - Add facebook to NoctuaPlugin
 - FirebaseAnalytics import macro
 
-### Miscellaneous
-
-- Bump version to 0.1.20
-
 ## [ios-sdk-v0.1.19] - 2024-09-11
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Use self.logger instead of print.
 
 ## [ios-sdk-v0.1.18] - 2024-09-11
 
-### Features
+### 🚀 Features
 
 - Add getActiveCurrency().
 
 ## [ios-sdk-v0.1.16] - 2024-09-10
 
-### Miscellaneous
+### ⚙️ Miscellaneous
 
 - Bump to v0.1.16
 
 ## [ios-sdk-v0.1.15] - 2024-09-10
 
-### Features
+### 🚀 Features
 
 - Catch receiptData after successful payment.
 
 ## [ios-sdk-v0.1.14] - 2024-09-10
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Use the real purchaseItem function. Bump to version 0.1.14.
 
 ## [ios-sdk-v0.1.13] - 2024-09-09
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Encode to JSON with best effort instead of coercing
 
 ## [ios-sdk-v0.1.12] - 2024-09-09
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Sync with unity data path
 
 ## [ios-sdk-v0.1.11] - 2024-09-09
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Fix config file path and add logging
 
 ## [ios-sdk-v0.1.7] - 2024-09-06
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Add simulation on the IAP bridge for testing purpose.
 
 ## [ios-sdk-v0.1.6] - 2024-09-05
 
-### Miscellaneous
+### ⚙️ Miscellaneous
 
 - Bump to 0.1.6
 
 ## [ios-sdk-v0.1.5] - 2024-08-07
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Serialize dictionary to json to cross .NET / obj-C boundary
 - Use Any instead of the non compatible Encodable
 
-### Features
+### 🚀 Features
 
 - Add objc bridge
 
 ## [ios-sdk-v0.1.4] - 2024-08-04
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Increment version because published 0.1.3 didn't work
 
 ## [ios-sdk-v0.1.3] - 2024-08-04
 
-### Bug Fixes
-
-- Use default subspec so pod can be installed
-
-### Improvements
-
-- Reconstruct workspace for development pods
-
-### Miscellaneous
+### ⚙️ Miscellaneous
 
 - Add logging
 
+### ✨ Improvements
+
+- Reconstruct workspace for development pods
+
+### 🐛 Bug Fixes
+
+- Use default subspec so pod can be installed
+
 ## [ios-sdk-v0.1.2] - 2024-08-02
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Bump version
 
-### Features
+### 🚀 Features
 
 - Optionally depends on Adjust
 
 ## [ios-sdk-v0.1.1] - 2024-08-01
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Change to correct source path
 - Add license file
@@ -562,7 +566,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [ios-sdk-v0.1.0] - 2024-08-01
 
-### Features
+### 🚀 Features
 
 - Integrate adjust
 - Add example project
