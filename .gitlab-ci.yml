@@ -65,8 +65,7 @@ bump-version-android-sdk:
     - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "android/**/*" --tag-pattern "android-sdk-v.*" --bumped-version)
     - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/android-sdk-v(.*)/\1/")
     - echo $NEW_VERSION > version.txt
-    - sed -i "s/NATIVE_SDK_VERSION: String = \"[^\"]*\"/NATIVE_SDK_VERSION: String = \"$NEW_VERSION\"/"
-        ../android/sdk/src/main/java/com/noctuagames/sdk/inspector/BuildInfoProvider.kt
+    - sed -i "s/NATIVE_SDK_VERSION: String = \"[^\"]*\"/NATIVE_SDK_VERSION: String = \"$NEW_VERSION\"/" ../android/sdk/src/main/java/com/noctuagames/sdk/inspector/BuildInfoProvider.kt
     - REMOTE_URL="https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git"
     - if [ -n "$(git diff --name-only HEAD -- ./version.txt)" ]; then
         echo "Bumping version for next release";
@@ -183,8 +182,7 @@ bump-version-ios-sdk:
     - NEW_VERSION_TAG=$(git-cliff --repository ".." --include-path "ios/**/*" --include-path "NoctuaSDK.podspec" --tag-pattern "ios-sdk-v.*" --bumped-version)
     - NEW_VERSION=$(echo $NEW_VERSION_TAG | sed -r "s/ios-sdk-v(.*)/\1/")
     - sed -r "s/(spec.version *= *)\".*\"/\1\"$(echo $NEW_VERSION)\"/" ../NoctuaSDK.podspec > ../NoctuaSDK.podspec.tmp && mv ../NoctuaSDK.podspec.tmp ../NoctuaSDK.podspec
-    - sed -i "" "s/nativeSdkVersion: String = \"[^\"]*\"/nativeSdkVersion: String = \"$NEW_VERSION\"/"
-        NoctuaSDK/Sources/Inspector/BuildInfoProvider.swift
+    - sed -i "" "s/nativeSdkVersion: String = \"[^\"]*\"/nativeSdkVersion: String = \"$NEW_VERSION\"/" NoctuaSDK/Sources/Inspector/BuildInfoProvider.swift
     - REMOTE_URL="https://$GITLAB_BUILDER_USER:$GITLAB_BUILDER_ACCESS_TOKEN@gitlab.com/evosverse/noctua/noctua-sdk-native.git"
     - if [ -n "$(git diff --name-only HEAD -- ../NoctuaSDK.podspec)" ]; then
         echo "Bumping version for next release";
