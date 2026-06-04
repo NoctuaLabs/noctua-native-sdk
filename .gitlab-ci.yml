@@ -1,9 +1,12 @@
 stages:
   - test
-  - bump-version
-  - deploy
-  - release
-  - publish
+  - bump-android
+  - deploy-android
+  - release-android
+  - publish-android
+  - bump-ios
+  - release-ios
+  - publish-ios
 
 .bump-version:
   image :
@@ -49,7 +52,7 @@ test-android-sdk:
 
 bump-version-android-sdk:
   extends: .bump-version
-  stage: bump-version
+  stage: bump-android
   tags:
     - android-local-2
   rules:
@@ -81,7 +84,7 @@ bump-version-android-sdk:
 
 deploy-android-sdk:
   image: cimg/android:2024.07.1
-  stage: deploy
+  stage: deploy-android
   tags:
     - android-local-2
   rules:
@@ -98,7 +101,7 @@ deploy-android-sdk:
 
 release-android-sdk:
   extends: .bump-version
-  stage: release
+  stage: release-android
   tags:
     - android-local-2
   rules:
@@ -129,7 +132,7 @@ release-android-sdk:
 
 publish-android-sdk:
   image: cimg/android:2024.07.1
-  stage: publish
+  stage: publish-android
   tags:
     - android-local-2
   rules:
@@ -164,7 +167,7 @@ publish-android-sdk:
 
 bump-version-ios-sdk:
   extends: .bump-version
-  stage: bump-version
+  stage: bump-ios
   tags:
     - macmini
   rules:
@@ -198,7 +201,7 @@ bump-version-ios-sdk:
 
 release-ios-sdk:
   extends: .bump-version
-  stage: release
+  stage: release-ios
   tags:
     - macmini
   rules:
@@ -231,7 +234,7 @@ release-ios-sdk:
     - git push "$REMOTE_URL" HEAD:$CI_COMMIT_BRANCH --follow-tags -o ci.skip
 
 publish-ios-sdk:
-  stage: publish
+  stage: publish-ios
   tags:
     - macmini
   rules:
