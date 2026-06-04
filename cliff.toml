@@ -48,12 +48,23 @@ split_commits = false
 
 # Regex for parsing commit messages.
 commit_parsers = [
+  # Internal-scope fixes — skip before the general fix: rule catches them
+  { message = "^fix\\(ci\\)", skip = true },
+  { message = "^fix\\(cd\\)", skip = true },
+  { message = "^fix\\(build\\)", skip = true },
+  { message = "^fix\\(test\\)", skip = true },
+  { message = "^fix\\(deps\\)", skip = true },
+  # Internal feat scopes — same treatment
+  { message = "^feat\\(ci\\)", skip = true },
+  { message = "^feat\\(cd\\)", skip = true },
+  # User-facing types
   { message = "^feat", group = "Features" },
   { message = "^fix", group = "Bug Fixes" },
   { message = "^improve", group = "Improvements" },
   { message = "^correct", group = "Improvements" },
   { message = "^perf", group = "Improvements" },
   { message = "^refactor", group = "Improvements" },
+  # Internal types — no changelog, no bump
   { message = "^docs", skip = true },
   { message = "^test", skip = true },
   { message = "^chore\\(release\\)", skip = true },

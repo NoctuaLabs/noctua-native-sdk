@@ -241,6 +241,22 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org). The 
 
 > **Rule:** anything visible to SDK consumers bumps a version. Anything purely internal (docs, tests, CI) does not.
 
+### Internal scopes — always hidden from changelog
+
+Adding an internal scope to any commit type removes it from the changelog and prevents a version bump, even for `fix:` and `feat:`:
+
+| Commit | Changelog | Bump |
+|---|---|---|
+| `fix: crash on init` | ✅ Bug Fixes | PATCH |
+| `fix(ci): yaml parse error` | ❌ hidden | none |
+| `fix(cd): wrong deploy target` | ❌ hidden | none |
+| `fix(build): gradle sync fails` | ❌ hidden | none |
+| `fix(test): flaky unit test` | ❌ hidden | none |
+| `fix(deps): pin transitive dep` | ❌ hidden | none |
+| `feat(ci): add lint step` | ❌ hidden | none |
+
+Use internal scopes for changes that only affect the development pipeline, not SDK consumers.
+
 ### Decision guide — `fix` vs `improve` vs `correct`
 
 Ask yourself: **"Was something broken?"**
