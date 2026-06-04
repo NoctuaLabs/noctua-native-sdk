@@ -3,8 +3,9 @@
 #
 # Semver bump rules (conventional commits):
 #   feat:             → MINOR  (0.x.0)
-#   fix:              → PATCH  (0.0.x)
-#   improve:          → PATCH  (0.0.x)
+#   fix:              → PATCH  (0.0.x)  — real bugs only
+#   improve:          → PATCH  (0.0.x)  — non-bug improvements (perf, refactor, UX tweaks)
+#   correct:          → PATCH  (0.0.x)  — corrections that are not bugs (config, naming, copy)
 #   feat! / BREAKING  → MAJOR  (x.0.0)
 #   chore/docs/etc.   → no bump
 
@@ -49,6 +50,7 @@ commit_parsers = [
   { message = "^feat", group = "Features" },
   { message = "^fix", group = "Bug Fixes" },
   { message = "^improve", group = "Improvements" },
+  { message = "^correct", group = "Improvements" },
   { message = "^perf", group = "Improvements" },
   { message = "^refactor", group = "Improvements" },
   { message = "^docs", group = "Documentation" },

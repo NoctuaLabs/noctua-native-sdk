@@ -215,10 +215,66 @@ Source glob: `ios/NoctuaSDK/Sources/**/*.{h,m,swift}` — new source files auto-
 
 ## Git Conventions
 
-- **Branch naming:** `feat/feature-name`, `fix/bug-name`, `chore/task-name`
-- **Commit style:** Conventional commits (`feat:`, `fix:`, `chore:`)
+- **Branch naming:** `feat/feature-name`, `fix/bug-name`, `improve/description`, `chore/task-name`
 - **Tags:** `ios-sdk-v{VERSION}`, `android-sdk-v{VERSION}`
 - **CI triggers:** Merge to `main` with relevant file changes
+
+### Commit Types & Changelog Sections
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org). The type controls both the **semver bump** and the **changelog section**.
+
+| Type | Semver | Changelog section | Use when |
+|---|---|---|---|
+| `feat:` | MINOR | Features | Adding new public API, new capability |
+| `fix:` | PATCH | Bug Fixes | Fixing a defect — something was broken and now works correctly |
+| `improve:` | PATCH | Improvements | Non-bug enhancement: UX tweak, better error message, cleaner flow |
+| `correct:` | PATCH | Improvements | Correction that isn't a bug: wrong config value, misleading name, bad default |
+| `perf:` | PATCH | Improvements | Performance optimisation |
+| `refactor:` | PATCH | Improvements | Code restructure with no behaviour change |
+| `docs:` | none | Documentation | Docs, comments, CHANGELOG |
+| `test:` | none | Testing | Adding or fixing tests |
+| `chore:` | none | Miscellaneous | Dependency bumps, build tooling, CI config |
+| `ci:` | none | *(hidden)* | CI-only changes |
+| `feat!:` / `BREAKING CHANGE:` | MAJOR | Features | Removes or changes existing public API in a breaking way |
+
+### Decision guide — `fix` vs `improve` vs `correct`
+
+Ask yourself: **"Was something broken?"**
+
+- **Yes, it produced wrong output / crashed / behaved unexpectedly** → `fix:`
+  ```
+  fix(android): crash when attribution callback fires before SDK init
+  fix(ios): IDFA returns nil after ATT permission granted
+  ```
+
+- **No, it worked but could be better** → `improve:`
+  ```
+  improve(android): reduce attribution polling interval from 5s to 2s
+  improve(ios): show clearer error message when noctuagg.json is missing
+  ```
+
+- **No, it was just wrong in a non-runtime way** → `correct:`
+  ```
+  correct(android): rename onAdjustAttributionChanged to onAttributionChanged
+  correct(ios): use production environment default instead of sandbox
+  correct: fix typo in public API method name (getAdjustAdId → getAdjustAdid)
+  ```
+
+- **New capability that didn't exist before** → `feat:`
+  ```
+  feat(android): add getAdjustGoogleAdId API
+  feat(ios): expose Adjust IDFA and IDFV getters
+  ```
+
+### Scope (optional but encouraged)
+
+Add `(platform)` scope to make it clear which platform is affected:
+```
+fix(android): ...
+fix(ios): ...
+fix(android/ios): ...   ← both platforms
+chore(ci): ...
+```
 
 ## Unity SDK Integration
 
