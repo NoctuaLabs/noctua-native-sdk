@@ -59,7 +59,7 @@ bump-version-android-sdk:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         - android/**/*
-      when: always
+      when: manual
   variables:
     GIT_STRATEGY: fetch # reuse workspace
     GIT_DEPTH: 0 # avoid shallow clone to give cliff all the info it needs
@@ -108,7 +108,7 @@ release-android-sdk:
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         - android/**/*
-      when: manual
+      when: on_success
       needs:
         - deploy-android-sdk
   variables:
@@ -209,7 +209,7 @@ release-ios-sdk:
       changes:
         - ios/**/*
         - NoctuaSDK.podspec
-      when: manual
+      when: on_success
       needs:
         - bump-version-ios-sdk
   variables:
