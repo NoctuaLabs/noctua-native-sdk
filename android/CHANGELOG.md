@@ -8,6 +8,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ### ✨ Improvements
 
 - *(ci)* Simplify changelog header — remove semver rule explanation
+- *(ci)* Restore emojis and scopes in changelog sections
 
 ### 🚀 Features
 
