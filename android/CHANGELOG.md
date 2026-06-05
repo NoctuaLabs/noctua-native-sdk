@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [android-sdk-v0.33.0] - 2026-06-05
 
 ### ✨ Improvements
 
