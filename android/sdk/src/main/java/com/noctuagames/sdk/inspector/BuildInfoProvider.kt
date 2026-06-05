@@ -20,7 +20,7 @@ object BuildInfoProvider {
     private const val TAG = "NoctuaBuildInfo"
 
     /** SDK semver. Bumped in lockstep with `android/version.txt`. */
-    const val NATIVE_SDK_VERSION: String = "0.32.0"
+    const val NATIVE_SDK_VERSION: String = "0.33.0"
 
     /**
      * Returns the Firebase project ID associated with this build.
