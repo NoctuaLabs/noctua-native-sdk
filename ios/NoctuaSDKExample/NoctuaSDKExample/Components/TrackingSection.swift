@@ -52,6 +52,38 @@ struct TrackingSection: View {
             }) {
                 actionButtonLabel("Track Custom Event")
             }
+
+            Button(action: {
+                Noctua.getAdjustAdid { adid in
+                    logger.debug("Adjust ADID: \(adid ?? "nil")")
+                }
+            }) {
+                actionButtonLabel("Get Adjust ADID")
+            }
+
+            Button(action: {
+                Noctua.getAdjustIdfa { idfa in
+                    logger.debug("Adjust IDFA: \(idfa ?? "nil")")
+                }
+            }) {
+                actionButtonLabel("Get Adjust IDFA")
+            }
+
+            Button(action: {
+                Noctua.getAdjustIdfv { idfv in
+                    logger.debug("Adjust IDFV: \(idfv ?? "nil")")
+                }
+            }) {
+                actionButtonLabel("Get Adjust IDFV")
+            }
+
+            Button(action: {
+                Noctua.getAdjustSdkVersion { version in
+                    logger.debug("Adjust SDK Version: \(version ?? "nil")")
+                }
+            }) {
+                actionButtonLabel("Get Adjust SDK Version")
+            }
         }
     }
 

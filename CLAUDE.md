@@ -215,10 +215,147 @@ Source glob: `ios/NoctuaSDK/Sources/**/*.{h,m,swift}` — new source files auto-
 
 ## Git Conventions
 
-- **Branch naming:** `feat/feature-name`, `fix/bug-name`, `chore/task-name`
-- **Commit style:** Conventional commits (`feat:`, `fix:`, `chore:`)
+- **Branch naming:** `feat/feature-name`, `fix/bug-name`, `improve/description`, `chore/task-name`
 - **Tags:** `ios-sdk-v{VERSION}`, `android-sdk-v{VERSION}`
 - **CI triggers:** Merge to `main` with relevant file changes
+
+### Commit Types & Changelog Sections
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org). The type controls both the **semver bump** and the **changelog section**.
+
+| Type | Semver bump | Changelog section | Use when |
+|---|---|---|---|
+| `feat:` | **MINOR** | Features | Adding new public API, new capability |
+| `fix:` | **PATCH** | Bug Fixes | Fixing a defect — something was broken and now works correctly |
+| `improve:` | **PATCH** | Improvements | Non-bug enhancement: UX tweak, better error message, cleaner flow |
+| `correct:` | **PATCH** | Improvements | Correction that isn't a bug: wrong config value, misleading name, bad default |
+| `perf:` | **PATCH** | Improvements | Performance optimisation |
+| `refactor:` | **PATCH** | Improvements | Code restructure with no behaviour change |
+| `chore:` | **PATCH** | Miscellaneous | Dependency bumps, build tooling (user-visible, so it bumps) |
+| `feat!:` / `BREAKING CHANGE:` | **MAJOR** | Features | Removes or changes existing public API in a breaking way |
+| `docs:` | none | *(hidden)* | Docs and comments — internal only, no release needed |
+| `test:` | none | *(hidden)* | Adding or fixing tests — internal only, no release needed |
+| `ci:` | none | *(hidden)* | CI pipeline changes only |
+| `style:` | none | *(hidden)* | Formatting, whitespace only |
+| `build:` | none | *(hidden)* | Build system changes only |
+
+> **Rule:** anything visible to SDK consumers bumps a version. Anything purely internal (docs, tests, CI) does not.
+
+### Internal scopes — always hidden from changelog
+
+Adding an internal scope to any commit type removes it from the changelog and prevents a version bump, even for `fix:` and `feat:`:
+
+| Commit | Changelog | Bump |
+|---|---|---|
+| `fix: crash on init` | ✅ Bug Fixes | PATCH |
+| `fix(ci): yaml parse error` | ❌ hidden | none |
+| `fix(cd): wrong deploy target` | ❌ hidden | none |
+| `fix(build): gradle sync fails` | ❌ hidden | none |
+| `fix(test): flaky unit test` | ❌ hidden | none |
+| `fix(deps): pin transitive dep` | ❌ hidden | none |
+| `feat(ci): add lint step` | ❌ hidden | none |
+
+Use internal scopes for changes that only affect the development pipeline, not SDK consumers.
+
+### Decision guide — `fix` vs `improve` vs `correct`
+
+Ask yourself: **"Was something broken?"**
+
+- **Yes, it produced wrong output / crashed / behaved unexpectedly** → `fix:`
+  ```
+  fix(android): crash when attribution callback fires before SDK init
+  fix(ios): IDFA returns nil after ATT permission granted
+  ```
+
+- **No, it worked but could be better** → `improve:`
+  ```
+  improve(android): reduce attribution polling interval from 5s to 2s
+  improve(ios): show clearer error message when noctuagg.json is missing
+  ```
+
+- **No, it was just wrong in a non-runtime way** → `correct:`
+  ```
+  correct(android): rename onAdjustAttributionChanged to onAttributionChanged
+  correct(ios): use production environment default instead of sandbox
+  correct: fix typo in public API method name (getAdjustAdId → getAdjustAdid)
+  ```
+
+- **New capability that didn't exist before** → `feat:`
+  ```
+  feat(android): add getAdjustGoogleAdId API
+  feat(ios): expose Adjust IDFA and IDFV getters
+  ```
+
+### Scope (optional but encouraged)
+
+Add `(platform)` scope to make it clear which platform is affected:
+```
+fix(android): ...
+fix(ios): ...
+fix(android/ios): ...   ← both platforms
+chore(ci): ...
+```
+
+### Squashing Commits
+
+**Squash before pushing when commits are noisy or don't tell a coherent story.**
+`git-cliff` reads every commit on `main` to build the changelog and decide the version bump — messy commits pollute both.
+
+#### When to squash
+
+| Situation | Action |
+|---|---|
+| WIP / checkpoint commits (`wip: halfway done`, `tmp: debug log`) | Always squash |
+| Multiple small fixups to the same change (`fix typo`, `fix build`, `oops`) | Squash into the parent |
+| A feature spread across many tiny commits with no individual value | Squash into one `feat:` |
+| Each commit is a meaningful, self-contained unit of work | Keep as-is |
+
+#### How to squash
+
+**Interactive rebase** (preferred — full control):
+```bash
+# Squash last N commits
+git rebase -i HEAD~N
+
+# In the editor: change 'pick' to 's' (squash) or 'f' (fixup, discard message)
+# 'squash' merges commit + keeps message for editing
+# 'fixup'  merges commit + discards its message silently
+```
+
+**Soft reset** (quick — when squashing everything on a branch into one):
+```bash
+git reset --soft main
+git commit -m "feat(android): add device info getters"
+```
+
+#### Rule of thumb for this repo
+
+> **One logical change = one commit on `main`.**
+> If your branch has 8 commits but they all implement the same feature, squash to 1–2 before merging.
+> If they are genuinely independent changes (separate fixes, separate features), keep them separate.
+
+#### Examples
+
+**Before (noisy — squash these):**
+```
+wip: start adjust device info
+fix build error
+oops forgot to add file
+add test
+fix test
+```
+
+**After (clean — one meaningful commit):**
+```
+feat(android/ios): add Adjust device info getters (ADID, IDFA, IDFV, SDK version)
+```
+
+**Before (keep these — each is independent):**
+```
+fix(android): crash when attribution fires before SDK init
+feat(ios): expose Adjust IDFV getter
+chore: bump Adjust SDK to 5.7.0
+```
 
 ## Unity SDK Integration
 

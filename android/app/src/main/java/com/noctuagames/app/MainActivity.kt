@@ -507,6 +507,30 @@ fun MainScreen(offset: Int, packageName: String, activity: MainActivity) {
                                 showSnackbar("Remote Config: $result")
                                 Log.d("MainActivity", "Firebase Remote Config: $result")
                             }
+                        },
+                        onGetAdjustAdid = {
+                            Noctua.getAdjustAdid { adid ->
+                                showSnackbar("ADID: ${adid ?: "nil"}")
+                                Log.d("MainActivity", "Adjust ADID: $adid")
+                            }
+                        },
+                        onGetAdjustGoogleAdId = {
+                            Noctua.getAdjustGoogleAdId { googleAdId ->
+                                showSnackbar("Google Ad ID: ${googleAdId ?: "nil"}")
+                                Log.d("MainActivity", "Google Ad ID: $googleAdId")
+                            }
+                        },
+                        onGetAdjustAmazonAdId = {
+                            Noctua.getAdjustAmazonAdId { amazonAdId ->
+                                showSnackbar("Amazon Ad ID: ${amazonAdId ?: "nil"}")
+                                Log.d("MainActivity", "Amazon Ad ID: $amazonAdId")
+                            }
+                        },
+                        onGetAdjustSdkVersion = {
+                            Noctua.getAdjustSdkVersion { version ->
+                                showSnackbar("Adjust SDK: ${version ?: "nil"}")
+                                Log.d("MainActivity", "Adjust SDK version: $version")
+                            }
                         }
                     )
                 }

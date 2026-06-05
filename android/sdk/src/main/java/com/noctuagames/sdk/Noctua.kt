@@ -228,6 +228,22 @@ object Noctua {
     fun getAdjustAttribution(onResult: (String) -> Unit) =
         ensureInit { presenter.getAdjustAttribution(onResult) }
 
+    /** Returns Adjust Device Identifier (ADID). */
+    fun getAdjustAdid(onResult: (String?) -> Unit) =
+        ensureInit { presenter.getAdjustAdid(onResult) }
+
+    /** Returns Google Play Services Advertising ID. */
+    fun getAdjustGoogleAdId(onResult: (String?) -> Unit) =
+        ensureInit { presenter.getAdjustGoogleAdId(onResult) }
+
+    /** Returns Amazon Advertiser ID. */
+    fun getAdjustAmazonAdId(onResult: (String?) -> Unit) =
+        ensureInit { presenter.getAdjustAmazonAdId(onResult) }
+
+    /** Returns Adjust SDK version string. */
+    fun getAdjustSdkVersion(onResult: (String?) -> Unit) =
+        ensureInit { presenter.getAdjustSdkVersion(onResult) }
+
     // ------------------------------------
     // Notification Permission
     // ------------------------------------

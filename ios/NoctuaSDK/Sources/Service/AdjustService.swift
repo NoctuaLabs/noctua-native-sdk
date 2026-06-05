@@ -165,6 +165,38 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
 #endif
     }
 
+    func getAdjustAdid(completion: @escaping (String?) -> Void) {
+    #if canImport(AdjustSdk)
+        Adjust.adid { adid in completion(adid) }
+    #else
+        completion(nil)
+    #endif
+    }
+
+    func getAdjustIdfa(completion: @escaping (String?) -> Void) {
+    #if canImport(AdjustSdk)
+        Adjust.idfa { idfa in completion(idfa) }
+    #else
+        completion(nil)
+    #endif
+    }
+
+    func getAdjustIdfv(completion: @escaping (String?) -> Void) {
+    #if canImport(AdjustSdk)
+        Adjust.idfv { idfv in completion(idfv) }
+    #else
+        completion(nil)
+    #endif
+    }
+
+    func getAdjustSdkVersion(completion: @escaping (String?) -> Void) {
+    #if canImport(AdjustSdk)
+        Adjust.sdkVersion { version in completion(version) }
+    #else
+        completion(nil)
+    #endif
+    }
+
     func onOnline() {
 #if canImport(AdjustSdk)
         Adjust.switchBackToOnlineMode()

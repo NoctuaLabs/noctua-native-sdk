@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +19,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AttributionSection(
     onGetAdjustAttribution: () -> Unit,
-    onGetRemoteConfig: () -> Unit
+    onGetRemoteConfig: () -> Unit,
+    onGetAdjustAdid: () -> Unit,
+    onGetAdjustGoogleAdId: () -> Unit,
+    onGetAdjustAmazonAdId: () -> Unit,
+    onGetAdjustSdkVersion: () -> Unit
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
@@ -36,6 +43,38 @@ fun AttributionSection(
             onClick = onGetRemoteConfig,
             icon = Icons.Default.Settings,
             label = "Remote Config",
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.weight(1f)
+        )
+        ActionButton(
+            onClick = onGetAdjustAdid,
+            icon = Icons.Default.Fingerprint,
+            label = "Adjust ADID",
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.weight(1f)
+        )
+        ActionButton(
+            onClick = onGetAdjustGoogleAdId,
+            icon = Icons.Default.Key,
+            label = "Google Ad ID",
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.weight(1f)
+        )
+        ActionButton(
+            onClick = onGetAdjustAmazonAdId,
+            icon = Icons.Default.Key,
+            label = "Amazon Ad ID",
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.weight(1f)
+        )
+        ActionButton(
+            onClick = onGetAdjustSdkVersion,
+            icon = Icons.Default.Info,
+            label = "Adjust SDK Ver",
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
             modifier = Modifier.weight(1f)

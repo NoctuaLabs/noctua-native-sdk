@@ -320,4 +320,123 @@ class SessionPresenterTests: XCTestCase {
 
         wait(for: [expectation], timeout: 1.0)
     }
+
+    // MARK: - Device Info
+
+    func testGetAdjustAdidDelegatesToAdjust() {
+        mockAdjust.adidToReturn = "test-adid-123"
+        let presenter = makePresenter(adjustSpecific: mockAdjust)
+        let expectation = XCTestExpectation(description: "adid")
+
+        presenter.getAdjustAdid { adid in
+            XCTAssertEqual(adid, "test-adid-123")
+            XCTAssertEqual(self.mockAdjust.getAdidCallCount, 1)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetAdjustAdidNilAdjust() {
+        let presenter = makePresenter(adjustSpecific: nil)
+        let expectation = XCTestExpectation(description: "adid nil")
+
+        presenter.getAdjustAdid { adid in
+            XCTAssertNil(adid)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetAdjustIdfaDelegatesToAdjust() {
+        mockAdjust.idfaToReturn = "test-idfa-456"
+        let presenter = makePresenter(adjustSpecific: mockAdjust)
+        let expectation = XCTestExpectation(description: "idfa")
+
+        presenter.getAdjustIdfa { idfa in
+            XCTAssertEqual(idfa, "test-idfa-456")
+            XCTAssertEqual(self.mockAdjust.getIdfaCallCount, 1)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetAdjustIdfaNilAdjust() {
+        let presenter = makePresenter(adjustSpecific: nil)
+        let expectation = XCTestExpectation(description: "idfa nil")
+
+        presenter.getAdjustIdfa { idfa in
+            XCTAssertNil(idfa)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetAdjustIdfvDelegatesToAdjust() {
+        mockAdjust.idfvToReturn = "test-idfv-789"
+        let presenter = makePresenter(adjustSpecific: mockAdjust)
+        let expectation = XCTestExpectation(description: "idfv")
+
+        presenter.getAdjustIdfv { idfv in
+            XCTAssertEqual(idfv, "test-idfv-789")
+            XCTAssertEqual(self.mockAdjust.getIdfvCallCount, 1)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetAdjustIdfvNilAdjust() {
+        let presenter = makePresenter(adjustSpecific: nil)
+        let expectation = XCTestExpectation(description: "idfv nil")
+
+        presenter.getAdjustIdfv { idfv in
+            XCTAssertNil(idfv)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetAdjustSdkVersionDelegatesToAdjust() {
+        mockAdjust.sdkVersionToReturn = "5.4.4"
+        let presenter = makePresenter(adjustSpecific: mockAdjust)
+        let expectation = XCTestExpectation(description: "sdk version")
+
+        presenter.getAdjustSdkVersion { version in
+            XCTAssertEqual(version, "5.4.4")
+            XCTAssertEqual(self.mockAdjust.getSdkVersionCallCount, 1)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetAdjustSdkVersionNilAdjust() {
+        let presenter = makePresenter(adjustSpecific: nil)
+        let expectation = XCTestExpectation(description: "sdk version nil")
+
+        presenter.getAdjustSdkVersion { version in
+            XCTAssertNil(version)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetAdjustAdidReturnsNilWhenMockReturnsNil() {
+        mockAdjust.adidToReturn = nil
+        let presenter = makePresenter(adjustSpecific: mockAdjust)
+        let expectation = XCTestExpectation(description: "adid returns nil from mock")
+
+        presenter.getAdjustAdid { adid in
+            XCTAssertNil(adid)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
 }
