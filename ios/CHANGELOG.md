@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [ios-sdk-v0.39.0] - 2026-06-17
+
+### 🚀 Features
+
+- Thread host sandbox override into init + couple third-party trackers
+
 ## [ios-sdk-v0.38.0] - 2026-06-05
 
 ### ✨ Improvements
