@@ -16,6 +16,7 @@ import kotlin.collections.iterator
 internal class AdjustService(
     private val config: AdjustServiceAndroidConfig,
     private val context: Context,
+    private val sandboxEnabled: Boolean,
     onAdjustAttributionChanged: (NoctuaAdjustAttribution) -> Unit
 ) {
     private val TAG = this::class.simpleName
@@ -33,10 +34,13 @@ internal class AdjustService(
             throw IllegalArgumentException("Event token for purchase is not set")
         }
 
-        val environment = if (config.environment.isNullOrEmpty()) {
+        // The host-resolved sandbox flag drives the Adjust environment, overriding
+        // noctuagg.json's adjust.environment — sandbox-mode events go to the Adjust sandbox
+        // console, production-mode events to production.
+        val environment = if (sandboxEnabled) {
             AdjustConfig.ENVIRONMENT_SANDBOX
         } else {
-            config.environment
+            AdjustConfig.ENVIRONMENT_PRODUCTION
         }
 
         val adjustConfig = AdjustConfig(context, config.appToken, environment)

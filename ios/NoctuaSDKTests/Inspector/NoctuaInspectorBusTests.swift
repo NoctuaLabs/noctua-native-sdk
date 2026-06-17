@@ -7,11 +7,15 @@ final class NoctuaInspectorBusTests: XCTestCase {
         super.setUp()
         NoctuaInspectorBus.shared.setCallback(nil)
         NoctuaInspectorBus.shared.setEnabled(false)
+        NoctuaInspectorBus.shared.setLogCallback(nil)
+        NoctuaInspectorBus.shared.setLogStreamEnabled(false)
     }
 
     override func tearDown() {
         NoctuaInspectorBus.shared.setCallback(nil)
         NoctuaInspectorBus.shared.setEnabled(false)
+        NoctuaInspectorBus.shared.setLogCallback(nil)
+        NoctuaInspectorBus.shared.setLogStreamEnabled(false)
         super.tearDown()
     }
 
@@ -84,5 +88,85 @@ final class NoctuaInspectorBusTests: XCTestCase {
         XCTAssertEqual(NoctuaTrackerEventPhase.acknowledged.rawValue, 4)
         XCTAssertEqual(NoctuaTrackerEventPhase.failed.rawValue,       5)
         XCTAssertEqual(NoctuaTrackerEventPhase.timedOut.rawValue,     6)
+    }
+
+    // ----- Log-stream channel -----
+
+    func testLogStreamDisabledByDefault() {
+        XCTAssertFalse(NoctuaInspectorBus.shared.isLogStreamEnabled)
+    }
+
+    func testSetLogStreamEnabledTogglesFlag() {
+        NoctuaInspectorBus.shared.setLogStreamEnabled(true)
+        XCTAssertTrue(NoctuaInspectorBus.shared.isLogStreamEnabled)
+        NoctuaInspectorBus.shared.setLogStreamEnabled(false)
+        XCTAssertFalse(NoctuaInspectorBus.shared.isLogStreamEnabled)
+    }
+
+    func testEmitLogNoOpWhenBusDisabled() {
+        var called = false
+        NoctuaInspectorBus.shared.setLogCallback { _, _, _, _, _ in called = true }
+        NoctuaInspectorBus.shared.setLogStreamEnabled(true)
+        // bus itself still disabled (setUp sets enabled = false)
+        NoctuaInspectorBus.shared.emitLog(level: 3, source: "os", tag: "t", message: "m", timestampMillisUtc: 1)
+        XCTAssertFalse(called, "emitLog must no-op while the bus is disabled")
+    }
+
+    func testEmitLogNoOpWhenLogStreamDisabled() {
+        var called = false
+        NoctuaInspectorBus.shared.setEnabled(true)
+        NoctuaInspectorBus.shared.setLogCallback { _, _, _, _, _ in called = true }
+        // log stream channel not enabled
+        NoctuaInspectorBus.shared.emitLog(level: 3, source: "os", tag: "t", message: "m", timestampMillisUtc: 1)
+        XCTAssertFalse(called, "emitLog must no-op while the log-stream channel is off")
+    }
+
+    func testEmitLogDeliversWhenBothEnabled() {
+        NoctuaInspectorBus.shared.setEnabled(true)
+        NoctuaInspectorBus.shared.setLogStreamEnabled(true)
+
+        var captured: (Int32, String, String, String, Int64)?
+        NoctuaInspectorBus.shared.setLogCallback { level, source, tag, message, ts in
+            captured = (level, source, tag, message, ts)
+        }
+        NoctuaInspectorBus.shared.emitLog(level: 4, source: "os_log", tag: "Noctua", message: "hello", timestampMillisUtc: 42)
+
+        XCTAssertEqual(captured?.0, 4)
+        XCTAssertEqual(captured?.1, "os_log")
+        XCTAssertEqual(captured?.2, "Noctua")
+        XCTAssertEqual(captured?.3, "hello")
+        XCTAssertEqual(captured?.4, 42)
+
+        NoctuaInspectorBus.shared.setLogCallback(nil)
+        NoctuaInspectorBus.shared.setLogStreamEnabled(false)
+    }
+}
+
+final class IOSLoggerTests: XCTestCase {
+
+    func testEnabledLoggerEmitsAllLevelsWithoutCrashing() {
+        let logger = IOSLogger(category: "test")
+        logger.isEnabled = true
+        // os.Logger output isn't introspectable in unit tests; exercising the bodies
+        // verifies they don't crash and covers the enabled branches.
+        logger.debug("d")
+        logger.info("i")
+        logger.warning("w")
+        logger.error("e")
+    }
+
+    func testDisabledLoggerSuppressesNonErrorLevels() {
+        let logger = IOSLogger(category: "test")
+        logger.isEnabled = false
+        // Covers the early-return guard paths for debug/info/warning.
+        logger.debug("d")
+        logger.info("i")
+        logger.warning("w")
+        // error() ignores isEnabled and always logs.
+        logger.error("e")
+    }
+
+    func testIsEnabledDefaultsTrue() {
+        XCTAssertTrue(IOSLogger(category: "x").isEnabled)
     }
 }

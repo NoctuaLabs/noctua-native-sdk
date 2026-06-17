@@ -456,6 +456,28 @@ class NoctuaPublicAPITests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
+    // MARK: - Sandbox resolution (override precedence)
+
+    func testResolveSandboxOverrideTrueWinsOverConfigFalse() {
+        XCTAssertTrue(Noctua.resolveSandbox(override: true, config: false))
+    }
+
+    func testResolveSandboxOverrideFalseWinsOverConfigTrue() {
+        XCTAssertFalse(Noctua.resolveSandbox(override: false, config: true))
+    }
+
+    func testResolveSandboxNilOverrideFallsBackToConfigTrue() {
+        XCTAssertTrue(Noctua.resolveSandbox(override: nil, config: true))
+    }
+
+    func testResolveSandboxNilOverrideFallsBackToConfigFalse() {
+        XCTAssertFalse(Noctua.resolveSandbox(override: nil, config: false))
+    }
+
+    func testResolveSandboxBothNilDefaultsToTrue() {
+        XCTAssertTrue(Noctua.resolveSandbox(override: nil, config: nil))
+    }
+
     // MARK: - loadConfig with test bundle
 
     func testLoadConfigFileNotFound() {

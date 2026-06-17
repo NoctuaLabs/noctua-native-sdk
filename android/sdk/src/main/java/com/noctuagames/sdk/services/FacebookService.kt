@@ -17,12 +17,13 @@ References:
 - https://developers.facebook.com/docs/app-events/reference
 * */
 
-class FacebookService(private val config: FacebookServiceAndroidConfig, context: Context) {
+class FacebookService(private val config: FacebookServiceAndroidConfig, context: Context, private val sandboxEnabled: Boolean = true) {
     private val TAG = this::class.simpleName
     private val eventsLogger: AppEventsLogger
 
     init {
-        if (config.enableDebug) {
+        // Host-resolved sandbox flag drives Facebook debug logging (overrides enableDebug).
+        if (sandboxEnabled) {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
         } else {

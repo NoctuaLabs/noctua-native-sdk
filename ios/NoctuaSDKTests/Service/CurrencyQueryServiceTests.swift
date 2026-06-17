@@ -14,21 +14,13 @@ class CurrencyQueryServiceTests: XCTestCase {
     }
 
     func testGetActiveCurrencyStoresCallback() {
-        // We can't easily test the full SKProductsRequest flow in unit tests
-        // since it requires App Store connectivity. Instead, verify the service
-        // accepts the call without crashing and logs appropriately.
-        let expectation = XCTestExpectation(description: "callback stored")
-        expectation.isInverted = true // We don't expect completion in unit tests
+        // We can't test the full SKProductsRequest flow in unit tests (it needs App Store
+        // connectivity, and StoreKit may complete/fail at non-deterministic timing — so we
+        // must not assert on whether/when the callback fires). Instead, verify the service
+        // accepts the call without crashing and synchronously logs the query start.
+        service.getActiveCurrency(productId: "com.test.product") { _, _ in }
 
-        service.getActiveCurrency(productId: "com.test.product") { _, _ in
-            expectation.fulfill()
-        }
-
-        // Verify debug log was emitted
         XCTAssertTrue(logger.debugMessages.contains("Started currency query for product: com.test.product"))
-
-        // Wait briefly to confirm callback is NOT called (no actual network)
-        wait(for: [expectation], timeout: 0.5)
     }
 
     func testMultipleConcurrentRequests() {

@@ -3,20 +3,40 @@ import StoreKit
 import UIKit
 
 @objc public class Noctua: NSObject {
+    /// Initializes the SDK, following the bundled `noctuagg.json` for `sandboxEnabled`.
     @objc public static func initNoctua(verifyPurchasesOnServer: Bool = false, useStoreKit1: Bool = true) throws {
+        try initNoctua(verifyPurchasesOnServer: verifyPurchasesOnServer, useStoreKit1: useStoreKit1, sandboxEnabledOverride: nil)
+    }
+
+    /// Initializes the SDK with an explicit `sandboxEnabled` override that wins over
+    /// `noctuagg.json`. Used by Unity, which resolves the sandbox value at runtime and is the
+    /// source of truth. Plain `Bool` — the no-override case is the overload above.
+    @objc public static func initNoctua(verifyPurchasesOnServer: Bool, useStoreKit1: Bool, sandboxEnabled: Bool) throws {
+        try initNoctua(verifyPurchasesOnServer: verifyPurchasesOnServer, useStoreKit1: useStoreKit1, sandboxEnabledOverride: sandboxEnabled)
+    }
+
+    /// Resolves the effective sandbox flag: a host-supplied override wins; otherwise the
+    /// bundled `noctuagg.json` value; otherwise `true` (sandbox-on default).
+    static func resolveSandbox(override: Bool?, config: Bool?) -> Bool {
+        override ?? (config ?? true)
+    }
+
+    private static func initNoctua(verifyPurchasesOnServer: Bool, useStoreKit1: Bool, sandboxEnabledOverride: Bool?) throws {
         if tracker == nil && storeKit == nil && account == nil && session == nil {
             let logger = IOSLogger(category: "Noctua")
 
             logger.info("Loading config from noctuagg.json")
             let config = try loadConfig()
 
-            logger.isEnabled = config.noctua?.sandboxEnabled ?? true
+            // Host override (Unity) wins; otherwise fall back to bundled noctuagg.json.
+            let effectiveSandbox = Noctua.resolveSandbox(override: sandboxEnabledOverride, config: config.noctua?.sandboxEnabled)
+            logger.isEnabled = effectiveSandbox
             logger.debug("Config loaded: clientId=\(config.clientId), gameId=\(config.gameId ?? 0)")
-            logger.debug("Noctua config: sandboxEnabled=\(config.noctua?.sandboxEnabled ?? true), nativeInternalTrackerEnabled=\(config.noctua?.nativeInternalTrackerEnabled ?? false), iapDisabled=\(config.noctua?.iapDisabled ?? false)")
+            logger.debug("Noctua config: sandboxEnabled=\(effectiveSandbox) (override=\(sandboxEnabledOverride?.description ?? "nil"), config=\(config.noctua?.sandboxEnabled ?? true)), nativeInternalTrackerEnabled=\(config.noctua?.nativeInternalTrackerEnabled ?? false), iapDisabled=\(config.noctua?.iapDisabled ?? false)")
             logger.debug("Service configs: adjust=\(config.adjust?.ios != nil), firebase=\(config.firebase?.ios != nil), facebook=\(config.facebook?.ios != nil)")
 
             logger.info("Building services (verifyPurchasesOnServer=\(verifyPurchasesOnServer), useStoreKit1=\(useStoreKit1))")
-            let services = buildServices(config: config, logger: logger, verifyPurchasesOnServer: verifyPurchasesOnServer, useStoreKit1: useStoreKit1)
+            let services = buildServices(config: config, logger: logger, verifyPurchasesOnServer: verifyPurchasesOnServer, useStoreKit1: useStoreKit1, sandboxEnabled: effectiveSandbox)
 
             tracker = TrackerPresenter(
                 config: config,
@@ -48,7 +68,7 @@ import UIKit
             logger.info("SessionPresenter initialized")
 
             // Inspector (dev-only; gated on sandboxEnabled — zero work in prod)
-            if config.noctua?.sandboxEnabled == true {
+            if effectiveSandbox {
                 NoctuaInspectorBus.shared.setEnabled(true)
                 FirebaseLogTailer.shared.start()
                 logger.info("Inspector bus enabled (sandboxEnabled=true); Firebase log tailer started")
@@ -377,7 +397,7 @@ import UIKit
     private static var lifecycleCallback: ((String) -> Void)?
     private static var lifecycleObservers: [NSObjectProtocol] = []
 
-    private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger, verifyPurchasesOnServer: Bool = false, useStoreKit1: Bool = true) -> (
+    private static func buildServices(config: NoctuaConfig, logger: NoctuaLogger, verifyPurchasesOnServer: Bool = false, useStoreKit1: Bool = true, sandboxEnabled: Bool = true) -> (
         trackers: [TrackerServiceProtocol],
         storeKitService: StoreKitServiceProtocol?,
         adjustSpecific: AdjustSpecificProtocol?,
@@ -387,7 +407,7 @@ import UIKit
     ) {
         // Initialize NoctuaInternal first (Koin must init before other services)
         let noctuaInternal = NoctuaInternalService()
-        noctuaInternal.initialize()
+        noctuaInternal.initialize(sandboxEnabled: sandboxEnabled)
 
         var trackers: [TrackerServiceProtocol] = []
         var adjustSpecific: AdjustSpecificProtocol? = nil
@@ -416,7 +436,7 @@ import UIKit
             logger.warning("config for AdjustService IOS not found")
         } else {
             do {
-                let service = try AdjustService(config: (config.adjust?.ios!)!, logger: logger)
+                let service = try AdjustService(config: (config.adjust?.ios!)!, logger: logger, sandboxEnabled: sandboxEnabled)
                 trackers.append(service)
                 adjustSpecific = service
                 logger.info("AdjustService initialized")
@@ -456,7 +476,7 @@ import UIKit
             logger.warning("config for FacebookService not found")
         } else {
             do {
-                let service = try FacebookService(config: (config.facebook?.ios!)!, logger: logger)
+                let service = try FacebookService(config: (config.facebook?.ios!)!, logger: logger, sandboxEnabled: sandboxEnabled)
                 trackers.append(service)
                 logger.info("FacebookService initialized")
             } catch FacebookServiceError.facebookNotFound {

@@ -137,6 +137,36 @@ class NoctuaPresenterTest {
     }
 
     // -----------------------------------------------
+    // Sandbox resolution (override precedence)
+    // (exercises NoctuaPresenter.resolveSandbox — the real production helper)
+    // -----------------------------------------------
+
+    @Test
+    fun `resolveSandbox - override true wins over config false`() {
+        assertTrue(NoctuaPresenter.resolveSandbox(override = true, configValue = false))
+    }
+
+    @Test
+    fun `resolveSandbox - override false wins over config true`() {
+        assertFalse(NoctuaPresenter.resolveSandbox(override = false, configValue = true))
+    }
+
+    @Test
+    fun `resolveSandbox - null override falls back to config true`() {
+        assertTrue(NoctuaPresenter.resolveSandbox(override = null, configValue = true))
+    }
+
+    @Test
+    fun `resolveSandbox - null override falls back to config false`() {
+        assertFalse(NoctuaPresenter.resolveSandbox(override = null, configValue = false))
+    }
+
+    @Test
+    fun `resolveSandbox - both null defaults to true`() {
+        assertTrue(NoctuaPresenter.resolveSandbox(override = null, configValue = null))
+    }
+
+    // -----------------------------------------------
     // Service creation logic
     // (mirrors NoctuaPresenter.createAdjust/createFirebase/createFacebook)
     // -----------------------------------------------

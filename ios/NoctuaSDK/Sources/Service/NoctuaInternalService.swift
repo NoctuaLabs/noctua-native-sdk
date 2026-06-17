@@ -7,9 +7,11 @@ import NoctuaInternalSDK
 class NoctuaInternalService: NoctuaInternalServiceProtocol {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "NoctuaSDK", category: "NoctuaInternalService")
 
-    func initialize() {
+    func initialize(sandboxEnabled: Bool) {
         #if canImport(NoctuaInternalSDK)
-        Utils_iosKt.doInitKoinManually()
+        // Pass the host-resolved sandbox flag so the internal SDK's logging + is_sandbox
+        // event field follow the override instead of its own bundled noctuagg.json.
+        Utils_iosKt.doInitKoinManually(sandboxEnabled: sandboxEnabled)
         #endif
     }
 

@@ -35,7 +35,8 @@ import kotlinx.coroutines.*
 class NoctuaPresenter(
     context: Context,
     private val publishedApps: List<String>,
-    private val billingConfig: NoctuaBillingConfig = NoctuaBillingConfig()
+    private val billingConfig: NoctuaBillingConfig = NoctuaBillingConfig(),
+    private val sandboxEnabledOverride: Boolean? = null
 ) {
 
     private val TAG = "NoctuaPresenter"
@@ -51,6 +52,7 @@ class NoctuaPresenter(
     private val appManagement: AppManagementService
 
     private var nativeInternalTrackerEnabled: Boolean = false
+    private var effectiveSandbox: Boolean = true
     private var noctuaAdjustAttribution: NoctuaAdjustAttribution? = null
     private var adjustAttribution: String = ""
     
@@ -75,9 +77,19 @@ class NoctuaPresenter(
             throw IllegalArgumentException("clientId is not set")
         }
 
-        NoctuaLog.sandboxEnabled = config.noctua?.sandboxEnabled ?: true
+        // Host override (Unity) wins; otherwise fall back to bundled noctuagg.json.
+        effectiveSandbox = resolveSandbox(sandboxEnabledOverride, config.noctua?.sandboxEnabled)
+        NoctuaLog.sandboxEnabled = effectiveSandbox
+
+        // The internal SDK's Koin is auto-initialized at process start by InternalNoctuaApp
+        // (before Unity loads), and Unity never calls initApp()/initKoin() — so the internal
+        // SDK can't receive the override at its own init. Push the host-resolved value into
+        // its Koin-independent SandboxState now (this runs when Unity calls Noctua.init,
+        // before the first internal event / network use) so its logging + is_sandbox event
+        // field follow the override. Same SandboxState.setOverride that initKoin would call.
+        NoctuaInternal.setSandboxEnabled(effectiveSandbox)
         NoctuaLog.d(TAG, "Config loaded: clientId=${config.clientId}, gameId=${config.gameId}")
-        NoctuaLog.d(TAG, "Noctua config: sandboxEnabled=${config.noctua?.sandboxEnabled}, nativeInternalTrackerEnabled=${config.noctua?.nativeInternalTrackerEnabled}")
+        NoctuaLog.d(TAG, "Noctua config: sandboxEnabled=$effectiveSandbox (override=$sandboxEnabledOverride, config=${config.noctua?.sandboxEnabled}), nativeInternalTrackerEnabled=${config.noctua?.nativeInternalTrackerEnabled}")
         NoctuaLog.d(TAG, "Service configs: adjust=${config.adjust?.android != null}, firebase=${config.firebase?.android != null}, facebook=${config.facebook?.android != null}")
 
         nativeInternalTrackerEnabled =
@@ -110,7 +122,7 @@ class NoctuaPresenter(
         // Inspector (dev-only; gated on sandboxEnabled — zero work in prod).
         // Self-gates inside the bus/tailer as well, so safe even if Unity binds
         // a callback before this line.
-        if (config.noctua?.sandboxEnabled == true) {
+        if (effectiveSandbox) {
             com.noctuagames.sdk.inspector.NoctuaInspectorBus.setEnabled(true)
             com.noctuagames.sdk.inspector.LogTailer.start()
             NoctuaLog.i(TAG, "Inspector bus enabled (sandboxEnabled=true); log tailer started")
@@ -124,7 +136,9 @@ class NoctuaPresenter(
     // ------------------------------------
 
     fun initKoin() {
-        initKoinManually(appContext)
+        // Pass the host-resolved sandbox flag so the internal SDK's logging + is_sandbox
+        // event field follow the override instead of its own bundled noctuagg.json.
+        initKoinManually(appContext, effectiveSandbox)
     }
 
     // ------------------------------------
@@ -637,7 +651,7 @@ class NoctuaPresenter(
     private fun createAdjust(config: NoctuaConfig): AdjustService? =
         try {
             config.adjust?.android?.let {
-                AdjustService(it, appContext) { attribution ->
+                AdjustService(it, appContext, effectiveSandbox) { attribution ->
                     noctuaAdjustAttribution = attribution
                     adjustAttribution = attribution.toJsonString()
                 }
@@ -660,10 +674,20 @@ class NoctuaPresenter(
     private fun createFacebook(config: NoctuaConfig): FacebookService? =
         try {
             config.facebook?.android?.let {
-                FacebookService(it, appContext)
+                FacebookService(it, appContext, effectiveSandbox)
             }
         } catch (e: Exception) {
             NoctuaLog.w(TAG, "Facebook init failed: ${e.message}")
             null
         }
+
+    companion object {
+        /**
+         * Resolves the effective sandbox flag: a host-supplied [override] wins; otherwise the
+         * bundled `noctuagg.json` value ([configValue]); otherwise `true` (sandbox-on default).
+         */
+        @JvmStatic
+        fun resolveSandbox(override: Boolean?, configValue: Boolean?): Boolean =
+            override ?: (configValue ?: true)
+    }
 }
