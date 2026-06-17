@@ -13,7 +13,7 @@ import Foundation
 public enum BuildInfoProvider {
 
     /// SDK semver. Bumped in lockstep with the podspec.
-    public static let nativeSdkVersion: String = "0.38.0"
+    public static let nativeSdkVersion: String = "0.39.0"
 
     /// Reads `PROJECT_ID` from the bundled `GoogleService-Info.plist`.
     /// Returns "" when the plist isn't bundled (Firebase not configured).
