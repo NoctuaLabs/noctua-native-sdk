@@ -1,7 +1,7 @@
 import Foundation
 
 protocol NoctuaInternalServiceProtocol {
-    func initialize()
+    func initialize(sandboxEnabled: Bool)
     func trackCustomEvent(eventName: String, properties: [String: Any])
     func setSessionTag(tag: String)
     func getSessionTag() -> String?

@@ -3,6 +3,7 @@ import Foundation
 
 class MockNoctuaInternalService: NoctuaInternalServiceProtocol {
     var initializeCalled = false
+    var initializeSandboxEnabled: Bool? = nil
     var trackedCustomEvents: [(String, [String: Any])] = []
     var sessionTag: String? = nil
     var experiment: String? = nil
@@ -17,8 +18,9 @@ class MockNoctuaInternalService: NoctuaInternalServiceProtocol {
     var deletedEventIdsResult: Int32 = 1
     var eventCount: Int32 = 0
 
-    func initialize() {
+    func initialize(sandboxEnabled: Bool) {
         initializeCalled = true
+        initializeSandboxEnabled = sandboxEnabled
     }
 
     func trackCustomEvent(eventName: String, properties: [String: Any]) {

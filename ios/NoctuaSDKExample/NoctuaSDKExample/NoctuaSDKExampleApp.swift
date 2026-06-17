@@ -10,7 +10,7 @@ struct NoctuaSDKExampleApp: App {
     let gameId: Int64
     
     init() {
-        try! Noctua.initNoctua()
+        try! Noctua.initNoctua(verifyPurchasesOnServer: false, useStoreKit1: true)
         
         gameId = (Bundle.main.bundleIdentifier?.contains("unity") ?? false) ? 1 : 2
     }

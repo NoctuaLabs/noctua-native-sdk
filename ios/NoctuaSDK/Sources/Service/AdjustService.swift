@@ -8,7 +8,7 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
     let config: AdjustServiceIosConfig
     private let logger: NoctuaLogger
 
-    init(config: AdjustServiceIosConfig, logger: NoctuaLogger = IOSLogger(category: "AdjustService")) throws {
+    init(config: AdjustServiceIosConfig, logger: NoctuaLogger = IOSLogger(category: "AdjustService"), sandboxEnabled: Bool = true) throws {
 #if canImport(AdjustSdk)
         self.config = config
         self.logger = logger
@@ -21,14 +21,17 @@ class AdjustService: TrackerServiceProtocol, AdjustSpecificProtocol {
             throw AdjustServiceError.invalidConfig("no eventToken for purchase")
         }
 
-        let environment = config.environment?.isEmpty ?? true ? "sandbox" : config.environment!
+        // The host-resolved sandbox flag drives the Adjust environment (and log level),
+        // overriding noctuagg.json's adjust.environment — sandbox-mode events go to the
+        // Adjust sandbox console, production-mode events to production.
+        let environment = sandboxEnabled ? "sandbox" : "production"
 
         let appToken = config.appToken
         guard !appToken.isEmpty else {
             throw AdjustServiceError.invalidConfig("appToken is empty")
         }
         let adjustConfig = ADJConfig(appToken: appToken, environment: environment)
-        adjustConfig?.logLevel = if config.environment == "production" { ADJLogLevel.warn } else { ADJLogLevel.debug }
+        adjustConfig?.logLevel = sandboxEnabled ? ADJLogLevel.debug : ADJLogLevel.warn
         adjustConfig?.enableCostDataInAttribution()
 
         Adjust.initSdk(adjustConfig)

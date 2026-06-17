@@ -83,7 +83,8 @@ class MainActivity : ComponentActivity() {
                 enablePendingPurchases = true,
                 enableAutoServiceReconnection = true,
                 verifyPurchasesOnServer = false
-            )
+            ),
+            sandboxEnabled = false
         )
 
         Noctua.setSessionTag("homepage")

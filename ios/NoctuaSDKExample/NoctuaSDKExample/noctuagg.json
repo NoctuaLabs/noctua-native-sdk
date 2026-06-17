@@ -2,7 +2,6 @@
   "clientId": "1-e724f5a9e6f1",
   "gameId": 1,
   "noctua": {
-    "sentryDsnUrl": "https://4809b03b8d2d48e1865b61c4f7e2dc8c@app.glitchtip.com/9229",
     "sandboxEnabled": true,
     "offlineFirstEnabled": true,
     "welcomeToastDisabled": false,

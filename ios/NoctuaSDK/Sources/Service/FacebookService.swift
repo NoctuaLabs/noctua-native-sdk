@@ -13,14 +13,17 @@ class FacebookService: TrackerServiceProtocol {
     let config: FacebookServiceIosConfig
     private let logger: NoctuaLogger
 
-    init(config: FacebookServiceIosConfig, logger: NoctuaLogger = IOSLogger(category: "FacebookService")) throws {
+    init(config: FacebookServiceIosConfig, logger: NoctuaLogger = IOSLogger(category: "FacebookService"), sandboxEnabled: Bool = true) throws {
 #if canImport(FBSDKCoreKit)
         self.logger = logger
         logger.info("Facebook module detected")
         self.config = config
 
-        if config.enableDebug ?? false {
+        // Host-resolved sandbox flag drives Facebook debug logging (overrides enableDebug).
+        if sandboxEnabled {
             Settings.shared.enableLoggingBehavior(.appEvents)
+        } else {
+            Settings.shared.disableLoggingBehavior(.appEvents)
         }
 
         Settings.shared.isAdvertiserIDCollectionEnabled = config.advertiserIdCollectionEnabled ?? false

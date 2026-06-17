@@ -55,6 +55,27 @@ object Noctua {
         askNotificationPermission(context as Activity)
     }
 
+    /**
+     * Unity/JNI entry point: same as [init] but with an explicit [sandboxEnabled] override
+     * that wins over `noctuagg.json`. Unity resolves the sandbox value at runtime and is the
+     * source of truth.
+     *
+     * Uses a **non-null primitive** [Boolean] (not `Boolean?`) so `AndroidJavaObject` method
+     * resolution matches a C# `bool` marshalled to a `jboolean` — passing a `Boolean?` would
+     * box to `java.lang.Boolean` and fail JNI lookup.
+     *
+     * @param sandboxEnabled Host-resolved sandbox flag; overrides the bundled `noctuagg.json`.
+     */
+    fun init(
+        context: Context,
+        publishedApps: List<String>,
+        billingConfig: NoctuaBillingConfig,
+        sandboxEnabled: Boolean
+    ) {
+        presenter = NoctuaPresenter(context, publishedApps, billingConfig, sandboxEnabled)
+        askNotificationPermission(context as Activity)
+    }
+
     // ------------------------------------
     // Lifecycle
     // ------------------------------------
