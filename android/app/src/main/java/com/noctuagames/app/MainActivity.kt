@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
@@ -52,6 +53,7 @@ import com.noctuagames.app.ui.components.AppManagementSection
 import com.noctuagames.app.ui.components.AttributionSection
 import com.noctuagames.app.ui.components.BillingSection
 import com.noctuagames.app.ui.components.ExperimentsSection
+import com.noctuagames.app.ui.components.FcmSection
 import com.noctuagames.app.ui.components.FirebaseIdsSection
 import com.noctuagames.app.ui.components.LifecycleSection
 import com.noctuagames.app.ui.components.RemoteConfigSection
@@ -145,6 +147,9 @@ fun MainScreen(offset: Int, packageName: String, activity: MainActivity) {
 
     // State for Remote Config
     var remoteConfigResult by remember { mutableStateOf<Pair<String, String>?>(null) }
+
+    // State for FCM Topics
+    var fcmResult by remember { mutableStateOf<String?>(null) }
 
     // State for Experiments
     var currentExperiment by remember { mutableStateOf<String?>(Noctua.getExperiment()) }
@@ -562,6 +567,48 @@ fun MainScreen(offset: Int, packageName: String, activity: MainActivity) {
                                 Log.d("MainActivity", "Firebase Analytics Session ID: $id")
                             }
                         }
+                    )
+                }
+            }
+
+            // FCM Topics Section
+            item {
+                SectionCard(
+                    title = "FCM Topics",
+                    icon = Icons.Default.Cloud,
+                    color = MaterialTheme.colorScheme.secondary,
+                    expandedByDefault = false
+                ) {
+                    FcmSection(
+                        onSubscribe = { topic ->
+                            Noctua.subscribeToFcmTopic(topic) { success ->
+                                fcmResult = "Subscribed to '$topic': $success"
+                                showSnackbar("Subscribed to '$topic': $success")
+                                Log.d("MainActivity", "FCM subscribe [$topic]: $success")
+                            }
+                        },
+                        onUnsubscribe = { topic ->
+                            Noctua.unsubscribeFromFcmTopic(topic) { success ->
+                                fcmResult = "Unsubscribed from '$topic': $success"
+                                showSnackbar("Unsubscribed from '$topic': $success")
+                                Log.d("MainActivity", "FCM unsubscribe [$topic]: $success")
+                            }
+                        },
+                        onGetToken = {
+                            Noctua.getFcmToken { token ->
+                                fcmResult = "Token: $token"
+                                showSnackbar("FCM token: ${token.take(30)}...")
+                                Log.d("MainActivity", "FCM token: $token")
+                            }
+                        },
+                        onDeleteToken = {
+                            Noctua.deleteFcmToken { success ->
+                                fcmResult = "Token deleted: $success"
+                                showSnackbar("FCM token deleted: $success")
+                                Log.d("MainActivity", "FCM token deleted: $success")
+                            }
+                        },
+                        lastResult = fcmResult
                     )
                 }
             }

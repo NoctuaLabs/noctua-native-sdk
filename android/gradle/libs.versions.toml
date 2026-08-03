@@ -1,7 +1,7 @@
 [versions]
 adjustAndroid = "5.7.0"
 adjustAndroidHuaweiReferrer = "5.0.0"
-agp = "8.7.0"
+agp = "9.2.1"
 billing = "8.2.1"
 billingKtx = "8.2.1"
 playAppReview = "2.0.2"
@@ -17,7 +17,7 @@ firebaseMessaging = "24.1.1"
 
 gson = "2.10.1"
 installreferrer = "2.2"
-kotlin = "2.1.21"
+kotlin = "2.2.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -27,7 +27,7 @@ kotlinxCoroutinesCore = "1.7.3"
 #nativeLocal = "0.11.0"
 mockitoInline = "5.2.0"
 mockitoKotlin = "6.2.3"
-noctua-internal-native = "0.19.0"
+noctua-internal-native = "0.19.1"
 #koinCore = "4.0.0"
 robolectric = "4.14.1"
 #okhttp = "4.12.0"
@@ -36,6 +36,9 @@ playServicesAppset = "16.1.0"
 lifecycleRuntimeKtx = "2.8.6"
 activityCompose = "1.9.2"
 composeBom = "2024.09.03"
+googleServices = "4.5.0"
+firebaseCrashlyticsPlugin = "3.0.7"
+vanniktechMavenPublish = "0.37.0"
 
 [libraries]
 adjust-android-huawei-referrer = { module = "com.adjust.sdk:adjust-android-huawei-referrer", version.ref = "adjustAndroidHuaweiReferrer" }
@@ -90,3 +93,6 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics-plugin = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMavenPublish" }

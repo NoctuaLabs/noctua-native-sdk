@@ -214,6 +214,26 @@ object Noctua {
         ensureInit { presenter.getFirebaseAnalyticsSessionID(onResult) }
 
     // ------------------------------------
+    // FCM Topics
+    // ------------------------------------
+
+    /** Subscribes the device to an FCM topic. */
+    fun subscribeToFcmTopic(topic: String, onResult: (Boolean) -> Unit) =
+        ensureInit { presenter.subscribeToFcmTopic(topic, onResult) }
+
+    /** Unsubscribes the device from an FCM topic. */
+    fun unsubscribeFromFcmTopic(topic: String, onResult: (Boolean) -> Unit) =
+        ensureInit { presenter.unsubscribeFromFcmTopic(topic, onResult) }
+
+    /** Retrieves the current FCM registration token. */
+    fun getFcmToken(onResult: (String) -> Unit) =
+        ensureInit { presenter.getFcmToken(onResult) }
+
+    /** Deletes the current FCM registration token. */
+    fun deleteFcmToken(onResult: (Boolean) -> Unit) =
+        ensureInit { presenter.deleteFcmToken(onResult) }
+
+    // ------------------------------------
     // Remote Config
     // ------------------------------------
 

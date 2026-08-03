@@ -3,7 +3,7 @@ import PackageDescription
 let package = Package(
     name: "NoctuaSDK",
     platforms: [
-        .iOS(.v14)
+        .iOS(.v15)
     ],
     products: [
         .library(

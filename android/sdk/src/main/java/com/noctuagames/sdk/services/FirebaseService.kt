@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
@@ -171,5 +172,56 @@ class FirebaseService(private val config: FirebaseServiceAndroidConfig, context:
 
     fun getFirebaseRemoteConfigLong(key: String): Long {
         return remoteConfig.getLong(key)
+    }
+
+    fun subscribeToTopic(topic: String, onResult: (Boolean) -> Unit) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    NoctuaLog.d(TAG, "Subscribed to FCM topic: $topic")
+                    onResult(true)
+                } else {
+                    NoctuaLog.e(TAG, "Failed to subscribe to FCM topic: $topic", task.exception)
+                    onResult(false)
+                }
+            }
+    }
+
+    fun unsubscribeFromTopic(topic: String, onResult: (Boolean) -> Unit) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    NoctuaLog.d(TAG, "Unsubscribed from FCM topic: $topic")
+                    onResult(true)
+                } else {
+                    NoctuaLog.e(TAG, "Failed to unsubscribe from FCM topic: $topic", task.exception)
+                    onResult(false)
+                }
+            }
+    }
+
+    fun getFcmToken(onResult: (String) -> Unit) {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(task.result ?: "")
+                } else {
+                    NoctuaLog.e(TAG, "Failed to get FCM token", task.exception)
+                    onResult("")
+                }
+            }
+    }
+
+    fun deleteFcmToken(onResult: (Boolean) -> Unit) {
+        FirebaseMessaging.getInstance().deleteToken()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    NoctuaLog.d(TAG, "Deleted FCM token")
+                    onResult(true)
+                } else {
+                    NoctuaLog.e(TAG, "Failed to delete FCM token", task.exception)
+                    onResult(false)
+                }
+            }
     }
 }

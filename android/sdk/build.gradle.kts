@@ -1,23 +1,21 @@
 import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     `maven-publish`
-    id("com.vanniktech.maven.publish") version "0.29.0"
+    alias(libs.plugins.vanniktech.maven.publish)
 }
 
 android {
     namespace = "com.noctuagames.sdk"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         aarMetadata {
             minCompileSdk = 32
         }
         minSdk = 22
-        compileSdk = 35
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -42,15 +40,18 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = false
     }
     testOptions {
         unitTests.isReturnDefaultValues = true
         unitTests.isIncludeAndroidResources = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
 }
 
@@ -68,7 +69,7 @@ mavenPublishing {
         )
     )
     signAllPublications()
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    publishToMavenCentral()
     pom {
         name.set("Noctua Android SDK")
         description.set("SDK to integrate with Noctua Games")

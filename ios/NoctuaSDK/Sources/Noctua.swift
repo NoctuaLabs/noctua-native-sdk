@@ -218,6 +218,22 @@ import UIKit
         return session?.getFirebaseRemoteConfigLong(key: key) ?? 0
     }
 
+    @objc public static func subscribeToFcmTopic(_ topic: String, completion: @escaping (Bool) -> Void) {
+        session?.subscribeToFcmTopic(topic, completion: completion) ?? completion(false)
+    }
+
+    @objc public static func unsubscribeFromFcmTopic(_ topic: String, completion: @escaping (Bool) -> Void) {
+        session?.unsubscribeFromFcmTopic(topic, completion: completion) ?? completion(false)
+    }
+
+    @objc public static func getFcmToken(completion: @escaping (String) -> Void) {
+        session?.getFcmToken(completion: completion) ?? completion("")
+    }
+
+    @objc public static func deleteFcmToken(completion: @escaping (Bool) -> Void) {
+        session?.deleteFcmToken(completion: completion) ?? completion(false)
+    }
+
     @objc public static func setSessionTag(tag: String) {
         session?.setSessionTag(tag: tag)
     }

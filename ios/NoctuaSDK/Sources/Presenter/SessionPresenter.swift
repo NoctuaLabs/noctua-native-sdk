@@ -57,6 +57,24 @@ class SessionPresenter {
         return firebaseQuery?.getFirebaseRemoteConfigLong(key: key)
     }
 
+    // MARK: - FCM Topics
+
+    func subscribeToFcmTopic(_ topic: String, completion: @escaping (Bool) -> Void) {
+        firebaseQuery?.subscribeToTopic(topic, completion: completion) ?? completion(false)
+    }
+
+    func unsubscribeFromFcmTopic(_ topic: String, completion: @escaping (Bool) -> Void) {
+        firebaseQuery?.unsubscribeFromTopic(topic, completion: completion) ?? completion(false)
+    }
+
+    func getFcmToken(completion: @escaping (String) -> Void) {
+        firebaseQuery?.getFcmToken(completion: completion) ?? completion("")
+    }
+
+    func deleteFcmToken(completion: @escaping (Bool) -> Void) {
+        firebaseQuery?.deleteFcmToken(completion: completion) ?? completion(false)
+    }
+
     // MARK: - Session Tags
 
     func setSessionTag(tag: String) {

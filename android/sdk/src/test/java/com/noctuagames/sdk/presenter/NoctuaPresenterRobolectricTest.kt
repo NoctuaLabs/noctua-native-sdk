@@ -180,6 +180,36 @@ class NoctuaPresenterRobolectricTest {
         assertNull(presenter.getFirebaseRemoteConfigLong("key"))
     }
 
+    // --- FCM Topics (null service, returns defaults) ---
+
+    @Test
+    fun `subscribeToFcmTopic returns false when firebase is null`() {
+        var result = true
+        presenter.subscribeToFcmTopic("news") { result = it }
+        assertFalse(result)
+    }
+
+    @Test
+    fun `unsubscribeFromFcmTopic returns false when firebase is null`() {
+        var result = true
+        presenter.unsubscribeFromFcmTopic("news") { result = it }
+        assertFalse(result)
+    }
+
+    @Test
+    fun `getFcmToken returns empty when firebase is null`() {
+        var result = "unset"
+        presenter.getFcmToken { result = it }
+        assertEquals("", result)
+    }
+
+    @Test
+    fun `deleteFcmToken returns false when firebase is null`() {
+        var result = true
+        presenter.deleteFcmToken { result = it }
+        assertFalse(result)
+    }
+
     // --- Adjust attribution ---
 
     @Test
