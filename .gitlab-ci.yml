@@ -30,21 +30,29 @@ test-ios-sdk:
   script:
     - cd ios
     - LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pod install
-    # Picks whatever iPhone simulator the runner's Xcode actually ships (prefers a plain
+    # Picks an iPhone simulator from the *latest installed runtime* (prefers a plain
     # "iPhone N" over Pro/Max/e variants) instead of hardcoding a model name, since the
-    # available device list differs across Xcode versions/runners. Each detection step is
-    # `|| true`'d so a flaky/slow `simctl` call on this runner can't abort the whole job
-    # (a bare `VAR=$(cmd)` still propagates cmd's exit code under `set -e`); "iPhone 16" is
-    # the confirmed-available fallback on this specific macmini runner as of 2026-08.
+    # available device list differs across Xcode versions/runners. This runner keeps
+    # several old runtimes installed alongside the latest one, and a device name is only
+    # valid for a given "OS=" if that pairing was actually instantiated -- e.g. "iPhone 15"
+    # only exists under iOS 17.x here, not under 18.4, so combining a device name from one
+    # runtime with `OS=latest` from another silently fails. We resolve the OS version
+    # explicitly from whichever runtime section the picked device came from, rather than
+    # trusting `OS=latest` to line up with it. Each detection step is `|| true`'d so a
+    # flaky/slow `simctl` call can't abort the whole job (a bare `VAR=$(cmd)` still
+    # propagates cmd's exit code under `set -e`); "iPhone 16"/"latest" is the
+    # confirmed-available fallback on this specific macmini runner as of 2026-08.
     - xcrun simctl list devices available || true
-    - DEVICE=$(xcrun simctl list devices available 2>&1 | awk -F' \\(' '/^ *iPhone [0-9]+ *\(/{gsub(/^ +| +$/,"",$1); print $1; exit}') || true
-    - if [ -z "$DEVICE" ]; then DEVICE=$(xcrun simctl list devices available 2>&1 | awk -F' \\(' '/^ *iPhone /{gsub(/^ +| +$/,"",$1); print $1; exit}') || true; fi
+    - RESOLVED=$(xcrun simctl list devices available 2>&1 | awk -F' \\(' '/^-- iOS [0-9.]+ --$/{match($0,/[0-9.]+/); ver=substr($0,RSTART,RLENGTH)} /^ *iPhone [0-9]+ *\(/{n=$1; gsub(/^ +| +$/,"",n); plain=n} /^ *iPhone /{n=$1; gsub(/^ +| +$/,"",n); any=n} END{if(plain!="") print ver"|"plain; else if(any!="") print ver"|"any}') || true
+    - DEVICE=$(echo "$RESOLVED" | cut -d'|' -f2)
+    - SIM_OS=$(echo "$RESOLVED" | cut -d'|' -f1)
     - if [ -z "$DEVICE" ]; then DEVICE="iPhone 16"; fi
-    - 'echo "Using simulator: $DEVICE"'
+    - if [ -z "$SIM_OS" ]; then SIM_OS="latest"; fi
+    - 'echo "Using simulator: $DEVICE (OS $SIM_OS)"'
     - set -o pipefail && xcodebuild test
         -workspace NoctuaSDKExample.xcworkspace
         -scheme NoctuaSDKTests
-        -destination "platform=iOS Simulator,name=$DEVICE,OS=latest"
+        -destination "platform=iOS Simulator,name=$DEVICE,OS=$SIM_OS"
         2>&1 | tail -20
 
 # NOTE: requires the android-local-2 runner's ANDROID_HOME (/home/devnoctua/Android/Sdk) to have
