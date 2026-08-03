@@ -32,9 +32,14 @@ test-ios-sdk:
     - LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pod install
     # Picks whatever iPhone simulator the runner's Xcode actually ships (prefers a plain
     # "iPhone N" over Pro/Max/e variants) instead of hardcoding a model name, since the
-    # available device list differs across Xcode versions/runners.
-    - DEVICE=$(xcrun simctl list devices available | awk -F' \\(' '/^ *iPhone [0-9]+ *\(/{gsub(/^ +| +$/,"",$1); print $1; exit}')
-    - if [ -z "$DEVICE" ]; then DEVICE=$(xcrun simctl list devices available | awk -F' \\(' '/^ *iPhone /{gsub(/^ +| +$/,"",$1); print $1; exit}'); fi
+    # available device list differs across Xcode versions/runners. Each detection step is
+    # `|| true`'d so a flaky/slow `simctl` call on this runner can't abort the whole job
+    # (a bare `VAR=$(cmd)` still propagates cmd's exit code under `set -e`); "iPhone 16" is
+    # the confirmed-available fallback on this specific macmini runner as of 2026-08.
+    - xcrun simctl list devices available || true
+    - DEVICE=$(xcrun simctl list devices available 2>&1 | awk -F' \\(' '/^ *iPhone [0-9]+ *\(/{gsub(/^ +| +$/,"",$1); print $1; exit}') || true
+    - if [ -z "$DEVICE" ]; then DEVICE=$(xcrun simctl list devices available 2>&1 | awk -F' \\(' '/^ *iPhone /{gsub(/^ +| +$/,"",$1); print $1; exit}') || true; fi
+    - if [ -z "$DEVICE" ]; then DEVICE="iPhone 16"; fi
     - 'echo "Using simulator: $DEVICE"'
     - set -o pipefail && xcodebuild test
         -workspace NoctuaSDKExample.xcworkspace
