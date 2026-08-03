@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [android-sdk-v0.35.0] - 2026-08-03
+
+### ⚙️ Miscellaneous
+
+- *(android/ios)* Upgrade to AGP 9, Gradle 9.4.1, and related dependencies
+
+### 🚀 Features
+
+- *(android/ios)* Add FCM topic subscription APIs
+
 ## [android-sdk-v0.34.0] - 2026-06-17
 
 ### 🚀 Features
