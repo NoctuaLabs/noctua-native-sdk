@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [ios-sdk-v0.40.0] - 2026-08-03
+
+### revert
+
+- *(ios)* Keep Adjust at ~> 5.6.2
+
+### ⚙️ Miscellaneous
+
+- *(android/ios)* Upgrade to AGP 9, Gradle 9.4.1, and related dependencies
+
+### 🚀 Features
+
+- *(android/ios)* Add FCM topic subscription APIs
+
 ## [ios-sdk-v0.39.0] - 2026-06-17
 
 ### 🚀 Features
