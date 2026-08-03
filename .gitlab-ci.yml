@@ -17,8 +17,6 @@ stages:
     - git config --global user.email "gitlab-ci@noctua.gg"
     - git config --global user.name "Noctua Gitlab CI"
 
-# NOTE: requires the macmini runner to have Xcode 26.4+ installed (provides the "iPhone 17"
-# simulator device type used below). Verify/upgrade Xcode on the runner before merging.
 test-ios-sdk:
   stage: test
   tags:
@@ -32,10 +30,16 @@ test-ios-sdk:
   script:
     - cd ios
     - LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pod install
+    # Picks whatever iPhone simulator the runner's Xcode actually ships (prefers a plain
+    # "iPhone N" over Pro/Max/e variants) instead of hardcoding a model name, since the
+    # available device list differs across Xcode versions/runners.
+    - DEVICE=$(xcrun simctl list devices available | awk -F' \\(' '/^ *iPhone [0-9]+ *\(/{gsub(/^ +| +$/,"",$1); print $1; exit}')
+    - if [ -z "$DEVICE" ]; then DEVICE=$(xcrun simctl list devices available | awk -F' \\(' '/^ *iPhone /{gsub(/^ +| +$/,"",$1); print $1; exit}'); fi
+    - 'echo "Using simulator: $DEVICE"'
     - set -o pipefail && xcodebuild test
         -workspace NoctuaSDKExample.xcworkspace
         -scheme NoctuaSDKTests
-        -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+        -destination "platform=iOS Simulator,name=$DEVICE,OS=latest"
         2>&1 | tail -20
 
 # NOTE: requires the android-local-2 runner's ANDROID_HOME (/home/devnoctua/Android/Sdk) to have
