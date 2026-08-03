@@ -9,6 +9,12 @@ class MockFirebaseQueryService: FirebaseQueryServiceProtocol {
     var remoteConfigDoubles: [String: Double] = [:]
     var remoteConfigLongs: [String: Int64] = [:]
     var fetchRemoteConfigCalled = false
+    var subscribeToTopicResult = true
+    var unsubscribeFromTopicResult = true
+    var fcmTokenToReturn = "mock-fcm-token"
+    var deleteFcmTokenResult = true
+    var subscribedTopics: [String] = []
+    var unsubscribedTopics: [String] = []
 
     func getFirebaseInstallationID(completion: @escaping (String) -> Void) {
         completion(installationIdToReturn)
@@ -36,5 +42,23 @@ class MockFirebaseQueryService: FirebaseQueryServiceProtocol {
 
     func getFirebaseRemoteConfigLong(key: String) -> Int64 {
         return remoteConfigLongs[key] ?? 0
+    }
+
+    func subscribeToTopic(_ topic: String, completion: @escaping (Bool) -> Void) {
+        subscribedTopics.append(topic)
+        completion(subscribeToTopicResult)
+    }
+
+    func unsubscribeFromTopic(_ topic: String, completion: @escaping (Bool) -> Void) {
+        unsubscribedTopics.append(topic)
+        completion(unsubscribeFromTopicResult)
+    }
+
+    func getFcmToken(completion: @escaping (String) -> Void) {
+        completion(fcmTokenToReturn)
+    }
+
+    func deleteFcmToken(completion: @escaping (Bool) -> Void) {
+        completion(deleteFcmTokenResult)
     }
 }

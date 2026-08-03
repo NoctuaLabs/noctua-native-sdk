@@ -9,6 +9,8 @@ struct FirebaseSection: View {
     @State private var sessionId: String = ""
     @State private var remoteConfigKey: String = "welcome_message"
     @State private var remoteConfigResult: String = ""
+    @State private var fcmTopic: String = "test_topic"
+    @State private var fcmResult: String = ""
 
     var body: some View {
         VStack(spacing: 8) {
@@ -101,6 +103,68 @@ struct FirebaseSection: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(8)
                     .background(Color.teal.opacity(0.1))
+                    .cornerRadius(6)
+            }
+
+            // FCM Topics
+            Divider().padding(.vertical, 4)
+
+            Text("FCM Topics")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            TextField("Topic", text: $fcmTopic)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .font(.system(size: 12))
+
+            HStack(spacing: 8) {
+                Button(action: {
+                    Noctua.subscribeToFcmTopic(fcmTopic) { success in
+                        fcmResult = "Subscribed to '\(fcmTopic)': \(success)"
+                        logger.debug("FCM subscribe[\(fcmTopic)]: \(success)")
+                    }
+                }) {
+                    actionButtonLabel("Subscribe", color: .purple)
+                }
+
+                Button(action: {
+                    Noctua.unsubscribeFromFcmTopic(fcmTopic) { success in
+                        fcmResult = "Unsubscribed from '\(fcmTopic)': \(success)"
+                        logger.debug("FCM unsubscribe[\(fcmTopic)]: \(success)")
+                    }
+                }) {
+                    actionButtonLabel("Unsubscribe", color: .purple)
+                }
+            }
+
+            HStack(spacing: 8) {
+                Button(action: {
+                    Noctua.getFcmToken { token in
+                        fcmResult = "Token: \(token)"
+                        logger.debug("FCM token: \(token)")
+                    }
+                }) {
+                    actionButtonLabel("Get Token", color: .purple)
+                }
+
+                Button(action: {
+                    Noctua.deleteFcmToken { success in
+                        fcmResult = "Token deleted: \(success)"
+                        logger.debug("FCM token deleted: \(success)")
+                    }
+                }) {
+                    actionButtonLabel("Delete Token", color: .purple)
+                }
+            }
+
+            if !fcmResult.isEmpty {
+                Text(fcmResult)
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(8)
+                    .background(Color.purple.opacity(0.1))
                     .cornerRadius(6)
             }
         }

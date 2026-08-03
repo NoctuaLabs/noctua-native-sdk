@@ -125,6 +125,88 @@ class SessionPresenterTests: XCTestCase {
         XCTAssertNil(presenter.getFirebaseRemoteConfigLong(key: "any"))
     }
 
+    // MARK: - FCM Topics
+
+    func testSubscribeToFcmTopicDelegatesToFirebase() {
+        let presenter = makePresenter(firebaseQuery: mockFirebase)
+        let expectation = XCTestExpectation(description: "subscribe")
+
+        presenter.subscribeToFcmTopic("news") { result in
+            XCTAssertTrue(result)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(mockFirebase.subscribedTopics, ["news"])
+    }
+
+    func testUnsubscribeFromFcmTopicDelegatesToFirebase() {
+        let presenter = makePresenter(firebaseQuery: mockFirebase)
+        let expectation = XCTestExpectation(description: "unsubscribe")
+
+        presenter.unsubscribeFromFcmTopic("news") { result in
+            XCTAssertTrue(result)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(mockFirebase.unsubscribedTopics, ["news"])
+    }
+
+    func testGetFcmToken() {
+        let presenter = makePresenter(firebaseQuery: mockFirebase)
+        let expectation = XCTestExpectation(description: "fcm token")
+
+        presenter.getFcmToken { token in
+            XCTAssertEqual(token, "mock-fcm-token")
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testDeleteFcmToken() {
+        let presenter = makePresenter(firebaseQuery: mockFirebase)
+        let expectation = XCTestExpectation(description: "delete fcm token")
+
+        presenter.deleteFcmToken { result in
+            XCTAssertTrue(result)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testFcmTopicsNilFirebaseReturnsFalseAndEmpty() {
+        let presenter = makePresenter(firebaseQuery: nil)
+
+        let subscribeExpectation = XCTestExpectation(description: "subscribe nil")
+        presenter.subscribeToFcmTopic("news") { result in
+            XCTAssertFalse(result)
+            subscribeExpectation.fulfill()
+        }
+
+        let unsubscribeExpectation = XCTestExpectation(description: "unsubscribe nil")
+        presenter.unsubscribeFromFcmTopic("news") { result in
+            XCTAssertFalse(result)
+            unsubscribeExpectation.fulfill()
+        }
+
+        let tokenExpectation = XCTestExpectation(description: "token nil")
+        presenter.getFcmToken { token in
+            XCTAssertEqual(token, "")
+            tokenExpectation.fulfill()
+        }
+
+        let deleteExpectation = XCTestExpectation(description: "delete nil")
+        presenter.deleteFcmToken { result in
+            XCTAssertFalse(result)
+            deleteExpectation.fulfill()
+        }
+
+        wait(for: [subscribeExpectation, unsubscribeExpectation, tokenExpectation, deleteExpectation], timeout: 1.0)
+    }
+
     // MARK: - Session Tags (enabled)
 
     func testSetSessionTagEnabled() {

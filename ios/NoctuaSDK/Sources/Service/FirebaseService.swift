@@ -10,6 +10,9 @@ import FirebaseAnalytics
 import FirebaseInstallations
 import FirebaseRemoteConfig
 #endif
+#if canImport(FirebaseMessaging)
+import FirebaseMessaging
+#endif
 
 class FirebaseService: TrackerServiceProtocol, FirebaseQueryServiceProtocol {
     let providerName: String = "Firebase"
@@ -213,6 +216,69 @@ class FirebaseService: TrackerServiceProtocol, FirebaseQueryServiceProtocol {
         return remoteConfig?.configValue(forKey: key).numberValue.int64Value ?? 0
 #else
         return 0
+#endif
+    }
+
+    func subscribeToTopic(_ topic: String, completion: @escaping (Bool) -> Void) {
+#if canImport(FirebaseMessaging)
+        Messaging.messaging().subscribe(toTopic: topic) { error in
+            if let error = error {
+                self.logger.debug("Error subscribing to FCM topic '\(topic)': \(error)")
+                completion(false)
+                return
+            }
+            self.logger.debug("Subscribed to FCM topic: \(topic)")
+            completion(true)
+        }
+#else
+        completion(false)
+#endif
+    }
+
+    func unsubscribeFromTopic(_ topic: String, completion: @escaping (Bool) -> Void) {
+#if canImport(FirebaseMessaging)
+        Messaging.messaging().unsubscribe(fromTopic: topic) { error in
+            if let error = error {
+                self.logger.debug("Error unsubscribing from FCM topic '\(topic)': \(error)")
+                completion(false)
+                return
+            }
+            self.logger.debug("Unsubscribed from FCM topic: \(topic)")
+            completion(true)
+        }
+#else
+        completion(false)
+#endif
+    }
+
+    func getFcmToken(completion: @escaping (String) -> Void) {
+#if canImport(FirebaseMessaging)
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                self.logger.debug("Error fetching FCM token: \(error)")
+                completion("")
+                return
+            }
+            completion(token ?? "")
+        }
+#else
+        completion("")
+#endif
+    }
+
+    func deleteFcmToken(completion: @escaping (Bool) -> Void) {
+#if canImport(FirebaseMessaging)
+        Messaging.messaging().deleteToken { error in
+            if let error = error {
+                self.logger.debug("Error deleting FCM token: \(error)")
+                completion(false)
+                return
+            }
+            self.logger.debug("Deleted FCM token")
+            completion(true)
+        }
+#else
+        completion(false)
 #endif
     }
 }

@@ -319,6 +319,26 @@ class NoctuaPresenter(
     }
 
     // ------------------------------------
+    // FCM Topics
+    // ------------------------------------
+
+    fun subscribeToFcmTopic(topic: String, onResult: (Boolean) -> Unit) {
+        firebase?.subscribeToTopic(topic, onResult) ?: onResult(false)
+    }
+
+    fun unsubscribeFromFcmTopic(topic: String, onResult: (Boolean) -> Unit) {
+        firebase?.unsubscribeFromTopic(topic, onResult) ?: onResult(false)
+    }
+
+    fun getFcmToken(onResult: (String) -> Unit) {
+        firebase?.getFcmToken(onResult) ?: onResult("")
+    }
+
+    fun deleteFcmToken(onResult: (Boolean) -> Unit) {
+        firebase?.deleteFcmToken(onResult) ?: onResult(false)
+    }
+
+    // ------------------------------------
     // Remote Config
     // ------------------------------------
 
