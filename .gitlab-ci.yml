@@ -17,6 +17,8 @@ stages:
     - git config --global user.email "gitlab-ci@noctua.gg"
     - git config --global user.name "Noctua Gitlab CI"
 
+# NOTE: requires the macmini runner to have Xcode 26.4+ installed (provides the "iPhone 17"
+# simulator device type used below). Verify/upgrade Xcode on the runner before merging.
 test-ios-sdk:
   stage: test
   tags:
@@ -33,9 +35,12 @@ test-ios-sdk:
     - set -o pipefail && xcodebuild test
         -workspace NoctuaSDKExample.xcworkspace
         -scheme NoctuaSDKTests
-        -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
+        -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
         2>&1 | tail -20
 
+# NOTE: requires the android-local-2 runner's ANDROID_HOME (/home/devnoctua/Android/Sdk) to have
+# Android SDK Platform 36 and Build-Tools 36.0.0 installed via sdkmanager for the AGP 9 / compileSdk 36
+# bump below to succeed. Verify/upgrade before merging.
 test-android-sdk:
   image: cimg/android:2024.07.1
   stage: test

@@ -24,10 +24,12 @@ Pod::Spec.new do |spec|
   end
 
   spec.subspec "Adjust" do |adjust|
-    adjust.dependency "Adjust", "~> 5.6.2"
+    adjust.dependency "Adjust", "~> 5.7.0"
     adjust.dependency "Adjust/AdjustGoogleOdm"
   end
   
+  # TODO: Firebase is deprecating CocoaPods distribution (no new versions published after Oct 2026,
+  # trunk read-only Dec 2026) -- plan a migration to SPM/XCFramework separately from this upgrade.
   spec.subspec "FirebaseAnalytics" do |firebase|
     firebase.dependency "FirebaseAnalytics", "~> 12.2.0"
   end
@@ -68,7 +70,7 @@ Pod::Spec.new do |spec|
   # Download NoctuaInternal + Facebook Static XCFrameworks
   spec.prepare_command = <<-CMD
     echo "Downloading NoctuaInternalSDK.xcframework"
-    VERSION="0.19.0"
+    VERSION="0.19.1"
     ZIPFILE="NoctuaInternalSDK.xcframework.zip"
     URL="https://github.com/NoctuaLabs/noctua-internal-native-sdk/releases/download/ios-sdk-v${VERSION}/${ZIPFILE}"
     DESTINATION="ios/NoctuaSDK"
