@@ -275,6 +275,200 @@ class StoreKit1ServiceTests: XCTestCase {
         XCTAssertEqual(mockListener.storeKitErrors.first?.0, .itemUnavailable)
     }
 
+    // MARK: - Concurrent Product Request Routing Tests
+
+    private func waitForMainQueue() {
+        let exp = expectation(description: "async")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { exp.fulfill() }
+        wait(for: [exp], timeout: 1.0)
+    }
+
+    func testPurchaseProductNotFoundAlsoReportsScopedPurchaseResult() {
+        sut.initialize(listener: mockListener)
+        sut.purchase(productId: "com.test.missing")
+
+        let response = MockSKProductsResponse(products: [], invalidProductIdentifiers: ["com.test.missing"])
+        sut.productsRequest(capturedRequests[0], didReceive: response)
+        waitForMainQueue()
+
+        XCTAssertEqual(mockListener.purchaseCompletedResults.count, 1)
+        XCTAssertEqual(mockListener.purchaseCompletedResults.first?.productId, "com.test.missing")
+        XCTAssertEqual(mockListener.purchaseCompletedResults.first?.success, false)
+        XCTAssertEqual(mockListener.purchaseCompletedResults.first?.errorCode, .itemUnavailable)
+        XCTAssertEqual(mockListener.storeKitErrors.first?.1, "Product not found: com.test.missing")
+    }
+
+    func testDetailsQueryResponseDoesNotHijackPendingPurchaseLookup() {
+        sut.initialize(listener: mockListener)
+        sut.queryProductDetails(productIds: ["com.test.a"], productType: .inapp)
+        sut.purchase(productId: "com.test.b")
+        XCTAssertEqual(capturedRequests.count, 2)
+
+        // The details query answers first while the purchase lookup is still in flight.
+        sut.productsRequest(capturedRequests[0], didReceive: MockSKProductsResponse(products: [MockSKProduct(id: "com.test.a")]))
+        waitForMainQueue()
+
+        XCTAssertTrue(mockQueue.addedPayments.isEmpty, "A details query must never add a payment")
+        XCTAssertTrue(mockListener.purchaseCompletedResults.isEmpty, "The pending purchase must not be failed")
+        XCTAssertEqual(mockListener.productDetailsLoadedResults.first?.map { $0.productId }, ["com.test.a"])
+
+        sut.productsRequest(capturedRequests[1], didReceive: MockSKProductsResponse(products: [MockSKProduct(id: "com.test.b")]))
+        waitForMainQueue()
+
+        XCTAssertEqual(mockQueue.addedPayments.map { $0.productIdentifier }, ["com.test.b"])
+        XCTAssertEqual(mockListener.productDetailsLoadedResults.count, 1, "A purchase lookup must not emit product details")
+    }
+
+    func testPurchaseLookupResponseArrivingFirstDoesNotSwallowDetailsQuery() {
+        sut.initialize(listener: mockListener)
+        sut.queryProductDetails(productIds: ["com.test.a"], productType: .inapp)
+        sut.purchase(productId: "com.test.b")
+
+        sut.productsRequest(capturedRequests[1], didReceive: MockSKProductsResponse(products: [MockSKProduct(id: "com.test.b")]))
+        sut.productsRequest(capturedRequests[0], didReceive: MockSKProductsResponse(products: [MockSKProduct(id: "com.test.a")]))
+        waitForMainQueue()
+
+        XCTAssertEqual(mockQueue.addedPayments.map { $0.productIdentifier }, ["com.test.b"])
+        XCTAssertEqual(mockListener.productDetailsLoadedResults.map { $0.map { $0.productId } }, [["com.test.a"]])
+        XCTAssertTrue(mockListener.storeKitErrors.isEmpty)
+    }
+
+    func testConcurrentDetailsQueriesKeepTheirOwnProductType() {
+        sut.initialize(listener: mockListener)
+        sut.queryProductDetails(productIds: ["com.test.inapp"], productType: .inapp)
+        sut.queryProductDetails(productIds: ["com.test.sub"], productType: .subs)
+
+        let bothProducts: [SKProduct] = [MockSKProduct(id: "com.test.inapp"), MockSKProduct(id: "com.test.sub", isSubscription: true)]
+        sut.productsRequest(capturedRequests[0], didReceive: MockSKProductsResponse(products: bothProducts))
+        sut.productsRequest(capturedRequests[1], didReceive: MockSKProductsResponse(products: bothProducts))
+        waitForMainQueue()
+
+        XCTAssertEqual(
+            mockListener.productDetailsLoadedResults.map { $0.map { $0.productId } },
+            [["com.test.inapp"], ["com.test.sub"]]
+        )
+    }
+
+    func testPurchaseLookupFailureIsScopedToThatPurchase() {
+        sut.initialize(listener: mockListener)
+        sut.queryProductDetails(productIds: ["com.test.a"], productType: .inapp)
+        sut.purchase(productId: "com.test.b")
+
+        let error = NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "offline"])
+        sut.request(capturedRequests[1], didFailWithError: error)
+        waitForMainQueue()
+
+        XCTAssertEqual(mockListener.purchaseCompletedResults.map { $0.productId }, ["com.test.b"])
+        XCTAssertEqual(mockListener.storeKitErrors.first?.1, "Failed to fetch product for purchase: com.test.b: offline")
+
+        // The details query is still tracked and answers normally.
+        sut.productsRequest(capturedRequests[0], didReceive: MockSKProductsResponse(products: [MockSKProduct(id: "com.test.a")]))
+        waitForMainQueue()
+        XCTAssertEqual(mockListener.productDetailsLoadedResults.count, 1)
+    }
+
+    func testResponseForUntrackedRequestIsIgnored() {
+        sut.initialize(listener: mockListener)
+        let stray = MockSKProductsRequest(productIdentifiers: ["com.test.stray"])
+
+        sut.productsRequest(stray, didReceive: MockSKProductsResponse(products: [MockSKProduct(id: "com.test.stray")]))
+        waitForMainQueue()
+
+        XCTAssertTrue(mockQueue.addedPayments.isEmpty)
+        XCTAssertTrue(mockListener.productDetailsLoadedResults.isEmpty)
+        XCTAssertTrue(mockListener.purchaseCompletedResults.isEmpty)
+    }
+
+    func testPurchaseCalledOffMainThreadIsSerializedOntoMain() {
+        sut.initialize(listener: mockListener)
+        let exp = expectation(description: "background purchase")
+
+        DispatchQueue.global().async {
+            self.sut.purchase(productId: "com.test.bg")
+            DispatchQueue.main.async { exp.fulfill() }
+        }
+        wait(for: [exp], timeout: 1.0)
+
+        XCTAssertEqual(capturedRequests.count, 1)
+        XCTAssertTrue(capturedRequests.first?.startCalled == true)
+    }
+
+    // MARK: - Failed Transaction Message Tests
+
+    func testUnknownSKErrorMessageIncludesUnderlyingError() {
+        sut.initialize(listener: mockListener)
+        let underlying = NSError(domain: "ASDServerErrorDomain", code: 3504, userInfo: nil)
+        let unknown = NSError(domain: SKErrorDomain, code: SKError.unknown.rawValue, userInfo: [
+            NSLocalizedDescriptionKey: "An unknown error occurred",
+            NSUnderlyingErrorKey: underlying
+        ])
+
+        sut.paymentQueue(SKPaymentQueue.default(), updatedTransactions: [makeFailedTransaction(productId: "com.test.product", error: unknown)])
+        waitForMainQueue()
+
+        XCTAssertEqual(mockListener.purchaseCompletedResults.first?.errorCode, .error)
+        XCTAssertEqual(
+            mockListener.purchaseCompletedResults.first?.message,
+            "An unknown error occurred (underlying: ASDServerErrorDomain 3504)"
+        )
+    }
+
+    // MARK: - Documented Error Code Mapping Tests
+    // SKError.Code: https://developer.apple.com/documentation/storekit/skerror/code
+
+    func testSKErrorOfferAndEntitlementCodesMapToDeveloperError() {
+        let codes: [SKError.Code] = [.invalidOfferIdentifier, .invalidOfferPrice, .invalidSignature, .missingOfferParams, .unauthorizedRequestData]
+        for code in codes {
+            XCTAssertEqual(StoreKit1Service.mapSKError(SKError(code)), .developerError, "SKError.Code \(code.rawValue)")
+        }
+    }
+
+    func testSKErrorCloudServiceRevokedMapsToServiceUnavailable() {
+        XCTAssertEqual(StoreKit1Service.mapSKError(SKError(.cloudServiceRevoked)), .serviceUnavailable)
+    }
+
+    func testSKErrorUnknownAndClientInvalidMapToError() {
+        XCTAssertEqual(StoreKit1Service.mapSKError(SKError(.unknown)), .error)
+        XCTAssertEqual(StoreKit1Service.mapSKError(SKError(.clientInvalid)), .error)
+        XCTAssertEqual(StoreKit1Service.mapSKError(SKError(.ineligibleForOffer)), .error)
+    }
+
+    func testRestoreFailureCancelledByUserReportsUserCanceled() {
+        sut.initialize(listener: mockListener)
+
+        sut.paymentQueue(SKPaymentQueue.default(), restoreCompletedTransactionsFailedWithError: SKError(.paymentCancelled))
+        waitForMainQueue()
+
+        XCTAssertEqual(mockListener.storeKitErrors.first?.0, .userCanceled)
+    }
+
+    // Product.PurchaseError: https://developer.apple.com/documentation/storekit/product/purchaseerror
+    // StoreKitError: https://developer.apple.com/documentation/storekit/storekiterror
+    func testStoreKit2ErrorMapping() throws {
+        guard #available(iOS 15.0, *) else { throw XCTSkip("StoreKit 2 requires iOS 15") }
+
+        XCTAssertEqual(StoreKitService.mapStoreKitError(StoreKitError.userCancelled), .userCanceled)
+        XCTAssertEqual(StoreKitService.mapStoreKitError(StoreKitError.notAvailableInStorefront), .itemUnavailable)
+        if #available(iOS 15.4, *) {
+            XCTAssertEqual(StoreKitService.mapStoreKitError(StoreKitError.notEntitled), .itemNotOwned)
+        }
+        XCTAssertEqual(StoreKitService.mapStoreKitError(StoreKitError.unknown), .error)
+        XCTAssertEqual(StoreKitService.mapStoreKitError(Product.PurchaseError.productUnavailable), .itemUnavailable)
+        XCTAssertEqual(StoreKitService.mapStoreKitError(Product.PurchaseError.invalidQuantity), .developerError)
+        XCTAssertEqual(StoreKitService.mapStoreKitError(Product.PurchaseError.invalidOfferSignature), .developerError)
+        XCTAssertEqual(StoreKitService.mapStoreKitError(Product.PurchaseError.purchaseNotAllowed), .error)
+        XCTAssertEqual(StoreKitService.mapStoreKitError(Product.PurchaseError.ineligibleForOffer), .error)
+        XCTAssertEqual(StoreKitService.mapStoreKitError(SKError(.paymentCancelled)), .userCanceled)
+        XCTAssertEqual(StoreKitService.mapStoreKitError(NSError(domain: "test", code: 1)), .error)
+    }
+
+    func testDescribeTransactionErrorWithoutUnderlyingKeepsDescription() {
+        let error = NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Generic"])
+
+        XCTAssertEqual(StoreKit1Service.describeTransactionError(error), "Generic")
+        XCTAssertEqual(StoreKit1Service.describeTransactionError(nil), "Unknown error")
+    }
+
     // MARK: - Transaction Observer Tests
 
     func testPurchasedTransactionCallsOnPurchaseCompleted() {
@@ -736,4 +930,31 @@ class MockSKProductsResponse: SKProductsResponse, @unchecked Sendable {
 
     override var products: [SKProduct] { _products }
     override var invalidProductIdentifiers: [String] { _invalidProductIdentifiers }
+}
+
+// MARK: - Mock SKProduct
+
+class MockSKProduct: SKProduct, @unchecked Sendable {
+    private let _productIdentifier: String
+    private let _subscriptionPeriod: SKProductSubscriptionPeriod?
+
+    init(id: String, isSubscription: Bool = false) {
+        self._productIdentifier = id
+        self._subscriptionPeriod = isSubscription ? MockSKProductSubscriptionPeriod() : nil
+        super.init()
+    }
+
+    override var productIdentifier: String { _productIdentifier }
+    override var price: NSDecimalNumber { NSDecimalNumber(string: "1.99") }
+    override var priceLocale: Locale { Locale(identifier: "en_US") }
+    override var localizedTitle: String { _productIdentifier }
+    override var localizedDescription: String { "" }
+    override var subscriptionPeriod: SKProductSubscriptionPeriod? { _subscriptionPeriod }
+    override var introductoryPrice: SKProductDiscount? { nil }
+    override var discounts: [SKProductDiscount] { [] }
+}
+
+class MockSKProductSubscriptionPeriod: SKProductSubscriptionPeriod, @unchecked Sendable {
+    override var unit: SKProduct.PeriodUnit { .month }
+    override var numberOfUnits: Int { 1 }
 }

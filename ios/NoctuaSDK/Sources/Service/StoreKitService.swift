@@ -6,10 +6,15 @@ class StoreKitService: StoreKitServiceProtocol {
     private let logger: NoctuaLogger
     private let config: NoctuaStoreKitConfig
     private weak var eventListener: StoreKitEventListener?
-    private var productTypeMap: [String: ConsumableType] = [:]
     private var transactionListenerTask: Task<Void, Never>?
-    private var cachedProducts: [String: Product] = [:]
     private var isInitialized = false
+
+    // Read and written from concurrent Tasks (queries, purchases, the transaction listener), so
+    // every access goes through stateLock — unsynchronized Swift dictionary writes can crash.
+    private let stateLock = NSLock()
+    private var productTypeMap: [String: ConsumableType] = [:]
+    private var cachedProducts: [String: Product] = [:]
+    private var handledTransactionIds: Set<UInt64> = []
 
     init(config: NoctuaStoreKitConfig, logger: NoctuaLogger = IOSLogger(category: "StoreKitService")) {
         self.config = config
@@ -27,6 +32,7 @@ class StoreKitService: StoreKitServiceProtocol {
         self.eventListener = listener
         transactionListenerTask = listenForTransactions()
         isInitialized = true
+        processUnfinishedTransactions()
 
         // Query existing purchases on initialization
         queryExistingPurchases()
@@ -37,6 +43,7 @@ class StoreKitService: StoreKitServiceProtocol {
     func dispose() {
         transactionListenerTask?.cancel()
         transactionListenerTask = nil
+        withState { handledTransactionIds.removeAll() }
         isInitialized = false
         logger.info("StoreKitService disposed")
     }
@@ -46,7 +53,7 @@ class StoreKitService: StoreKitServiceProtocol {
     }
 
     func registerProduct(productId: String, consumableType: ConsumableType) {
-        productTypeMap[productId] = consumableType
+        withState { productTypeMap[productId] = consumableType }
         logger.debug("Registered product: \(productId) as \(consumableType)")
     }
 
@@ -64,10 +71,7 @@ class StoreKitService: StoreKitServiceProtocol {
                     }
                 }
 
-                // Cache products
-                for product in filtered {
-                    cachedProducts[product.id] = product
-                }
+                cacheProducts(filtered)
 
                 let results = filtered.map { mapProduct($0) }
                 logger.debug("Loaded \(results.count) product details")
@@ -98,11 +102,13 @@ class StoreKitService: StoreKitServiceProtocol {
             var purchases: [NoctuaPurchaseResult] = []
 
             for await result in Transaction.currentEntitlements {
-                if case .verified(let transaction) = result {
-                    let matchesType = doesTransactionMatchType(transaction, productType: productType)
-                    if matchesType {
+                switch result {
+                case .verified(let transaction):
+                    if doesTransactionMatchType(transaction, productType: productType) {
                         purchases.append(mapTransaction(transaction))
                     }
+                case .unverified(let transaction, let error):
+                    logger.warning("Skipping unverified entitlement \(transaction.productID): \(error.localizedDescription)")
                 }
             }
 
@@ -126,7 +132,7 @@ class StoreKitService: StoreKitServiceProtocol {
                         allPurchases.append(mapTransaction(transaction))
 
                         // Process unfinished transactions
-                        let consumableType = productTypeMap[transaction.productID] ?? .nonConsumable
+                        let consumableType = registeredConsumableType(for: transaction.productID)
                         if config.verifyPurchasesOnServer {
                             await MainActor.run {
                                 self.eventListener?.onServerVerificationRequired(
@@ -146,11 +152,12 @@ class StoreKitService: StoreKitServiceProtocol {
                     self.eventListener?.onRestorePurchasesCompleted(purchases: finalPurchases)
                 }
             } catch {
-                logger.error("Failed to restore purchases: \(error.localizedDescription)")
+                let message = StoreKitErrorDescription.describe(error)
+                logger.error("Failed to restore purchases: \(message)")
                 await MainActor.run {
                     self.eventListener?.onStoreKitError(
-                        error: .error,
-                        message: "Failed to restore purchases: \(error.localizedDescription)"
+                        error: StoreKitService.mapStoreKitError(error),
+                        message: "Failed to restore purchases: \(message)"
                     )
                 }
             }
@@ -172,7 +179,7 @@ class StoreKitService: StoreKitServiceProtocol {
 
             let status: NoctuaProductPurchaseStatus
             if let transaction = matchingTransaction {
-                let productType = cachedProducts[productId]?.type
+                let productType = cachedProduct(for: productId)?.type
                 status = NoctuaProductPurchaseStatus(
                     productId: productId,
                     isPurchased: true,
@@ -242,6 +249,10 @@ class StoreKitService: StoreKitServiceProtocol {
 
                 switch result {
                 case .verified(let transaction):
+                    guard self.markTransactionHandled(transaction.id) else {
+                        self.logger.debug("Transaction update \(transaction.id) already handled")
+                        continue
+                    }
                     let purchaseResult = self.mapTransaction(transaction)
                     self.logger.debug("Transaction update: \(transaction.productID), state: verified")
 
@@ -269,34 +280,30 @@ class StoreKitService: StoreKitServiceProtocol {
 
     private func purchaseAsync(productId: String) async {
         // Fetch product if not cached
-        var product = cachedProducts[productId]
+        var product = cachedProduct(for: productId)
         if product == nil {
             do {
                 let products = try await Product.products(for: [productId])
-                product = products.first
+                product = products.first { $0.id == productId }
                 if let product = product {
-                    cachedProducts[productId] = product
+                    cacheProducts([product])
                 }
             } catch {
-                logger.error("Failed to fetch product \(productId): \(error.localizedDescription)")
-                await MainActor.run {
-                    self.eventListener?.onStoreKitError(
-                        error: .itemUnavailable,
-                        message: "Failed to fetch product: \(error.localizedDescription)"
-                    )
-                }
+                await reportPurchaseLookupFailure(
+                    productId: productId,
+                    errorCode: StoreKitService.mapStoreKitError(error),
+                    message: "Failed to fetch product for purchase: \(productId): \(StoreKitErrorDescription.describe(error))"
+                )
                 return
             }
         }
 
         guard let product = product else {
-            logger.error("Product not found: \(productId)")
-            await MainActor.run {
-                self.eventListener?.onStoreKitError(
-                    error: .itemUnavailable,
-                    message: "Product not found: \(productId)"
-                )
-            }
+            await reportPurchaseLookupFailure(
+                productId: productId,
+                errorCode: .itemUnavailable,
+                message: "Product not found: \(productId)"
+            )
             return
         }
 
@@ -307,6 +314,7 @@ class StoreKitService: StoreKitServiceProtocol {
             case .success(let verification):
                 switch verification {
                 case .verified(let transaction):
+                    _ = markTransactionHandled(transaction.id)
                     let purchaseResult = mapTransaction(transaction)
 
                     await handleVerifiedTransaction(transaction, result: purchaseResult)
@@ -367,13 +375,13 @@ class StoreKitService: StoreKitServiceProtocol {
                 }
             }
         } catch {
-            logger.error("Purchase failed: \(error.localizedDescription)")
-            let errorCode = mapStoreKitError(error)
+            let message = "Purchase failed: \(StoreKitErrorDescription.describe(error))"
+            logger.error(message)
             let purchaseResult = NoctuaPurchaseResult(
                 success: false,
-                errorCode: errorCode,
+                errorCode: StoreKitService.mapStoreKitError(error),
                 productId: productId,
-                message: "Purchase failed: \(error.localizedDescription)"
+                message: message
             )
             await MainActor.run {
                 self.eventListener?.onPurchaseCompleted(result: purchaseResult)
@@ -381,8 +389,79 @@ class StoreKitService: StoreKitServiceProtocol {
         }
     }
 
+    /// Reports a failure that belongs to one purchase as a purchase result carrying the productId (so
+    /// the caller's purchase completes), then as onStoreKitError for listeners that only watch errors.
+    /// Same contract and messages as StoreKit1Service.
+    private func reportPurchaseLookupFailure(productId: String, errorCode: StoreKitErrorCode, message: String) async {
+        logger.error(message)
+        let result = NoctuaPurchaseResult(
+            success: false,
+            errorCode: errorCode,
+            productId: productId,
+            message: message
+        )
+        await MainActor.run {
+            self.eventListener?.onPurchaseCompleted(result: result)
+            self.eventListener?.onStoreKitError(error: errorCode, message: message)
+        }
+    }
+
+    /// Apple: unfinished transactions are delivered to `Transaction.updates` once, right after launch,
+    /// and a listener started later can miss them
+    /// (https://developer.apple.com/documentation/storekit/transaction/updates). This service starts
+    /// on the first StoreKit call, so it also walks `Transaction.unfinished` once. Unverified
+    /// transactions are skipped, as Apple's guidance recommends.
+    private func processUnfinishedTransactions() {
+        Task {
+            for await result in Transaction.unfinished {
+                switch result {
+                case .verified(let transaction):
+                    guard markTransactionHandled(transaction.id) else { continue }
+                    logger.info("Processing unfinished transaction \(transaction.id) for \(transaction.productID)")
+                    let purchaseResult = mapTransaction(transaction)
+                    await handleVerifiedTransaction(transaction, result: purchaseResult)
+                    await MainActor.run {
+                        self.eventListener?.onPurchaseUpdated(result: purchaseResult)
+                    }
+                case .unverified(let transaction, let error):
+                    logger.warning("Skipping unverified unfinished transaction \(transaction.productID): \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    // MARK: - Synchronized state
+
+    /// Returns true the first time a transaction is seen by this service, so the updates listener,
+    /// the unfinished-transaction sweep and the purchase flow never emit the same transaction twice.
+    private func markTransactionHandled(_ transactionId: UInt64) -> Bool {
+        withState { handledTransactionIds.insert(transactionId).inserted }
+    }
+
+    private func withState<T>(_ body: () -> T) -> T {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        return body()
+    }
+
+    private func cachedProduct(for productId: String) -> Product? {
+        withState { cachedProducts[productId] }
+    }
+
+    private func cacheProducts(_ products: [Product]) {
+        withState {
+            for product in products {
+                cachedProducts[product.id] = product
+            }
+        }
+    }
+
+    private func registeredConsumableType(for productId: String) -> ConsumableType {
+        withState { productTypeMap[productId] ?? .nonConsumable }
+    }
+
     private func handleVerifiedTransaction(_ transaction: Transaction, result: NoctuaPurchaseResult) async {
-        let consumableType = productTypeMap[transaction.productID] ?? .nonConsumable
+        let consumableType = registeredConsumableType(for: transaction.productID)
 
         if config.verifyPurchasesOnServer {
             logger.debug("Server verification required for \(transaction.productID) (type: \(consumableType))")
@@ -490,7 +569,7 @@ class StoreKitService: StoreKitServiceProtocol {
     }
 
     private func mapTransaction(_ transaction: Transaction) -> NoctuaPurchaseResult {
-        let productType = cachedProducts[transaction.productID]?.type
+        let productType = cachedProduct(for: transaction.productID)?.type
         let isAutoRenewing = productType == .autoRenewable && transaction.revocationDate == nil
 
         return NoctuaPurchaseResult(
@@ -526,7 +605,7 @@ class StoreKitService: StoreKitServiceProtocol {
     }
 
     private func doesTransactionMatchType(_ transaction: Transaction, productType: ProductType) -> Bool {
-        if let product = cachedProducts[transaction.productID] {
+        if let product = cachedProduct(for: transaction.productID) {
             switch productType {
             case .inapp:
                 return product.type == .consumable || product.type == .nonConsumable
@@ -538,7 +617,11 @@ class StoreKitService: StoreKitServiceProtocol {
         return true
     }
 
-    private func mapStoreKitError(_ error: Error) -> StoreKitErrorCode {
+    /// Maps errors thrown by StoreKit 2 APIs — `StoreKitError`
+    /// (https://developer.apple.com/documentation/storekit/storekiterror) and `Product.PurchaseError`
+    /// (https://developer.apple.com/documentation/storekit/product/purchaseerror) — to the
+    /// cross-platform error code.
+    static func mapStoreKitError(_ error: Error) -> StoreKitErrorCode {
         if let storeKitError = error as? StoreKitError {
             switch storeKitError {
             case .userCancelled:
@@ -552,6 +635,22 @@ class StoreKitService: StoreKitServiceProtocol {
             default:
                 return .error
             }
+        }
+        if let purchaseError = error as? Product.PurchaseError {
+            switch purchaseError {
+            case .productUnavailable:
+                return .itemUnavailable
+            case .invalidQuantity, .invalidOfferIdentifier, .invalidOfferPrice,
+                 .invalidOfferSignature, .missingOfferParameters:
+                return .developerError
+            default:
+                // purchaseNotAllowed, ineligibleForOffer (a customer condition, not a request bug),
+                // paymentMethodBindingConfigurationRequired, and future cases.
+                return .error
+            }
+        }
+        if let skError = error as? SKError, skError.code == .paymentCancelled {
+            return .userCanceled
         }
         return .error
     }
