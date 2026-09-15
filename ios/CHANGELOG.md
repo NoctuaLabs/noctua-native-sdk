@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [ios-sdk-v0.40.1] - 2026-09-15
+
+### 🐛 Bug Fixes
+
+- *(ios)* Route StoreKit product responses per request and harden purchase error handling
+
 ## [ios-sdk-v0.40.0] - 2026-08-03
 
 ### revert
