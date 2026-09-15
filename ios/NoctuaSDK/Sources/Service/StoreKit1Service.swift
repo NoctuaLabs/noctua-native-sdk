@@ -36,11 +36,16 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
     // Track active product requests to prevent deallocation
     private var activeRequests: [SKProductsRequest] = []
 
-    // Track which product type was requested for filtering
-    private var pendingQueryProductType: ProductType = .inapp
-
-    // Track auto-purchase after product query
-    private var pendingPurchaseProductId: String?
+    // What each in-flight SKProductsRequest was started for. SK1 delivers every products
+    // response to the same delegate, so this must be tracked per request: a single shared
+    // "pending purchase product" / "pending query type" slot let a concurrent details query's
+    // response be consumed as a purchase lookup (or the reverse) — silently adding a payment
+    // for the wrong call, or failing a purchase with a false "Product not found".
+    private enum ProductRequestPurpose {
+        case query(ProductType)
+        case purchase(productId: String)
+    }
+    private var requestPurposes: [ObjectIdentifier: ProductRequestPurpose] = [:]
 
     // Track restored transactions for batch callback
     private var pendingRestoreResults: [NoctuaPurchaseResult] = []
@@ -74,13 +79,15 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
     }
 
     func dispose() {
-        paymentQueue.remove(self)
-        pendingTransactions.removeAll()
-        activeRequests.removeAll()
-        pendingPurchaseProductId = nil
-        pendingRestoreResults.removeAll()
-        isInitialized = false
-        logger.info("StoreKit1Service disposed")
+        onMain { [self] in
+            paymentQueue.remove(self)
+            pendingTransactions.removeAll()
+            activeRequests.removeAll()
+            requestPurposes.removeAll()
+            pendingRestoreResults.removeAll()
+            isInitialized = false
+            logger.info("StoreKit1Service disposed")
+        }
     }
 
     func isReady() -> Bool {
@@ -88,36 +95,37 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
     }
 
     func registerProduct(productId: String, consumableType: ConsumableType) {
-        productTypeMap[productId] = consumableType
-        logger.debug("Registered product: \(productId) as \(consumableType)")
+        onMain { [self] in
+            productTypeMap[productId] = consumableType
+            logger.debug("Registered product: \(productId) as \(consumableType)")
+        }
     }
 
     func queryProductDetails(productIds: [String], productType: ProductType) {
-        pendingQueryProductType = productType
-        let request = productRequestFactory(Set(productIds))
-        request.delegate = self
-        activeRequests.append(request)
-        request.start()
-        logger.debug("Started product details query for \(productIds.count) products (SK1)")
+        onMain { [self] in
+            startProductRequest(productRequestFactory(Set(productIds)), purpose: .query(productType))
+            logger.debug("Started product details query for \(productIds.count) products (SK1)")
+        }
     }
 
     func purchase(productId: String) {
-        if let product = cachedProducts[productId] {
-            let payment = SKPayment(product: product)
-            paymentQueue.add(payment)
-            logger.debug("Added payment to queue for \(productId) (SK1)")
-        } else {
-            // Query product first, then purchase in the callback
-            pendingPurchaseProductId = productId
-            let request = productRequestFactory([productId])
-            request.delegate = self
-            activeRequests.append(request)
-            request.start()
-            logger.debug("Querying product before purchase: \(productId) (SK1)")
+        onMain { [self] in
+            if let product = cachedProducts[productId] {
+                paymentQueue.add(SKPayment(product: product))
+                logger.debug("Added payment to queue for \(productId) (SK1)")
+            } else {
+                // Query product first, then purchase when this request's response arrives
+                startProductRequest(productRequestFactory([productId]), purpose: .purchase(productId: productId))
+                logger.debug("Querying product before purchase: \(productId) (SK1)")
+            }
         }
     }
 
     func queryPurchases(productType: ProductType) {
+        onMain { [self] in queryPurchasesOnMain(productType: productType) }
+    }
+
+    private func queryPurchasesOnMain(productType: ProductType) {
         // SK1 has no Transaction.currentEntitlements equivalent.
         // Report currently tracked pending (unfinished) transactions.
         var purchases: [NoctuaPurchaseResult] = []
@@ -139,12 +147,18 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
     }
 
     func restorePurchases() {
-        pendingRestoreResults.removeAll()
-        paymentQueue.restoreCompletedTransactions()
-        logger.debug("Restore purchases initiated (SK1)")
+        onMain { [self] in
+            pendingRestoreResults.removeAll()
+            paymentQueue.restoreCompletedTransactions()
+            logger.debug("Restore purchases initiated (SK1)")
+        }
     }
 
     func getProductPurchaseStatus(productId: String) {
+        onMain { [self] in getProductPurchaseStatusOnMain(productId: productId) }
+    }
+
+    private func getProductPurchaseStatusOnMain(productId: String) {
         // Step 1 — check the SK1 in-flight queue first. This catches a
         // freshly-purchased product BEFORE `completePurchaseProcessing`
         // calls `finishTransaction`, which is the only window where SK1
@@ -188,13 +202,14 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
         // returns `false` because `pendingTransactions` is wiped by
         // `finishTransaction` during the original purchase.
         if #available(iOS 15.0, *) {
+            // Read the product cache here, on main — the Task body runs off-main and must not
+            // touch service state.
+            let isSubscription = cachedProducts[productId]?.subscriptionPeriod != nil
             Task { [weak self] in
                 guard let self = self else { return }
                 let matched = await self.findCurrentEntitlement(productId: productId)
                 let status: NoctuaProductPurchaseStatus
                 if let tx = matched {
-                    let product = self.cachedProducts[productId]
-                    let isSubscription = product?.subscriptionPeriod != nil
                     status = NoctuaProductPurchaseStatus(
                         productId: productId,
                         isPurchased: true,
@@ -238,14 +253,15 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
             return
         }
 
-        if let transaction = pendingTransactions[purchaseToken] {
-            paymentQueue.finishTransaction(transaction)
-            pendingTransactions.removeValue(forKey: purchaseToken)
-            logger.debug("Purchase processing completed for token: \(purchaseToken.prefix(20))... (SK1)")
-            DispatchQueue.main.async { callback?(true) }
-        } else {
-            // Transaction may have already been finished
-            logger.debug("Transaction already finished or not found: \(purchaseToken.prefix(20))... (SK1)")
+        onMain { [self] in
+            if let transaction = pendingTransactions[purchaseToken] {
+                paymentQueue.finishTransaction(transaction)
+                pendingTransactions.removeValue(forKey: purchaseToken)
+                logger.debug("Purchase processing completed for token: \(purchaseToken.prefix(20))... (SK1)")
+            } else {
+                // Transaction may have already been finished
+                logger.debug("Transaction already finished or not found: \(purchaseToken.prefix(20))... (SK1)")
+            }
             DispatchQueue.main.async { callback?(true) }
         }
     }
@@ -253,6 +269,10 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
     // MARK: - SKPaymentTransactionObserver
 
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        onMain { [self] in handleUpdatedTransactions(transactions) }
+    }
+
+    private func handleUpdatedTransactions(_ transactions: [SKPaymentTransaction]) {
         for transaction in transactions {
             switch transaction.transactionState {
             case .purchased:
@@ -272,57 +292,106 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
     }
 
     func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
-        let restoredPurchases = pendingRestoreResults
-        pendingRestoreResults.removeAll()
+        onMain { [self] in
+            let restoredPurchases = pendingRestoreResults
+            pendingRestoreResults.removeAll()
 
-        logger.debug("Restore purchases completed: \(restoredPurchases.count) purchases found (SK1)")
-        DispatchQueue.main.async { [weak self] in
-            self?.eventListener?.onRestorePurchasesCompleted(purchases: restoredPurchases)
+            logger.debug("Restore purchases completed: \(restoredPurchases.count) purchases found (SK1)")
+            DispatchQueue.main.async { [weak self] in
+                self?.eventListener?.onRestorePurchasesCompleted(purchases: restoredPurchases)
+            }
         }
     }
 
     func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
-        pendingRestoreResults.removeAll()
+        onMain { [self] in
+            pendingRestoreResults.removeAll()
 
-        logger.error("Failed to restore purchases: \(error.localizedDescription)")
-        DispatchQueue.main.async { [weak self] in
-            self?.eventListener?.onStoreKitError(
-                error: .error,
-                message: "Failed to restore purchases: \(error.localizedDescription)"
-            )
+            let errorCode = (error as? SKError).map { StoreKit1Service.mapSKError($0) } ?? .error
+            logger.error("Failed to restore purchases: \(error.localizedDescription)")
+            DispatchQueue.main.async { [weak self] in
+                self?.eventListener?.onStoreKitError(
+                    error: errorCode,
+                    message: "Failed to restore purchases: \(error.localizedDescription)"
+                )
+            }
         }
     }
 
     // MARK: - SKProductsRequestDelegate
 
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        // Check if this is a purchase-triggered query
-        if let purchaseProductId = pendingPurchaseProductId {
-            pendingPurchaseProductId = nil
+        onMain { [self] in
+            let purpose = requestPurposes[ObjectIdentifier(request)]
+            cleanupRequest(request)
 
-            if let product = response.products.first(where: { $0.productIdentifier == purchaseProductId }) {
-                cachedProducts[product.productIdentifier] = product
-                let payment = SKPayment(product: product)
-                paymentQueue.add(payment)
-                logger.debug("Auto-purchased after query: \(purchaseProductId) (SK1)")
-            } else {
-                logger.error("Product not found for purchase: \(purchaseProductId)")
+            switch purpose {
+            case .purchase(let productId):
+                handlePurchaseLookupResponse(productId: productId, response: response)
+            case .query(let productType):
+                handleProductDetailsResponse(productType: productType, response: response)
+            case nil:
+                logger.warning("Ignoring response for an untracked product request (SK1)")
+            }
+        }
+    }
+
+    func request(_ request: SKRequest, didFailWithError error: Error) {
+        onMain { [self] in
+            logger.error("SKProductsRequest failed: \(error.localizedDescription)")
+
+            guard let productsRequest = request as? SKProductsRequest else { return }
+            let purpose = requestPurposes[ObjectIdentifier(productsRequest)]
+            cleanupRequest(productsRequest)
+
+            switch purpose {
+            case .purchase(let productId):
+                reportPurchaseLookupFailure(
+                    productId: productId,
+                    errorCode: .error,
+                    message: "Failed to fetch product for purchase: \(productId): \(error.localizedDescription)"
+                )
+            case .query:
                 DispatchQueue.main.async { [weak self] in
                     self?.eventListener?.onStoreKitError(
-                        error: .itemUnavailable,
-                        message: "Product not found: \(purchaseProductId)"
+                        error: .error,
+                        message: "Failed to query product details: \(error.localizedDescription)"
                     )
                 }
+            case nil:
+                logger.warning("Ignoring failure for an untracked product request (SK1)")
             }
+        }
+    }
 
-            cleanupRequest(request)
+    // MARK: - Product Request Routing
+
+    private func startProductRequest(_ request: SKProductsRequest, purpose: ProductRequestPurpose) {
+        request.delegate = self
+        activeRequests.append(request)
+        requestPurposes[ObjectIdentifier(request)] = purpose
+        request.start()
+    }
+
+    private func handlePurchaseLookupResponse(productId: String, response: SKProductsResponse) {
+        guard let product = response.products.first(where: { $0.productIdentifier == productId }) else {
+            reportPurchaseLookupFailure(
+                productId: productId,
+                errorCode: .itemUnavailable,
+                message: "Product not found: \(productId)"
+            )
             return
         }
 
-        // Standard product details query
+        cachedProducts[product.productIdentifier] = product
+        paymentQueue.add(SKPayment(product: product))
+        logger.debug("Auto-purchased after query: \(productId) (SK1)")
+    }
+
+    private func handleProductDetailsResponse(productType: ProductType, response: SKProductsResponse) {
         let filtered = response.products.filter { product in
             let isSubscription = product.subscriptionPeriod != nil
-            switch pendingQueryProductType {
+            switch productType {
             case .inapp: return !isSubscription
             case .subs: return isSubscription
             }
@@ -338,34 +407,35 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
         DispatchQueue.main.async { [weak self] in
             self?.eventListener?.onProductDetailsLoaded(products: results)
         }
-
-        cleanupRequest(request)
     }
 
-    func request(_ request: SKRequest, didFailWithError error: Error) {
-        logger.error("SKProductsRequest failed: \(error.localizedDescription)")
-
-        // If this was a purchase-triggered query, clear the pending purchase
-        if pendingPurchaseProductId != nil {
-            let productId = pendingPurchaseProductId!
-            pendingPurchaseProductId = nil
-            DispatchQueue.main.async { [weak self] in
-                self?.eventListener?.onStoreKitError(
-                    error: .error,
-                    message: "Failed to fetch product for purchase: \(productId): \(error.localizedDescription)"
-                )
-            }
-        } else {
-            DispatchQueue.main.async { [weak self] in
-                self?.eventListener?.onStoreKitError(
-                    error: .error,
-                    message: "Failed to query product details: \(error.localizedDescription)"
-                )
-            }
+    /// Reports a failure that belongs to one specific purchase. It is delivered as a purchase
+    /// result carrying the productId, so a bridge can match it to the purchase that asked for
+    /// it instead of guessing from an unscoped error. onStoreKitError is still emitted
+    /// afterwards (same code and message as before) for listeners that only watch errors.
+    private func reportPurchaseLookupFailure(productId: String, errorCode: StoreKitErrorCode, message: String) {
+        logger.error(message)
+        let result = NoctuaPurchaseResult(
+            success: false,
+            errorCode: errorCode,
+            productId: productId,
+            message: message
+        )
+        DispatchQueue.main.async { [weak self] in
+            self?.eventListener?.onPurchaseCompleted(result: result)
+            self?.eventListener?.onStoreKitError(error: errorCode, message: message)
         }
+    }
 
-        if let productsRequest = request as? SKProductsRequest {
-            cleanupRequest(productsRequest)
+    /// Runs `work` on the main thread — synchronously when already there. All mutable service
+    /// state is only touched from main: SKPaymentQueue and SKProductsRequest callbacks arrive
+    /// there, while the public entry points can be called from any thread (e.g. a Unity
+    /// thread-pool continuation).
+    private func onMain(_ work: @escaping () -> Void) {
+        if Thread.isMainThread {
+            work()
+        } else {
+            DispatchQueue.main.async(execute: work)
         }
     }
 
@@ -407,16 +477,8 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
         let productId = transaction.payment.productIdentifier
         let error = transaction.error as? SKError
 
-        let errorCode: StoreKitErrorCode
-        let message: String
-
-        if let skError = error {
-            errorCode = mapSKError(skError)
-            message = skError.localizedDescription
-        } else {
-            errorCode = .error
-            message = transaction.error?.localizedDescription ?? "Unknown error"
-        }
+        let errorCode = error.map { StoreKit1Service.mapSKError($0) } ?? .error
+        let message = StoreKit1Service.describeTransactionError(transaction.error)
 
         // Always finish failed transactions
         paymentQueue.finishTransaction(transaction)
@@ -682,7 +744,10 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
         return true
     }
 
-    private func mapSKError(_ error: SKError) -> StoreKitErrorCode {
+    /// Maps `SKError.Code` (https://developer.apple.com/documentation/storekit/skerror/code) to the
+    /// cross-platform error code. Existing mappings are unchanged; the offer/entitlement codes Apple
+    /// documents as request-configuration problems map to `.developerError`.
+    static func mapSKError(_ error: SKError) -> StoreKitErrorCode {
         switch error.code {
         case .paymentCancelled:
             return .userCanceled
@@ -692,9 +757,10 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
             return .itemUnavailable
         case .paymentNotAllowed:
             return .error
-        case .paymentInvalid:
+        case .paymentInvalid, .invalidOfferIdentifier, .invalidOfferPrice, .invalidSignature,
+             .missingOfferParams, .unauthorizedRequestData:
             return .developerError
-        case .cloudServicePermissionDenied:
+        case .cloudServicePermissionDenied, .cloudServiceRevoked:
             return .serviceUnavailable
         default:
             return .error
@@ -703,5 +769,29 @@ class StoreKit1Service: NSObject, StoreKitServiceProtocol, SKPaymentTransactionO
 
     private func cleanupRequest(_ request: SKProductsRequest) {
         activeRequests.removeAll { $0 === request }
+        requestPurposes.removeValue(forKey: ObjectIdentifier(request))
+    }
+
+    /// Human-readable failure text for a failed transaction. StoreKit 1 reports many App Store
+    /// account and payment-method problems as a bare `SKError.unknown` ("An unknown error
+    /// occurred"); the actionable reason only lives in `NSUnderlyingErrorKey`, so it is appended
+    /// when present. The base text is unchanged, keeping existing message checks working.
+    static func describeTransactionError(_ error: Error?) -> String {
+        guard let error = error else { return "Unknown error" }
+        return StoreKitErrorDescription.describe(error)
+    }
+}
+
+/// Failure text shared by the StoreKit 1 and StoreKit 2 services.
+enum StoreKitErrorDescription {
+    /// The error's description, plus the `NSUnderlyingErrorKey` domain and code when present — StoreKit
+    /// often reports account and payment-method problems as a generic "unknown" error whose actionable
+    /// reason only lives in the underlying error.
+    static func describe(_ error: Error) -> String {
+        let nsError = error as NSError
+        guard let underlying = nsError.userInfo[NSUnderlyingErrorKey] as? NSError else {
+            return nsError.localizedDescription
+        }
+        return "\(nsError.localizedDescription) (underlying: \(underlying.domain) \(underlying.code))"
     }
 }
