@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [android-sdk-v0.35.1] - 2026-09-16
+
+### 🐛 Bug Fixes
+
+- *(billing)* Rebuild the BillingClient when reconnecting so billing can recover
+
 ## [android-sdk-v0.35.0] - 2026-08-03
 
 ### ⚙️ Miscellaneous
