@@ -45,6 +45,32 @@ class BillingService(
     private var eventListener: BillingEventListener? = null
     private var isInitialized = false
 
+    // Guards against stacking connection attempts: callers retry roughly once a second while
+    // waiting for billing, and each reconnect builds a new client. Tearing down an in-flight
+    // handshake to start another would stop any attempt from ever completing.
+    //
+    // Deliberately a deadline rather than a plain flag: if Play never invokes the setup callback,
+    // a boolean would stay set and block reconnection for the rest of the session — the same class
+    // of permanent-dead-state bug this change exists to fix. Written on the caller's thread and
+    // cleared from Play's callback thread, hence @Volatile.
+    // internal rather than private so tests can stage an outstanding attempt: under Robolectric the
+    // handshake completes synchronously, so there is otherwise no way to observe the in-flight state.
+    @Volatile
+    internal var connectAttemptStartedAtNanos = 0L
+
+    // Overridable so tests can exercise back-to-back reconnects without waiting out the deadline.
+    internal var connectAttemptTimeoutMs = 10_000L
+
+    private fun isConnectionInFlight(): Boolean {
+        val startedAt = connectAttemptStartedAtNanos
+
+        if (startedAt == 0L) {
+            return false
+        }
+
+        return (System.nanoTime() - startedAt) / 1_000_000 < connectAttemptTimeoutMs
+    }
+
     // Track connection state
     private val _connectionState = MutableStateFlow(false)
     val connectionState: StateFlow<Boolean> = _connectionState
@@ -53,12 +79,39 @@ class BillingService(
     private val productTypeMap = ConcurrentHashMap<String, ConsumableType>()
 
     fun initialize(listener: BillingEventListener? = null) {
+        if (listener != null) {
+            this.eventListener = listener
+        }
+
         if (isInitialized) {
-            NoctuaLog.w(TAG, "BillingService already initialized")
+            if (isReady()) {
+                NoctuaLog.w(TAG, "BillingService already initialized")
+                return
+            }
+
+            // Initialized before but not connected: the first connection attempt failed (Google
+            // Play unavailable at launch) or the service dropped. Recover instead of returning
+            // early, which used to leave billing permanently dead for the session.
+            NoctuaLog.i(TAG, "BillingService initialized but not connected, reconnecting")
+            reconnect()
+
             return
         }
 
-        this.eventListener = listener
+        billingClient = buildBillingClient()
+        startConnection()
+        isInitialized = true
+        NoctuaLog.i(TAG, "BillingService initialized")
+    }
+
+    // How many BillingClient instances this service has constructed. Exposed so tests can assert
+    // that recovery builds a *fresh* client rather than retrying the dead one, which is the whole
+    // point of the fix and is otherwise invisible from outside.
+    internal var billingClientBuildCount = 0
+        private set
+
+    private fun buildBillingClient(): BillingClient {
+        billingClientBuildCount++
 
         val builder = BillingClient.newBuilder(context)
             .setListener(PurchasesUpdatedListenerImpl())
@@ -73,15 +126,20 @@ class BillingService(
             builder.enableAutoServiceReconnection()
         }
 
-        billingClient = builder.build()
-        startConnection()
-        isInitialized = true
-        NoctuaLog.i(TAG, "BillingService initialized")
+        return builder.build()
     }
 
     private fun startConnection() {
+        if (isConnectionInFlight()) {
+            NoctuaLog.d(TAG, "Billing connection already in progress")
+            return
+        }
+
+        connectAttemptStartedAtNanos = System.nanoTime()
         billingClient?.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
+                connectAttemptStartedAtNanos = 0L
+
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     NoctuaLog.i(TAG, "Billing client connected successfully")
                     _connectionState.value = true
@@ -99,23 +157,64 @@ class BillingService(
 
             override fun onBillingServiceDisconnected() {
                 NoctuaLog.w(TAG, "Billing service disconnected")
+                connectAttemptStartedAtNanos = 0L
                 _connectionState.value = false
                 // Auto-reconnection is handled by BillingClient if enabled
             }
         })
     }
 
+    /**
+     * Re-establishes the Play billing connection, rebuilding the client first.
+     *
+     * A [BillingClient] supports a single connection lifecycle: once its connection has failed or
+     * been closed, calling `startConnection()` on that same instance will not bring it back. The
+     * previous implementation retried on the existing instance, so a client that failed to connect
+     * at startup — Google Play not signed in, Play Store disabled or blocked, common on
+     * OPPO/ColorOS — stayed dead for the whole session. Purchases then failed without ever
+     * reaching Google Play, even after the user signed in, until the app was restarted.
+     *
+     * Building a fresh client is what actually allows recovery. Play Billing's own
+     * `enableAutoServiceReconnection` does not cover this case: it re-establishes a connection that
+     * was made and later severed, not one that never succeeded.
+     */
     fun reconnect() {
-        if (billingClient?.isReady == false) {
-            startConnection()
+        // Reconnecting is recovery for a service that has already been set up. Before initialize()
+        // there is no listener to report results to, so building a client here would be pointless.
+        if (!isInitialized) {
+            NoctuaLog.w(TAG, "reconnect called before initialize, ignoring")
+            return
         }
+
+        if (isReady()) {
+            return
+        }
+
+        if (isConnectionInFlight()) {
+            NoctuaLog.d(TAG, "Reconnect skipped, billing connection already in progress")
+            return
+        }
+
+        NoctuaLog.i(TAG, "Rebuilding billing client before reconnecting")
+
+        // The old client cannot be reused. Closing it is best-effort: it may already be closed,
+        // and failing to close it must not prevent building a working replacement.
+        runCatching { billingClient?.endConnection() }
+            .onFailure { NoctuaLog.w(TAG, "Ignoring error while closing stale billing client: ${it.message}") }
+
+        _connectionState.value = false
+        billingClient = buildBillingClient()
+        startConnection()
     }
 
     fun dispose() {
         mainScope.cancel()
         ioScope.cancel()
         billingClient?.endConnection()
+        billingClient = null
         isInitialized = false
+        connectAttemptStartedAtNanos = 0L
+        _connectionState.value = false
         NoctuaLog.i(TAG, "BillingService disposed")
     }
 
