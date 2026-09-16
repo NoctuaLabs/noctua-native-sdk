@@ -62,6 +62,119 @@ class BillingServiceRobolectricTest {
         billingService.initialize() // Should log warning, not crash
     }
 
+    /**
+     * Recovery tests for the case that used to leave billing permanently dead: the first
+     * connection attempt fails (Google Play unavailable at launch), and every later retry was a
+     * no-op because initialize() returned early on isInitialized and reconnect() called
+     * startConnection() again on the same, unrevivable BillingClient.
+     *
+     * A BillingClient allows a single connection lifecycle, so recovery is only possible by
+     * building a new one. billingClientBuildCount is what makes that observable here: Robolectric
+     * can build a real client but never reaches Google Play, which is exactly the never-connected
+     * state these tests need.
+     *
+     * connectAttemptTimeoutMs is zeroed so the in-flight guard does not suppress the immediate
+     * back-to-back retries; that guard has its own test below.
+     */
+    @Test
+    fun `reconnect builds a fresh billing client when never connected`() {
+        billingService.connectAttemptTimeoutMs = 0
+        billingService.initialize()
+        assertEquals(1, billingService.billingClientBuildCount)
+
+        billingService.reconnect()
+
+        assertEquals(
+            "reconnect must rebuild the client; retrying the dead one can never recover",
+            2,
+            billingService.billingClientBuildCount
+        )
+    }
+
+    @Test
+    fun `initialize after a failed connection retries instead of returning early`() {
+        billingService.connectAttemptTimeoutMs = 0
+        billingService.initialize()
+        assertEquals(1, billingService.billingClientBuildCount)
+
+        // What the SDK's readiness loop does: call initialize() again while billing is not ready.
+        billingService.initialize()
+
+        assertEquals(
+            "a second initialize while disconnected must attempt recovery, not no-op",
+            2,
+            billingService.billingClientBuildCount
+        )
+    }
+
+    @Test
+    fun `repeated reconnects keep rebuilding while disconnected`() {
+        billingService.connectAttemptTimeoutMs = 0
+        billingService.initialize()
+
+        repeat(3) { billingService.reconnect() }
+
+        assertEquals(4, billingService.billingClientBuildCount)
+    }
+
+    @Test
+    fun `reconnect is suppressed while a connection attempt is still in flight`() {
+        billingService.initialize()
+        assertEquals(1, billingService.billingClientBuildCount)
+
+        // Robolectric finishes the handshake synchronously, so stage an attempt that is still
+        // outstanding — the real-device case this guard exists for. Replacing a live handshake
+        // would mean no attempt ever gets far enough to succeed.
+        billingService.connectAttemptStartedAtNanos = System.nanoTime()
+
+        billingService.reconnect()
+
+        assertEquals(
+            "an in-flight handshake must not be replaced, or no attempt ever completes",
+            1,
+            billingService.billingClientBuildCount
+        )
+    }
+
+    @Test
+    fun `in-flight guard expires so a stuck attempt cannot block recovery forever`() {
+        billingService.initialize()
+        assertEquals(1, billingService.billingClientBuildCount)
+
+        // Play accepted the connection request and then never called back: without an expiry this
+        // would wedge reconnection for the rest of the session.
+        billingService.connectAttemptStartedAtNanos = System.nanoTime()
+        billingService.reconnect()
+        assertEquals("still within the deadline", 1, billingService.billingClientBuildCount)
+
+        billingService.connectAttemptTimeoutMs = 0
+
+        billingService.reconnect()
+
+        assertEquals(
+            "once the deadline passes, recovery must be possible again",
+            2,
+            billingService.billingClientBuildCount
+        )
+    }
+
+    @Test
+    fun `reconnect without initialize does not crash`() {
+        billingService.connectAttemptTimeoutMs = 0
+        billingService.reconnect()
+    }
+
+    @Test
+    fun `initialize after dispose starts a new client`() {
+        billingService.initialize()
+        billingService.dispose()
+
+        val revived = BillingService(RuntimeEnvironment.getApplication())
+        revived.initialize()
+
+        assertEquals(1, revived.billingClientBuildCount)
+    }
+
     @Test
     fun `dispose after initialize does not crash`() {
         billingService.initialize()
