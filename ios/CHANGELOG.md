@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [ios-sdk-v0.40.2] - 2026-10-06
+
+### 🐛 Bug Fixes
+
+- *(ios)* Import Foundation in AccountRepository
+
 ## [ios-sdk-v0.40.1] - 2026-09-15
 
 ### 🐛 Bug Fixes
