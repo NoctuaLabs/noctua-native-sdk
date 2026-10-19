@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [android-sdk-v0.36.0] - 2026-10-19
+
+### 🚀 Features
+
+- *(android)* Bridge push notifications to the host app
+
 ## [android-sdk-v0.35.1] - 2026-09-16
 
 ### 🐛 Bug Fixes
