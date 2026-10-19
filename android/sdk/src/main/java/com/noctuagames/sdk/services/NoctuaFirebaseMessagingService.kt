@@ -12,9 +12,29 @@ class NoctuaFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        remoteMessage.notification?.let {
-            // Handle received notification
+        val notification = remoteMessage.notification
+        notification?.let {
             NoctuaLog.d(TAG, "Message Notification Body: ${it.body}")
+        }
+
+        val json = NoctuaPushBridge.buildPayloadJson(
+            messageId = remoteMessage.messageId,
+            title = notification?.title,
+            body = notification?.body,
+            data = remoteMessage.data,
+        )
+        NoctuaPushBridge.dispatchReceived(json)
+
+        // FCM only displays notification messages itself while the app is in the background.
+        if (notification != null) {
+            NoctuaNotificationDisplayer.show(
+                context = this,
+                messageId = remoteMessage.messageId,
+                title = notification.title,
+                body = notification.body,
+                channelId = notification.channelId,
+                data = remoteMessage.data,
+            )
         }
     }
 }

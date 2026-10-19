@@ -5,8 +5,17 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Requested at runtime by NoctuaPresenter; needed to show foreground pushes (Android 13+). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application android:gwpAsanMode="always">
+        <!-- Monochrome small icon for FCM tray notifications and NoctuaNotificationDisplayer.
+             Without it Android falls back to the full-colour launcher icon, which renders as a
+             white square. Games override it with tools:replace="android:resource". -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/noctua_ic_notification" />
+
         <provider
             android:name=".platform.AccountContentProvider"
             android:authorities="${applicationId}.noctuaaccountprovider"
