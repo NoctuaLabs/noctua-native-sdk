@@ -13,6 +13,8 @@ import com.noctuagames.sdk.models.NoctuaProductPurchaseStatus
 import com.noctuagames.sdk.models.NoctuaPurchaseResult
 import com.noctuagames.sdk.presenter.NoctuaPresenter
 import com.noctuagames.sdk.services.BillingEventListener
+import com.noctuagames.sdk.services.NoctuaPushBridge
+import com.noctuagames.sdk.services.NoctuaPushTapTracker
 
 /**
  * Public API entry point for the Noctua Native SDK.
@@ -53,6 +55,7 @@ object Noctua {
     ) {
         presenter = NoctuaPresenter(context, publishedApps, billingConfig)
         askNotificationPermission(context as Activity)
+        NoctuaPushTapTracker.register(context as Activity)
     }
 
     /**
@@ -74,6 +77,7 @@ object Noctua {
     ) {
         presenter = NoctuaPresenter(context, publishedApps, billingConfig, sandboxEnabled)
         askNotificationPermission(context as Activity)
+        NoctuaPushTapTracker.register(context as Activity)
     }
 
     // ------------------------------------
@@ -232,6 +236,30 @@ object Noctua {
     /** Deletes the current FCM registration token. */
     fun deleteFcmToken(onResult: (Boolean) -> Unit) =
         ensureInit { presenter.deleteFcmToken(onResult) }
+
+    /**
+     * Registers a listener for push notifications received while the app process is running
+     * (foreground notifications and data messages). The listener receives the payload as JSON.
+     * A payload that arrived before registration is delivered immediately.
+     *
+     * Not gated by init: FCM can deliver messages before the SDK is initialized.
+     *
+     * @param listener Callback receiving the payload JSON, or null to unregister.
+     */
+    fun setRemoteNotificationReceivedListener(listener: ((String) -> Unit)?) =
+        NoctuaPushBridge.setReceivedListener(listener)
+
+    /**
+     * Registers a listener for notification taps (FCM tray notifications and foreground
+     * notifications shown by the SDK). The listener receives the push payload as JSON. A tap
+     * that launched the app before registration is delivered immediately.
+     *
+     * Not gated by init so the host can register before or after [init].
+     *
+     * @param listener Callback receiving the payload JSON, or null to unregister.
+     */
+    fun setNotificationTappedListener(listener: ((String) -> Unit)?) =
+        NoctuaPushBridge.setTappedListener(listener)
 
     // ------------------------------------
     // Remote Config
