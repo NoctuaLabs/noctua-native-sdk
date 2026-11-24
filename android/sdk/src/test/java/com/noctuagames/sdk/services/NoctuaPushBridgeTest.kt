@@ -73,6 +73,31 @@ class NoctuaPushBridgeTest {
     }
 
     @Test
+    fun `token refreshed before registration delivers only the latest token once`() {
+        NoctuaPushBridge.dispatchTokenRefresh("old-token")
+        NoctuaPushBridge.dispatchTokenRefresh("new-token")
+
+        val tokens = mutableListOf<String>()
+        NoctuaPushBridge.setTokenRefreshListener { tokens.add(it) }
+        NoctuaPushBridge.setTokenRefreshListener { tokens.add(it) }
+
+        assertEquals(listOf("new-token"), tokens)
+    }
+
+    @Test
+    fun `token refresh is independent of received channel`() {
+        val tokens = mutableListOf<String>()
+        val received = mutableListOf<String>()
+        NoctuaPushBridge.setTokenRefreshListener { tokens.add(it) }
+        NoctuaPushBridge.setReceivedListener { received.add(it) }
+
+        NoctuaPushBridge.dispatchTokenRefresh("token-1")
+
+        assertEquals(listOf("token-1"), tokens)
+        assertTrue(received.isEmpty())
+    }
+
+    @Test
     fun `listener exception does not propagate`() {
         NoctuaPushBridge.setReceivedListener { throw IllegalStateException("boom") }
 
