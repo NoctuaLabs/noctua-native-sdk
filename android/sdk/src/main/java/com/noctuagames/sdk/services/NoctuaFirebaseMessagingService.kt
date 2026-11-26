@@ -9,6 +9,7 @@ class NoctuaFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         NoctuaLog.d(TAG, "Refreshed token")
+        NoctuaPushBridge.dispatchTokenRefresh(token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

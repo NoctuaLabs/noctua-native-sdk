@@ -7,10 +7,11 @@ import org.json.JSONObject
 
 /**
  * Forwards push notifications to the host (e.g. the Unity bridge): messages received by
- * [NoctuaFirebaseMessagingService] and notification taps detected by [NoctuaPushTapTracker].
+ * [NoctuaFirebaseMessagingService], notification taps detected by [NoctuaPushTapTracker] and
+ * FCM registration token refreshes from [NoctuaFirebaseMessagingService.onNewToken].
  *
- * Either can happen before the host registers its listener (cold start), so the most recent
- * payload of each kind is buffered and handed over as soon as a listener is set — same
+ * Any of them can happen before the host registers its listener (cold start), so the most recent
+ * value of each kind is buffered and handed over as soon as a listener is set — same
  * behaviour as the iOS `CustomAppController` buffering.
  *
  * Both payloads use the JSON shape the Unity `NoctuaNotificationPayload.FromJson` parses:
@@ -25,6 +26,7 @@ object NoctuaPushBridge {
 
     private val received = Channel("received")
     private val tapped = Channel("tapped")
+    private val tokenRefreshed = Channel("token refresh")
 
     /** Registers the received-push listener; delivers a buffered payload. Null unregisters. */
     fun setReceivedListener(listener: ((String) -> Unit)?) = received.setListener(listener)
@@ -37,6 +39,12 @@ object NoctuaPushBridge {
 
     /** Dispatches a tap payload to the listener, or buffers it when none is set. */
     fun dispatchTapped(json: String) = tapped.dispatch(json)
+
+    /** Registers the FCM token refresh listener; delivers a buffered token. Null unregisters. */
+    fun setTokenRefreshListener(listener: ((String) -> Unit)?) = tokenRefreshed.setListener(listener)
+
+    /** Dispatches a refreshed FCM token to the listener, or buffers it when none is set. */
+    fun dispatchTokenRefresh(token: String) = tokenRefreshed.dispatch(token)
 
     fun buildPayloadJson(
         messageId: String?,
@@ -96,6 +104,7 @@ object NoctuaPushBridge {
     internal fun reset() {
         received.setListener(null)
         tapped.setListener(null)
+        tokenRefreshed.setListener(null)
     }
 
     private class Channel(private val name: String) {

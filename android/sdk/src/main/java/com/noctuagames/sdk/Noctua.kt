@@ -261,6 +261,18 @@ object Noctua {
     fun setNotificationTappedListener(listener: ((String) -> Unit)?) =
         NoctuaPushBridge.setTappedListener(listener)
 
+    /**
+     * Registers a listener for FCM registration token refreshes (`FirebaseMessagingService.onNewToken`):
+     * the first token after install, reinstall, app-data clear or a periodic rotation. The listener
+     * receives the new token. A token refreshed before registration is delivered immediately.
+     *
+     * Not gated by init: FCM can mint a token before the SDK is initialized.
+     *
+     * @param listener Callback receiving the new token, or null to unregister.
+     */
+    fun setFcmTokenRefreshListener(listener: ((String) -> Unit)?) =
+        NoctuaPushBridge.setTokenRefreshListener(listener)
+
     // ------------------------------------
     // Remote Config
     // ------------------------------------
