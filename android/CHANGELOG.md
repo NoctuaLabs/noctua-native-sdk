@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [android-sdk-v0.37.0] - 2026-11-26
+
+### 🚀 Features
+
+- *(android)* Bridge FCM token refresh to the host app
+
 ## [android-sdk-v0.36.0] - 2026-10-19
 
 ### 🚀 Features
